@@ -15,7 +15,7 @@ The login and payment workflow is described with the following diagram for commu
 
 ## Installation
 
-1. Then add this dependency to your app build.gradle file.
+1. Add this dependency to your app build.gradle file.
 
 ```gradle
 dependencies {
