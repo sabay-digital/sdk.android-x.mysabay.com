@@ -1,7 +1,7 @@
 apply plugin: 'com.android.library'
 
 apply plugin: 'com.github.dcendents.android-maven'
-group='com.kh.mysabay'
+group='kh.com.mysabay'
 version='1.0.0-o'
 
 android {
