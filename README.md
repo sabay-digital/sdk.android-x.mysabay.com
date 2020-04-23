@@ -15,15 +15,26 @@ The login and payment workflow is described with the following diagram for commu
 
 ## Installation
 
-1. Add this dependency to your app build.gradle file.
+1. Add Jitpack to your project build.gralde file
 
 ```gradle
-dependencies {
-    implementation 'kh.com.mysabay:sabaysdk:[dependency version deployed to server]'
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
 }
 ```
 
-2. Initialize sdk & Declare Permissions
+2. Then add this dependency to your app build.gradle file.
+
+```gradle
+dependencies {
+    implementation 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.0-o'
+}
+```
+
+3. Initialize sdk & Declare Permissions
 MysabaySdk needs to be initialized. You should only do this 1 time, so placing the initialization in your Application is a good idea. An example for this would be:
 
 ```java
