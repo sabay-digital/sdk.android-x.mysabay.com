@@ -1,5 +1,9 @@
 apply plugin: 'com.android.library'
 
+apply plugin: 'com.github.dcendents.android-maven'
+group='kh.com.mysabay'
+version='1.0.0-o'
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
