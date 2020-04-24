@@ -11,7 +11,7 @@ and `appSecret` for the integration.
 The login and payment workflow is described with the following diagram for communication between CP app, server, mySabay SDK and mySabay API.
 
 ### Login flow
-<img src="Images/user-login-flow.png">
+<img src="https://git.sabay.com/mysabay/sdk/app.android.sdk.mysabay.com.public/-/raw/master/Images/user-login-flow.png">
 
 ## Installation
 
