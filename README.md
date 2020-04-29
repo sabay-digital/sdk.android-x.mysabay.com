@@ -30,7 +30,7 @@ allprojects {
 
 ```gradle
 dependencies {
-    implementation 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.0-o'
+    implementation 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.1-o'
 }
 ```
 
