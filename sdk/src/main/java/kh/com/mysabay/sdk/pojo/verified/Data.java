@@ -19,6 +19,12 @@ public class Data implements Parcelable {
     @SerializedName("id")
     @Expose
     public Integer id;
+    @SerializedName("access_token")
+    @Expose
+    public String accessToken;
+    @SerializedName("refresh_token")
+    @Expose
+    public String refreshToken;
     @SerializedName("uuid")
     @Expose
     public String uuid;
@@ -43,6 +49,9 @@ public class Data implements Parcelable {
     @SerializedName("updated_at")
     @Expose
     public String updatedAt;
+    @SerializedName("expire")
+    @Expose
+    public int expire;
     public final static Creator<Data> CREATOR = new Creator<Data>() {
 
 
@@ -69,6 +78,9 @@ public class Data implements Parcelable {
         this.lastLogin = ((String) in.readValue((String.class.getClassLoader())));
         this.createdAt = ((String) in.readValue((String.class.getClassLoader())));
         this.updatedAt = ((String) in.readValue((String.class.getClassLoader())));
+        this.accessToken = ((String) in.readValue((String.class.getClassLoader())));
+        this.refreshToken = ((String) in.readValue((String.class.getClassLoader())));
+        this.expire = ((int) in.readValue((Integer.class.getClassLoader())));
     }
 
     /**
@@ -78,19 +90,23 @@ public class Data implements Parcelable {
     }
 
     /**
+     * @param id
+     * @param accessToken
+     * @param refreshToken
+     * @param uuid
+     * @param serviceId
      * @param mysabayUserId
+     * @param serviceUserId
+     * @param status
      * @param lastLogin
      * @param createdAt
-     * @param serviceUserId
-     * @param id
-     * @param serviceId
-     * @param uuid
-     * @param status
      * @param updatedAt
      */
-    public Data(Integer id, String uuid, Integer serviceId, Integer mysabayUserId, String serviceUserId, Integer status, String lastLogin, String createdAt, String updatedAt) {
+    public Data(Integer id, String accessToken, String refreshToken, String uuid, Integer serviceId, Integer mysabayUserId, String serviceUserId, Integer status, String lastLogin, String createdAt, String updatedAt, int expire) {
         super();
         this.id = id;
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
         this.uuid = uuid;
         this.serviceId = serviceId;
         this.mysabayUserId = mysabayUserId;
@@ -99,10 +115,21 @@ public class Data implements Parcelable {
         this.lastLogin = lastLogin;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.expire = expire;
     }
 
     public Data withId(Integer id) {
         this.id = id;
+        return this;
+    }
+
+    public Data withAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+        return this;
+    }
+
+    public Data withRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
         return this;
     }
 
@@ -146,14 +173,19 @@ public class Data implements Parcelable {
         return this;
     }
 
+    public Data withExpire(int expire) {
+        this.expire = expire;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("uuid", uuid).append("serviceId", serviceId).append("mysabayUserId", mysabayUserId).append("serviceUserId", serviceUserId).append("status", status).append("lastLogin", lastLogin).append("createdAt", createdAt).append("updatedAt", updatedAt).toString();
+        return new ToStringBuilder(this).append("id", id).append("accessToken", accessToken).append("refreshToken", refreshToken).append("uuid", uuid).append("serviceId", serviceId).append("mysabayUserId", mysabayUserId).append("serviceUserId", serviceUserId).append("status", status).append("lastLogin", lastLogin).append("createdAt", createdAt).append("updatedAt", updatedAt).append("expire", expire).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(mysabayUserId).append(lastLogin).append(createdAt).append(serviceUserId).append(id).append(serviceId).append(uuid).append(status).append(updatedAt).toHashCode();
+        return new HashCodeBuilder().append(accessToken).append(refreshToken).append(mysabayUserId).append(lastLogin).append(createdAt).append(serviceUserId).append(id).append(serviceId).append(uuid).append(status).append(updatedAt).append(expire).toHashCode();
     }
 
     @Override
@@ -165,11 +197,13 @@ public class Data implements Parcelable {
             return false;
         }
         Data rhs = ((Data) other);
-        return new EqualsBuilder().append(mysabayUserId, rhs.mysabayUserId).append(lastLogin, rhs.lastLogin).append(createdAt, rhs.createdAt).append(serviceUserId, rhs.serviceUserId).append(id, rhs.id).append(serviceId, rhs.serviceId).append(uuid, rhs.uuid).append(status, rhs.status).append(updatedAt, rhs.updatedAt).isEquals();
+        return new EqualsBuilder().append(accessToken, rhs.accessToken).append(refreshToken, rhs.refreshToken).append(mysabayUserId, rhs.mysabayUserId).append(lastLogin, rhs.lastLogin).append(createdAt, rhs.createdAt).append(serviceUserId, rhs.serviceUserId).append(id, rhs.id).append(serviceId, rhs.serviceId).append(uuid, rhs.uuid).append(status, rhs.status).append(updatedAt, rhs.updatedAt).append(expire, rhs.expire).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
+        dest.writeValue(accessToken);
+        dest.writeValue(refreshToken);
         dest.writeValue(uuid);
         dest.writeValue(serviceId);
         dest.writeValue(mysabayUserId);
@@ -178,6 +212,7 @@ public class Data implements Parcelable {
         dest.writeValue(lastLogin);
         dest.writeValue(createdAt);
         dest.writeValue(updatedAt);
+        dest.writeValue(expire);
     }
 
     public int describeContents() {
