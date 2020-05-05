@@ -232,7 +232,7 @@ public class StoreApiVM extends ViewModel {
                             EventBus.getDefault().post(new SubscribePayment(item, null, null));
                             MessageUtil.displayDialog(context, item.message);
                         }
-
+                        
                         @Override
                         protected void onErrors(Throwable error) {
                             EventBus.getDefault().post(new SubscribePayment(null, null, error));

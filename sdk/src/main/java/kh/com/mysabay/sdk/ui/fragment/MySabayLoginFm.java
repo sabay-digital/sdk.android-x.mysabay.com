@@ -24,6 +24,7 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmMysabayLoginBinding;
+import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
@@ -85,11 +86,19 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
             @Nullable
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-
                 LogUtil.debug(TAG, "url =" + request.getUrl() + " token =" + request.getUrl().getQueryParameter("access_token"));
                 String token = request.getUrl().getQueryParameter("access_token");
-                if (!StringUtils.isBlank(token) && getActivity() != null)
+                String refreshToken = request.getUrl().getQueryParameter("refresh_token");
+                String expire = request.getUrl().getQueryParameter("expire");
+
+                if (!StringUtils.isBlank(token) && getActivity() != null) {
+                    if (!StringUtils.isBlank(token) && !StringUtils.isBlank(refreshToken)) {
+                        AppItem appItem = new AppItem(MySabaySDK.getInstance().getSdkConfiguration().appSecret, token, refreshToken, "", Long.parseLong(expire));
+                        String encrypted = gson.toJson(appItem);
+                        MySabaySDK.getInstance().saveAppItem(encrypted);
+                    }
                     getActivity().runOnUiThread(() -> viewModel.postToGetUserProfile(getActivity(), token));
+                }
 
                 return super.shouldInterceptRequest(view, request);
             }
@@ -114,7 +123,7 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
             Map<String, String> header = new HashMap<>();
             header.put("app_secret", MySabaySDK.getInstance().getSdkConfiguration().appSecret);
 
-            mViewBinding.wv.loadUrl("https://user.master.mysabay.com/api/v1/user/mysabay/login", header);
+            mViewBinding.wv.loadUrl("https://user.testing.mysabay.com/api/v1.4/user/mysabay/login", header);
         } else
             mViewBinding.wv.loadUrl(mDeepLink);
     }

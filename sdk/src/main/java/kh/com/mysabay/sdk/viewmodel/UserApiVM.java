@@ -188,6 +188,7 @@ public class UserApiVM extends ViewModel {
     }
 
     public void postToGetUserProfile(@NotNull Activity context, String token) {
+        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         this.userRepo.getUserProfile(sdkConfiguration.appSecret, token)
                 .subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread())
@@ -196,7 +197,7 @@ public class UserApiVM extends ViewModel {
                     protected void onSuccess(UserProfileItem userProfileItem) {
                         if (userProfileItem.data != null) {
                             EventBus.getDefault().post(new SubscribeLogin(token, null));
-                            AppItem appItem = new AppItem(sdkConfiguration.appSecret, userProfileItem.data.refreshToken, null, userProfileItem.data.uuid, userProfileItem.data.expire);
+                            appItem.withUuid(userProfileItem.data.uuid);
                             MySabaySDK.getInstance().saveAppItem(gson.toJson(appItem));
                             context.runOnUiThread(context::finish);
                         } else
