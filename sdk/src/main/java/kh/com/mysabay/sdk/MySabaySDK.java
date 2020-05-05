@@ -132,8 +132,7 @@ public class MySabaySDK {
             protected void onSuccess(UserProfileItem userProfileItem) {
                 if (listener != null) {
                     if (userProfileItem.status == 200) {
-                        item.withToken(userProfileItem.data.refreshToken);
-                        item.withExpired(userProfileItem.data.expire);
+                        item.withUuid(userProfileItem.data.uuid);
                         MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
                         listener.userInfo(gson.toJson(userProfileItem));
                     } else
