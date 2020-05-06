@@ -143,13 +143,14 @@ public class UserApiVM extends ViewModel {
                 .observeOn(appRxSchedulers.mainThread()).subscribe(response -> {
                     if (response.status == 200) {
                         if (response.data != null) {
+                            LogUtil.info("success", response.data.toString());
                             AppItem appItem = new AppItem(item.data.appSecret, response.data.accessToken, response.data.refreshToken, response.data.uuid, response.data.expire);
                             String encrypted = gson.toJson(appItem);
                             MySabaySDK.getInstance().saveAppItem(encrypted);
                             MessageUtil.displayToast(context, "verified code success");
                             LogUtil.debug(TAG, "write appItem success");
 
-                            EventBus.getDefault().post(new SubscribeLogin(item.data.accessToken, null));
+                            EventBus.getDefault().post(new SubscribeLogin(response.data.accessToken, null));
 
                             LoginActivity.loginActivity.finish();
                         } else {
