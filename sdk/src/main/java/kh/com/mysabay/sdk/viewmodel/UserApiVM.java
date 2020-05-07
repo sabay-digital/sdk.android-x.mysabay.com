@@ -149,7 +149,7 @@ public class UserApiVM extends ViewModel {
                             MessageUtil.displayToast(context, "verified code success");
                             LogUtil.debug(TAG, "write appItem success");
 
-                            EventBus.getDefault().post(new SubscribeLogin(item.data.accessToken, null));
+                            EventBus.getDefault().post(new SubscribeLogin(response.data.accessToken, null));
 
                             LoginActivity.loginActivity.finish();
                         } else {
