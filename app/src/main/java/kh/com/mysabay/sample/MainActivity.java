@@ -11,6 +11,8 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
+import kh.com.mysabay.sdk.pojo.payment.DataIAP;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,7 +22,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mViewBinding.viewPb.setVisibility(View.GONE);
         findViewById(R.id.show_login_screen).setOnClickListener(v -> {
@@ -59,6 +60,10 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void purchaseIAPSuccess(Object dataIAP) {
+                        if (dataIAP instanceof  DataIAP) {
+                            DataIAP obj = (DataIAP) dataIAP;
+                            LogUtil.info("Price", obj.getPriceInUsd().toString());
+                        }
                         MessageUtil.displayToast(v.getContext(), "dataAIP = " + dataIAP);
                     }
 

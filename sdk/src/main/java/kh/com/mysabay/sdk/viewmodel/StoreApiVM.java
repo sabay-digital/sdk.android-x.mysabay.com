@@ -230,7 +230,6 @@ public class StoreApiVM extends ViewModel {
                         @Override
                         protected void onSuccess(PaymentResponseItem item) {
                             EventBus.getDefault().post(new SubscribePayment(item, null, null));
-                            MessageUtil.displayDialog(context, item.message);
                         }
                         
                         @Override
@@ -255,7 +254,7 @@ public class StoreApiVM extends ViewModel {
                         protected void onSuccess(ResponseItem response) {
                             if (response.status == 200) {
                                 MySabaySDK.getInstance().saveMethodSelected(gson.toJson(data.withIsPaidWith(false)));
-                                context.initAddFragment(BankVerifiedFm.newInstance(response.data), PaymentFm.TAG, true);
+                                context.initAddFragment(BankVerifiedFm.newInstance(response.data, shopItem), PaymentFm.TAG, true);
                             } else
                                 MessageUtil.displayDialog(context, gson.toJson(response));
                         }
