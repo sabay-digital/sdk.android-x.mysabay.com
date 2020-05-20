@@ -232,12 +232,7 @@ public class MySabaySDK {
     @Subscribe
     public void onPaymentEvent(SubscribePayment event) {
         if (mPaymentListener != null) {
-            if (event.dataIAP != null)
-                mPaymentListener.purchaseIAPSuccess(event.dataIAP);
-            else if (event.dataMySabay != null)
-                mPaymentListener.purchaseMySabaySuccess(event.dataMySabay);
-            else
-                mPaymentListener.purchaseFailed(event.dataError);
+            mPaymentListener.purchaseSuccess(event);
         } else
             LogUtil.debug(TAG, "loginListerner null " + gson.toJson(event));
     }
