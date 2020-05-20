@@ -6,13 +6,19 @@ package kh.com.mysabay.sdk.pojo.payment;
  */
 public class SubscribePayment {
 
-    public final Object dataMySabay;
-    public final Object dataIAP;
-    public final Object dataError;
+    public final String type;
+    public final Object data;
 
-    public SubscribePayment(Object dataMySabay, Object dataIAP, Object dataError) {
-        this.dataMySabay = dataMySabay;
-        this.dataIAP = dataIAP;
-        this.dataError = dataError;
+    public SubscribePayment(String type, Object data) {
+        this.type = type;
+        this.data = data;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public Object getData() {
+        return data;
     }
 }

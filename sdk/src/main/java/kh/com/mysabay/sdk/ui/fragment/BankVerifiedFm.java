@@ -13,14 +13,18 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import kh.com.mysabay.sdk.BuildConfig;
+import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.PartialBankProviderVerifiedBinding;
+import kh.com.mysabay.sdk.pojo.payment.DataIAP;
+import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.pojo.thirdParty.payment.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.LogUtil;
@@ -34,14 +38,17 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
 
     public static final String TAG = BankVerifiedFm.class.getSimpleName();
     private static final String EXT_KEY_PaymentResponseItem = "PaymentResponseItem";
+    public static final String EXT_KEY_DATA = "EXT_KEY_DATA";
 
+    private kh.com.mysabay.sdk.pojo.shop.Data mData;
     private Data mPaymentResponseItem;
     private boolean isFinished = false;
 
     @NotNull
-    public static BankVerifiedFm newInstance(Data item) {
+    public static BankVerifiedFm newInstance(Data item, kh.com.mysabay.sdk.pojo.shop.Data shopItem) {
         Bundle args = new Bundle();
         args.putParcelable(EXT_KEY_PaymentResponseItem, item);
+        args.putParcelable(EXT_KEY_DATA, shopItem);
         BankVerifiedFm f = new BankVerifiedFm();
         f.setArguments(args);
         return f;
@@ -50,8 +57,10 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        if (getArguments() != null)
+        if (getArguments() != null) {
             mPaymentResponseItem = getArguments().getParcelable(EXT_KEY_PaymentResponseItem);
+            mData = getArguments().getParcelable(EXT_KEY_DATA);
+        }
         setRetainInstance(true);
         super.onCreate(savedInstanceState);
     }
@@ -64,6 +73,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public void initializeObjects(View v, Bundle args) {
+        viewModel.setShopItemSelected(mData);
         if (args != null) {
             mViewBinding.wv.restoreState(args);
         } else {
@@ -102,6 +112,14 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                                 kh.com.mysabay.sdk.pojo.thirdParty.Data data = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.thirdParty.Data.class);
                                 data.withIsPaidWith(true);
                                 MySabaySDK.getInstance().saveMethodSelected(gson.toJson(data));
+                                DataIAP dataIAP = new DataIAP();
+                                dataIAP.withPriceInUsd(mData.priceInUsd);
+                                dataIAP.withPriceInSc(mData.priceInSc);
+                                dataIAP.withAssetCode(data.assetCode);
+                                dataIAP.withHash(mPaymentResponseItem.hash);
+                                dataIAP.withPackageId(mData.packageId);
+
+                                EventBus.getDefault().post(new SubscribePayment(Globals.ONE_TIME, dataIAP));
                             }
                         });
                         LogUtil.debug(TAG, "payment success");

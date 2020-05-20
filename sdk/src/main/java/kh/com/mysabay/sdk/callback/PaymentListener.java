@@ -1,4 +1,5 @@
 package kh.com.mysabay.sdk.callback;
+import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 
 /**
  * Created by Tan Phirum on 3/28/20
@@ -6,9 +7,7 @@ package kh.com.mysabay.sdk.callback;
  */
 public interface PaymentListener {
 
-    void purchaseMySabaySuccess(Object dataMySabay);
-
-    void purchaseIAPSuccess(Object dataIAP);
+    void purchaseSuccess(SubscribePayment data);
 
     void purchaseFailed(Object dataError);
 }

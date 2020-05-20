@@ -7,10 +7,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import kh.com.mysabay.sample.databinding.ActivityMainBinding;
+import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
+import kh.com.mysabay.sdk.pojo.payment.DataIAP;
+import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mViewBinding.viewPb.setVisibility(View.GONE);
         findViewById(R.id.show_login_screen).setOnClickListener(v -> {
@@ -53,15 +56,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 MySabaySDK.getInstance().showStoreView(new PaymentListener() {
                     @Override
-                    public void purchaseMySabaySuccess(Object dataMySabay) {
-                        MessageUtil.displayToast(v.getContext(), "dataMySabay = " + dataMySabay);
+                    public void purchaseSuccess(SubscribePayment data) {
+                        if(data.getType().equals(Globals.APP_IN_PURCHASE)) {
+                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                        } else if (data.getType().equals(Globals.MY_SABAY)) {
+                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                        } else {
+                            LogUtil.info(data.getType(), data.data.toString());
+                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                        }
                     }
-
-                    @Override
-                    public void purchaseIAPSuccess(Object dataIAP) {
-                        MessageUtil.displayToast(v.getContext(), "dataAIP = " + dataIAP);
-                    }
-
                     @Override
                     public void purchaseFailed(Object dataError) {
                         MessageUtil.displayToast(v.getContext(), "error = " + dataError);
