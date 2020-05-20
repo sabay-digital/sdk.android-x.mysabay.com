@@ -21,19 +21,10 @@ public class PaymentResponseItem implements Parcelable {
     @SerializedName("status")
     @Expose
     public Integer status;
-    @SerializedName("hash")
+    @SerializedName("data")
     @Expose
-    public String hash;
-    @SerializedName("message")
-    @Expose
-    public String message;
-    @SerializedName("amount")
-    @Expose
-    public String amount;
-    @SerializedName("asset_code")
-    @Expose
-    public String assetCode;
-    public final static Creator<PaymentResponseItem> CREATOR = new Creator<PaymentResponseItem>() {
+    public Data data;
+    public final static Parcelable.Creator<PaymentResponseItem> CREATOR = new Creator<PaymentResponseItem>() {
 
 
         @NotNull
@@ -52,10 +43,7 @@ public class PaymentResponseItem implements Parcelable {
 
     protected PaymentResponseItem(@NotNull Parcel in) {
         this.status = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.hash = ((String) in.readValue((String.class.getClassLoader())));
-        this.message = ((String) in.readValue((String.class.getClassLoader())));
-        this.amount = ((String) in.readValue((String.class.getClassLoader())));
-        this.assetCode = ((String) in.readValue((String.class.getClassLoader())));
+        this.data = ((Data) in.readValue((Data.class.getClassLoader())));
     }
 
     /**
@@ -65,19 +53,13 @@ public class PaymentResponseItem implements Parcelable {
     }
 
     /**
-     * @param amount
-     * @param assetCode
-     * @param message
-     * @param hash
      * @param status
+     * @param data
      */
-    public PaymentResponseItem(Integer status, String hash, String message, String amount, String assetCode) {
+    public PaymentResponseItem(Integer status, Data data) {
         super();
         this.status = status;
-        this.hash = hash;
-        this.message = message;
-        this.amount = amount;
-        this.assetCode = assetCode;
+        this.data = data;
     }
 
     public PaymentResponseItem withStatus(Integer status) {
@@ -85,34 +67,19 @@ public class PaymentResponseItem implements Parcelable {
         return this;
     }
 
-    public PaymentResponseItem withHash(String hash) {
-        this.hash = hash;
-        return this;
-    }
-
-    public PaymentResponseItem withMessage(String message) {
-        this.message = message;
-        return this;
-    }
-
-    public PaymentResponseItem withAmount(String amount) {
-        this.amount = amount;
-        return this;
-    }
-
-    public PaymentResponseItem withAssetCode(String assetCode) {
-        this.assetCode = assetCode;
+    public PaymentResponseItem withData(Data data) {
+        this.data = data;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("status", status).append("hash", hash).append("message", message).append("amount", amount).append("assetCode", assetCode).toString();
+        return new ToStringBuilder(this).append("status", status).append("data", data).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(amount).append(assetCode).append(message).append(hash).append(status).toHashCode();
+        return new HashCodeBuilder().append(data).append(status).toHashCode();
     }
 
     @Override
@@ -124,15 +91,12 @@ public class PaymentResponseItem implements Parcelable {
             return false;
         }
         PaymentResponseItem rhs = ((PaymentResponseItem) other);
-        return new EqualsBuilder().append(amount, rhs.amount).append(assetCode, rhs.assetCode).append(message, rhs.message).append(hash, rhs.hash).append(status, rhs.status).isEquals();
+        return new EqualsBuilder().append(data, rhs.data).append(status, rhs.status).isEquals();
     }
 
     public void writeToParcel(@NotNull Parcel dest, int flags) {
         dest.writeValue(status);
-        dest.writeValue(hash);
-        dest.writeValue(message);
-        dest.writeValue(amount);
-        dest.writeValue(assetCode);
+        dest.writeValue(data);
     }
 
     public int describeContents() {

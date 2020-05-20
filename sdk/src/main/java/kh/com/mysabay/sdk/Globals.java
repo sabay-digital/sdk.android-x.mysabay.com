@@ -24,7 +24,9 @@ public class Globals {
     public static final String EXT_KEY_DATA = "ext_key_data";
     public static final String EXT_KEY_APP_ITEM = "EXT_KEY_APP_ITEM";
     public static final String EXT_KEY_PAYMENT_METHOD = "EXT_KEY_PAYMENT_METHOD";
-
+    public static final String APP_IN_PURCHASE = "APP_IN_PURCHASE";
+    public static final String MY_SABAY = "MY_SABAY";
+    public static final String ONE_TIME = "ONE_TIME";
 
     /**
      * Method replace fragment with set title to activity and add backpress
