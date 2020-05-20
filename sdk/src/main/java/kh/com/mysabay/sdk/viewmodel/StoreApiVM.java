@@ -19,6 +19,7 @@ import io.reactivex.Observer;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.SdkConfiguration;
 import kh.com.mysabay.sdk.pojo.AppItem;
@@ -193,7 +194,7 @@ public class StoreApiVM extends ViewModel {
     }
 
     public void postToVerifyAppInPurchase(@NotNull Context context, @NotNull GoogleVerifyBody body) {
-        EventBus.getDefault().post(new SubscribePayment(null, body.receipt, null));
+        EventBus.getDefault().post(new SubscribePayment(Globals.APP_IN_PURCHASE, body.receipt));
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         mCompos.add(storeRepo.postToVerifyGoogle(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new Consumer<GoogleVerifyResponse>() {
@@ -229,12 +230,12 @@ public class StoreApiVM extends ViewModel {
                     .subscribe(new AbstractDisposableObs<PaymentResponseItem>(context, _networkState) {
                         @Override
                         protected void onSuccess(PaymentResponseItem item) {
-                            EventBus.getDefault().post(new SubscribePayment(item, null, null));
+                            EventBus.getDefault().post(new SubscribePayment(Globals.MY_SABAY, item));
                         }
                         
                         @Override
                         protected void onErrors(Throwable error) {
-                            EventBus.getDefault().post(new SubscribePayment(null, null, error));
+                            EventBus.getDefault().post(new SubscribePayment(null, null));
                         }
                     });
         }

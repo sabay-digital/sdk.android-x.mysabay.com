@@ -8,6 +8,7 @@ public class DataIAP {
     private Float priceInSc;
     private String hash;
     private String assetCode;
+    private String packageId;
 
     public DataIAP withPriceInUsd(Float priceInUsd) {
         this.priceInUsd = priceInUsd;
@@ -29,6 +30,11 @@ public class DataIAP {
         return this;
     }
 
+    public DataIAP withPackageId(String packageId) {
+        this.packageId = packageId;
+        return this;
+    }
+
     public Float getPriceInUsd() {
         return priceInUsd;
     }
@@ -45,8 +51,12 @@ public class DataIAP {
         return assetCode;
     }
 
+    public String getPackageId() {
+        return packageId;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("priceInUsd", priceInUsd).append("priceInSc", priceInSc).append("hash", hash).append("assetCode", assetCode).toString();
+        return new ToStringBuilder(this).append("priceInUsd", priceInUsd).append("priceInSc", priceInSc).append("hash", hash).append("assetCode", assetCode).append("packageId", packageId).toString();
     }
 }

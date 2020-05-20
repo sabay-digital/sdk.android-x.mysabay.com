@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import kh.com.mysabay.sdk.BuildConfig;
+import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
@@ -116,7 +117,9 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                                 dataIAP.withPriceInSc(mData.priceInSc);
                                 dataIAP.withAssetCode(data.assetCode);
                                 dataIAP.withHash(mPaymentResponseItem.hash);
-                                EventBus.getDefault().post(new SubscribePayment(null, dataIAP, null));
+                                dataIAP.withPackageId(mData.packageId);
+
+                                EventBus.getDefault().post(new SubscribePayment(Globals.ONE_TIME, dataIAP));
                             }
                         });
                         LogUtil.debug(TAG, "payment success");
