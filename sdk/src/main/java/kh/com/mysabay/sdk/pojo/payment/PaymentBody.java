@@ -28,6 +28,10 @@ public class PaymentBody implements Parcelable {
     @SerializedName("asset_code")
     @Expose
     public String assetCode;
+    @SerializedName("package_id")
+    @Expose
+    public String packageId;
+
     public final static Parcelable.Creator<PaymentBody> CREATOR = new Creator<PaymentBody>() {
 
 
@@ -49,6 +53,7 @@ public class PaymentBody implements Parcelable {
         this.amount = ((String) in.readValue((String.class.getClassLoader())));
         this.cashierCode = ((String) in.readValue((String.class.getClassLoader())));
         this.assetCode = ((String) in.readValue((String.class.getClassLoader())));
+        this.packageId = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     /**
@@ -57,12 +62,13 @@ public class PaymentBody implements Parcelable {
      * @param cashierCode
      * @param uuid
      */
-    public PaymentBody(String uuid, String amount, String cashierCode, String assetCode) {
+    public PaymentBody(String uuid, String amount, String cashierCode, String assetCode, String packageId) {
         super();
         this.uuid = uuid;
         this.amount = amount;
         this.cashierCode = cashierCode;
         this.assetCode = assetCode;
+        this.packageId = packageId;
     }
 
     public PaymentBody withUuid(String uuid) {
@@ -85,14 +91,19 @@ public class PaymentBody implements Parcelable {
         return this;
     }
 
+    public PaymentBody withPackageId(String packageId) {
+        this.packageId = packageId;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("uuid", uuid).append("amount", amount).append("cashierCode", cashierCode).append("assetCode", assetCode).toString();
+        return new ToStringBuilder(this).append("uuid", uuid).append("amount", amount).append("cashierCode", cashierCode).append("assetCode", assetCode).append("packageId", packageId).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(amount).append(cashierCode).append(assetCode).append(uuid).toHashCode();
+        return new HashCodeBuilder().append(amount).append(cashierCode).append(assetCode).append(packageId).append(uuid).toHashCode();
     }
 
     @Override
@@ -104,7 +115,7 @@ public class PaymentBody implements Parcelable {
             return false;
         }
         PaymentBody rhs = ((PaymentBody) other);
-        return new EqualsBuilder().append(amount, rhs.amount).append(cashierCode, rhs.cashierCode).append(assetCode, rhs.assetCode).append(uuid, rhs.uuid).isEquals();
+        return new EqualsBuilder().append(amount, rhs.amount).append(cashierCode, rhs.cashierCode).append(assetCode, rhs.assetCode).append(packageId, rhs.packageId).append(uuid, rhs.uuid).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
@@ -112,6 +123,7 @@ public class PaymentBody implements Parcelable {
         dest.writeValue(amount);
         dest.writeValue(cashierCode);
         dest.writeValue(assetCode);
+        dest.writeValue(packageId);
     }
 
     public int describeContents() {
