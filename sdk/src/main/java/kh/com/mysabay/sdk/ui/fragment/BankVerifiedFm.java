@@ -22,6 +22,7 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.PartialBankProviderVerifiedBinding;
+import kh.com.mysabay.sdk.pojo.payment.DataPayment;
 import kh.com.mysabay.sdk.pojo.thirdParty.payment.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.pojo.payment.DataIAP;
@@ -111,14 +112,15 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                                 kh.com.mysabay.sdk.pojo.thirdParty.Data data = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.thirdParty.Data.class);
                                 data.withIsPaidWith(true);
                                 MySabaySDK.getInstance().saveMethodSelected(gson.toJson(data));
-                                DataIAP dataIAP = new DataIAP();
-                                dataIAP.withPriceInUsd(mData.priceInUsd);
-                                dataIAP.withPriceInSc(mData.priceInSc);
-                                dataIAP.withAssetCode(data.assetCode);
-                                dataIAP.withHash(mPaymentResponseItem.hash);
-                                dataIAP.withPackageId(mData.packageId);
+                                DataPayment dataPayment = new DataPayment();
+                                dataPayment.withName(mData.name);
+                                dataPayment.withPriceInUsd(mData.priceInUsd);
+                                dataPayment.withPriceInSc(mData.priceInSc);
+                                dataPayment.withAssetCode(data.assetCode);
+                                dataPayment.withHash(mPaymentResponseItem.hash);
+                                dataPayment.withPackageId(mData.packageId);
                                 
-                                EventBus.getDefault().post(new SubscribePayment(Globals.ONE_TIME, dataIAP));
+                                EventBus.getDefault().post(new SubscribePayment(Globals.ONE_TIME, dataPayment));
                             }
                         });
                         LogUtil.debug(TAG, "payment success");

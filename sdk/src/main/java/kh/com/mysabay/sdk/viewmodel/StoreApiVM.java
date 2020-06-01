@@ -223,7 +223,7 @@ public class StoreApiVM extends ViewModel {
 
         List<kh.com.mysabay.sdk.pojo.mysabay.Data> listMySabayProvider = getMySabayProvider().getValue().data;
         if (listMySabayProvider.size() > 0 && shopItem != null) {
-            PaymentBody body = new PaymentBody(appItem.uuid, shopItem.priceInUsd.toString(), listMySabayProvider.get(0).code.toLowerCase(), listMySabayProvider.get(0).assetCode.toLowerCase());
+            PaymentBody body = new PaymentBody(appItem.uuid, shopItem.priceInUsd.toString(), listMySabayProvider.get(0).code.toLowerCase(), listMySabayProvider.get(0).assetCode.toLowerCase(), shopItem.packageId);
             storeRepo.postToPaid(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
                     .observeOn(appRxSchedulers.mainThread())
                     .subscribe(new AbstractDisposableObs<PaymentResponseItem>(context, _networkState) {
@@ -246,7 +246,7 @@ public class StoreApiVM extends ViewModel {
         Data shopItem = getItemSelected().getValue();
 
         if (data != null && shopItem != null) {
-            PaymentBody body = new PaymentBody(appItem.uuid, shopItem.priceInUsd.toString(), data.code.toLowerCase(), data.assetCode.toLowerCase());
+            PaymentBody body = new PaymentBody(appItem.uuid, shopItem.priceInUsd.toString(), data.code.toLowerCase(), data.assetCode.toLowerCase(), null);
             storeRepo.postToChargeOneTime(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
                     .observeOn(appRxSchedulers.mainThread())
                     .subscribe(new AbstractDisposableObs<ResponseItem>(context, _networkState) {
