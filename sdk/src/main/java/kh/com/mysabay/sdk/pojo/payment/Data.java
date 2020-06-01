@@ -26,6 +26,9 @@ public class Data  implements Parcelable {
     @SerializedName("asset_code")
     @Expose
     public String assetCode;
+    @SerializedName("package_id")
+    @Expose
+    public String packageId;
     public final static Parcelable.Creator<Data> CREATOR = new Creator<Data>() {
 
 
@@ -48,6 +51,7 @@ public class Data  implements Parcelable {
         this.message = ((String) in.readValue((String.class.getClassLoader())));
         this.amount = ((String) in.readValue((String.class.getClassLoader())));
         this.assetCode = ((String) in.readValue((String.class.getClassLoader())));
+        this.packageId = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     /**
@@ -57,17 +61,20 @@ public class Data  implements Parcelable {
     }
 
     /**
+     *
      * @param hash
      * @param message
      * @param amount
      * @param assetCode
+     * @param packageId
      */
-    public Data(String hash, String message, String amount, String assetCode) {
+    public Data(String hash, String message, String amount, String assetCode, String packageId) {
         super();
         this.hash = hash;
         this.message = message;
         this.amount = amount;
         this.assetCode = assetCode;
+        this.packageId = packageId;
     }
 
     public Data withHash(String hash) {
@@ -90,14 +97,19 @@ public class Data  implements Parcelable {
         return this;
     }
 
+    public Data withPackageId(String packageId) {
+        this.packageId = packageId;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("hash", hash).append("message", message).append("amount", amount).append("assetCode", assetCode).toString();
+        return new ToStringBuilder(this).append("hash", hash).append("message", message).append("amount", amount).append("assetCode", assetCode).append("packageId", packageId).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(amount).append(assetCode).append(message).append(hash).toHashCode();
+        return new HashCodeBuilder().append(amount).append(assetCode).append(message).append(hash).append(packageId).toHashCode();
     }
 
     @Override
@@ -109,7 +121,7 @@ public class Data  implements Parcelable {
             return false;
         }
         Data rhs = ((Data) other);
-        return new EqualsBuilder().append(amount, rhs.amount).append(assetCode, rhs.assetCode).append(message, rhs.message).append(hash, rhs.hash).isEquals();
+        return new EqualsBuilder().append(amount, rhs.amount).append(assetCode, rhs.assetCode).append(message, rhs.message).append(hash, rhs.hash).append(packageId, rhs.packageId).isEquals();
     }
 
     public void writeToParcel(@NotNull Parcel dest, int flags) {
@@ -117,6 +129,7 @@ public class Data  implements Parcelable {
         dest.writeValue(message);
         dest.writeValue(amount);
         dest.writeValue(assetCode);
+        dest.writeValue(packageId);
     }
 
     public int describeContents() {

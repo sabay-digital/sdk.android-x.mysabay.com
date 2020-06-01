@@ -11,6 +11,8 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
+import kh.com.mysabay.sdk.pojo.payment.DataPayment;
+import kh.com.mysabay.sdk.pojo.payment.PaymentResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.pojo.payment.DataIAP;
@@ -58,8 +60,14 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void purchaseSuccess(SubscribePayment data) {
                         if(data.getType().equals(Globals.APP_IN_PURCHASE)) {
+                            LogUtil.info(data.getType(), data.data.toString());
                             MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
                         } else if (data.getType().equals(Globals.MY_SABAY)) {
+                            if (data.data instanceof PaymentResponseItem) {
+                                PaymentResponseItem dataPayment = (PaymentResponseItem) data.data;
+                                LogUtil.info("PackageId",  dataPayment.data.packageId);
+                            }
+                            LogUtil.info(data.getType(), data.data.toString());
                             MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
                         } else {
                             LogUtil.info(data.getType(), data.data.toString());
