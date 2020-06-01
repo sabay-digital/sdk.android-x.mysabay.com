@@ -13,6 +13,8 @@ import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
 import kh.com.mysabay.sdk.pojo.payment.DataIAP;
+import kh.com.mysabay.sdk.pojo.payment.DataPayment;
+import kh.com.mysabay.sdk.pojo.payment.PaymentResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
@@ -58,8 +60,18 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void purchaseSuccess(SubscribePayment data) {
                         if(data.getType().equals(Globals.APP_IN_PURCHASE)) {
+                            if (data.data instanceof  DataIAP) {
+                                DataIAP d = (DataIAP) data.data;
+                                LogUtil.info("dat", d.name);
+                            }
+                            LogUtil.info(data.getType(), data.data.toString());
                             MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
                         } else if (data.getType().equals(Globals.MY_SABAY)) {
+                            if (data.data instanceof PaymentResponseItem) {
+                                PaymentResponseItem d = (PaymentResponseItem) data.data;
+                                LogUtil.info("data-payment", d.toString());
+                            }
+                            LogUtil.info(data.getType(), data.data.toString());
                             MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
                         } else {
                             LogUtil.info(data.getType(), data.data.toString());
