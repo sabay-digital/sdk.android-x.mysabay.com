@@ -16,9 +16,10 @@
     <string name="msg_phone_incorrect">your phone number format is incorrect</string>
     <string name="msg_input_phone">Input phone number</string>
     <string name="verify_code_required">verify code is required</string>
-    <string name="pay">pay</string>
-    <string name="shops">Shops</string>
-    <string name="total_s">Total: %s</string>
+    <string name="pay">pay %s</string>
+    <string name="shops">Shop</string>
+    <string name="total_s">Total</string>
+    <string name="payment">Payment</string>
     <string name="payment_options">Payment Options</string>
     <string name="upgrade_google_play">In-app billing service is unavailable, please upgrade Google Play</string>
     <string name="select_a_partner_bank">Select a partner bank</string>
@@ -28,5 +29,5 @@
     <string name="payment_confirmation">Payment Confirmation</string>
     <string name="are_you_pay_with_my_sabay_provider">Are you sure you want to pay %s SC through Mysabay Payment Provider?</string>
     <string name="partnered_payment_providers">partnered payment providers</string>
-    <string name="select_a_partnered_payment_provider_fro_pre_authorization">Select a partnered payment provider for pre-authorization.</string>
+    <string name="please_select_your_preferred_partnered_payment_provider">Please select your preferred payment provider</string>
 </resources>

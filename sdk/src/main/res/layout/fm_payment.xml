@@ -188,6 +188,7 @@
                 android:fontFamily="@font/font_battambang_regular"
                 android:gravity="center"
                 android:text="@string/pay"
+                android:textAllCaps="true"
                 android:textAppearance="@style/MyAppearanceBody1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
