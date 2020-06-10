@@ -2,12 +2,15 @@ package kh.com.mysabay.sdk.webservice.api;
 
 import io.reactivex.Observable;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
+import kh.com.mysabay.sdk.pojo.logout.LogoutResponseItem;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
+import kh.com.mysabay.sdk.pojo.refreshToken.TokenVerify;
 import kh.com.mysabay.sdk.pojo.verified.VerifiedItem;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.HTTP;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -38,5 +41,12 @@ public interface UserApi {
 
     @GET("api/v1.4/user/profile")
     Observable<UserProfileItem> getUserProfile(@Header("app_secret") String appSecret, @Header("Authorization") String token);
+
+    @FormUrlEncoded
+    @HTTP(method = "DELETE", path = "api/v1.4/user/logout", hasBody = true)
+    Observable<LogoutResponseItem> logout(@Header("app_secret") String appSecret, @Field("refresh_token") String refreshToken);
+
+    @GET("api/v1.4/user/verify/token")
+    Observable<TokenVerify> getVerifyToken(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
 }

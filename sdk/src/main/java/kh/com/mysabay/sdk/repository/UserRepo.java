@@ -5,8 +5,10 @@ import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
+import kh.com.mysabay.sdk.pojo.logout.LogoutResponseItem;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
+import kh.com.mysabay.sdk.pojo.refreshToken.TokenVerify;
 import kh.com.mysabay.sdk.pojo.verified.VerifiedItem;
 import kh.com.mysabay.sdk.webservice.api.UserApi;
 
@@ -49,5 +51,14 @@ public class UserRepo implements UserApi {
         return this.userApi.postRefreshToken(appSecret, refreshToken);
     }
 
+    @Override
+    public Observable<LogoutResponseItem> logout(String appSecret, String refreshToken) {
+        return this.userApi.logout(appSecret, refreshToken);
+    }
+
+    @Override
+    public Observable<TokenVerify> getVerifyToken(String appSecret, String token) {
+        return this.userApi.getVerifyToken(appSecret, "Bearer " + token);
+    }
 
 }

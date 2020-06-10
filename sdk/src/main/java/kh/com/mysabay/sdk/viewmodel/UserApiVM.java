@@ -141,12 +141,12 @@ public class UserApiVM extends ViewModel {
         mCompositeDisposable.add(this.userRepo.postVerifyCode(item.data.appSecret, item.data.phone, code).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(response -> {
                     if (response.status == 200) {
+                        LogUtil.info("refresh-Token", response.data.refreshToken);
                         if (response.data != null) {
                             AppItem appItem = new AppItem(item.data.appSecret, response.data.accessToken, response.data.refreshToken, response.data.uuid, response.data.expire);
                             String encrypted = gson.toJson(appItem);
                             MySabaySDK.getInstance().saveAppItem(encrypted);
                             MessageUtil.displayToast(context, "verified code success");
-                            LogUtil.debug(TAG, "write appItem success");
 
                             EventBus.getDefault().post(new SubscribeLogin(response.data.accessToken, null));
 
