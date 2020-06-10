@@ -5,8 +5,11 @@
     <android.support.design.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/padding_5"
-        app:cardCornerRadius="@dimen/padding_5">
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/colorYellow"
+        app:strokeWidth="1dp"
+        android:layout_margin="@dimen/padding_5">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/view_bank_item"
@@ -36,6 +39,7 @@
                 android:layout_marginStart="@dimen/padding_15"
                 android:layout_marginEnd="@dimen/padding_15"
                 android:text="chip mong bank"
+                android:textColor="@color/colorYellow"
                 android:textAppearance="@style/MyAppearanceCaption"
                 app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
                 app:layout_constraintEnd_toStartOf="@+id/img_right"
@@ -50,6 +54,7 @@
                 android:layout_marginEnd="@dimen/padding_15"
                 app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:tint="@color/colorYellow"
                 app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"
                 app:srcCompat="@drawable/ic_chevron_right" />
         </android.support.constraint.ConstraintLayout>

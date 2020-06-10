@@ -31,6 +31,10 @@ public class Data implements Parcelable {
     @SerializedName("price_in_sc")
     @Expose
     public Float priceInSc;
+    @SerializedName("label")
+    @Expose
+    public String label;
+
     public final static Creator<Data> CREATOR = new Creator<Data>() {
 
 
@@ -53,6 +57,7 @@ public class Data implements Parcelable {
         this.name = ((String) in.readValue((String.class.getClassLoader())));
         this.priceInUsd = ((Float) in.readValue((Float.class.getClassLoader())));
         this.priceInSc = ((Float) in.readValue((Float.class.getClassLoader())));
+        this.label = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     /**
@@ -62,19 +67,22 @@ public class Data implements Parcelable {
     }
 
     /**
+     *
+     * @param cashierName
      * @param packageId
      * @param name
      * @param priceInUsd
      * @param priceInSc
-     * @param cashierName
+     * @param label
      */
-    public Data(String cashierName, String packageId, String name, Float priceInUsd, Float priceInSc) {
+    public Data(String cashierName, String packageId, String name, Float priceInUsd, Float priceInSc, String label) {
         super();
         this.cashierName = cashierName;
         this.packageId = packageId;
         this.name = name;
         this.priceInUsd = priceInUsd;
         this.priceInSc = priceInSc;
+        this.label = label;
     }
 
     public Data withCashierName(String cashierName) {
@@ -102,14 +110,19 @@ public class Data implements Parcelable {
         return this;
     }
 
+    public Data withLabel(String label) {
+        this.label = label;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("cashierName", cashierName).append("packageId", packageId).append("name", name).append("priceInUsd", priceInUsd).append("priceInSc", priceInSc).toString();
+        return new ToStringBuilder(this).append("cashierName", cashierName).append("packageId", packageId).append("name", name).append("priceInUsd", priceInUsd).append("priceInSc", priceInSc).append("label", label).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(packageId).append(name).append(priceInUsd).append(priceInSc).append(cashierName).toHashCode();
+        return new HashCodeBuilder().append(packageId).append(name).append(priceInUsd).append(priceInSc).append(cashierName).append(label).toHashCode();
     }
 
     @Override
@@ -121,7 +134,7 @@ public class Data implements Parcelable {
             return false;
         }
         Data rhs = ((Data) other);
-        return new EqualsBuilder().append(packageId, rhs.packageId).append(name, rhs.name).append(priceInUsd, rhs.priceInUsd).append(priceInSc, rhs.priceInSc).append(cashierName, rhs.cashierName).isEquals();
+        return new EqualsBuilder().append(packageId, rhs.packageId).append(name, rhs.name).append(priceInUsd, rhs.priceInUsd).append(priceInSc, rhs.priceInSc).append(cashierName, rhs.cashierName).append(label, rhs.label).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
@@ -130,6 +143,7 @@ public class Data implements Parcelable {
         dest.writeValue(name);
         dest.writeValue(priceInUsd);
         dest.writeValue(priceInSc);
+        dest.writeValue(label);
     }
 
     public int describeContents() {

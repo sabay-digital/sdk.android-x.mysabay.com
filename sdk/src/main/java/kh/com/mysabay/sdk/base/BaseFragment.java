@@ -221,6 +221,15 @@ public abstract class BaseFragment<D extends ViewDataBinding, V extends ViewMode
         assignEmptyView().setVisibility(isShow ? View.VISIBLE : View.GONE);
     }
 
+    public int textColorCode() {
+        int colorCode;
+        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Dark) {
+            colorCode = 0xFF000000;
+        } else
+            colorCode = 0xFFFFFFFF;
+        return colorCode;
+    }
+
     public int colorCodeBackground() {
         int colorCode;
         if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Dark) {

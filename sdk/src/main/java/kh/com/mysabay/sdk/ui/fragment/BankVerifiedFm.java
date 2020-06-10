@@ -91,6 +91,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
             mViewBinding.wv.getSettings().setMinimumLogicalFontSize(1);
             mViewBinding.wv.clearHistory();
             mViewBinding.wv.clearCache(true);
+            mViewBinding.viewWeb.setBackgroundResource(colorCodeBackground());
             mViewBinding.wv.setWebViewClient(new WebViewClient() {
                 @Nullable
                 @Override

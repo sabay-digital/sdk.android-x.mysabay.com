@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/view_payment_provider"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -13,7 +14,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/partnered_payment_providers"
-            android:textAppearance="@style/MyAppearanceTitleBold"
+            android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -25,7 +26,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:text="@string/select_a_partnered_payment_provider_fro_pre_authorization"
+            android:textColor="@color/colorYellow"
+            android:text="@string/please_select_your_preferred_partnered_payment_provider"
             android:textAppearance="@style/MyAppearanceCaption"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
