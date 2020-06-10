@@ -3,9 +3,11 @@ package kh.com.mysabay.sdk.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -85,6 +87,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
     public void initializeObjects(@NotNull View v, Bundle args) {
         mViewBinding.viewMainPayment.setBackgroundResource(colorCodeBackground());
         mViewBinding.materialCardView.setBackgroundResource(colorCodeBackground());
+        mViewBinding.btnPay.setTextColor(textColorCode());
 
         viewModel.setShopItemSelected(mData);
         viewModel.getMySabayCheckout(v.getContext());
@@ -105,7 +108,9 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             if (data != null) {
                 mViewBinding.tvPoint.setText(data.name);
                 mViewBinding.tvPrice.setText(data.toUSDPrice());
-                mViewBinding.tvTotal.setText(String.format(getString(R.string.total_s), data.toUSDPrice()));
+                mViewBinding.tvTotal.setText(data.toUSDPrice());
+                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
+                mViewBinding.tvLabel.setText(data.label);
             }
         });
 
@@ -175,8 +180,10 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         });
 
         mViewBinding.btnClose.setOnClickListener(v -> {
-            if (getActivity() != null)
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
                 getActivity().onBackPressed();
+            }
         });
 
         /*mViewBinding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -298,6 +305,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             dialogBank.dismiss();
         }
         PartialBankProviderBinding view = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.partial_bank_provider, null, false);
+        view.viewPaymentProvider.setBackgroundResource(colorCodeBackground());
         RecyclerView rcv = view.bankRcv;
         BankProviderAdapter adapter = new BankProviderAdapter(context, data, item -> {
             viewModel.postToPaidWithBank((StoreActivity) getActivity(), (kh.com.mysabay.sdk.pojo.thirdParty.Data) item);
@@ -314,6 +322,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                 .customView(view.getRoot(), true)
                 .canceledOnTouchOutside(false)
                 .cancelable(false)
+                .backgroundColorRes(colorCodeBackground())
+                .positiveColorRes(R.color.colorYellow)
                 .positiveText(R.string.label_close).onPositive((dialog, which) -> {
                     dialog.dismiss();
                     dialogBank = null;

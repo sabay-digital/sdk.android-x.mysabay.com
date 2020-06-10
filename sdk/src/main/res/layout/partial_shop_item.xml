@@ -15,6 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="@color/colorBackground"
+        app:cardElevation="0dp"
         android:clickable="true"
         android:focusable="true"
         android:orientation="vertical"
@@ -39,12 +40,20 @@
                 app:srcCompat="@drawable/ic_game_shop" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/tv_item_name"
+            android:id="@+id/tv_item_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_5"
+            android:text="@{item.name}"
+            android:textAppearance="@style/MyAppearanceBody1.Primary" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_item_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/padding_5"
                 android:layout_marginBottom="@dimen/padding_5"
-                android:text="@{item.name}"
+                android:textColor="@color/secondary"
+                android:text="@{item.label}"
                 android:textAppearance="@style/MyAppearanceBody1.Primary" />
 
             <android.support.v7.widget.AppCompatTextView

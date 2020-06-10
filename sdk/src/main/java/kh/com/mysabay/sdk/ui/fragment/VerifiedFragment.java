@@ -41,6 +41,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         mViewBinding.btnBack.setBackgroundResource(colorCodeBackground());
         if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light)
             mViewBinding.tvResendOtp.setTextColor(getResources().getColor(R.color.colorWhite700));
+            mViewBinding.btnVerify.setTextColor(textColorCode());
 
         this.viewModel = LoginActivity.loginActivity.viewModel;
     }
