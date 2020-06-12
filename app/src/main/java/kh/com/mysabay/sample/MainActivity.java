@@ -1,5 +1,6 @@
 package kh.com.mysabay.sample;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -124,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (MySabaySDK.getInstance().isLogIn()) {
                     MySabaySDK.getInstance().getUserProfile(info -> {
+                        LogUtil.info("test", info);
                         MessageUtil.displayDialog(v.getContext(), info);
                     });
                 } else {

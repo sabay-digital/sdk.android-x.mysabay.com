@@ -114,7 +114,27 @@ public class MySabaySDK {
                         @Override
                         protected void onSuccess(TokenVerify tokenVerify) {
                             LogUtil.info(TAG, "Token is valid");
-                            EventBus.getDefault().post(new SubscribeLogin(item.token, null));
+                            userRepo.postRefreshToken(item.appSecret,item.refreshToken)
+                                    .subscribeOn(appRxSchedulers.io())
+                                    .observeOn(appRxSchedulers.mainThread()).subscribe(
+                                    new AbstractDisposableObs<RefreshTokenItem>(mAppContext, _networkState, null) {
+                                        @Override
+                                        protected void onSuccess(RefreshTokenItem refreshTokenItem) {
+                                                if (refreshTokenItem.status == 200) {
+                                                    item.withToken(refreshTokenItem.data.accessToken);
+                                                    item.withExpired(refreshTokenItem.data.expire);
+                                                    item.withRefreshToken(refreshTokenItem.data.refreshToken);
+                                                    MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
+                                                    EventBus.getDefault().post(new SubscribeLogin(item.token, null));
+                                                } else
+                                                    onErrors(new Error(gson.toJson(refreshTokenItem)));
+                                        }
+
+                                        @Override
+                                        protected void onErrors(@NotNull Throwable error) {
+                                            LogUtil.info(TAG, error.getMessage());
+                                        }
+                                    });
                         }
 
                         @Override
@@ -140,7 +160,7 @@ public class MySabaySDK {
     public void logout() {
         AppItem item = gson.fromJson(getAppItem(), AppItem.class);
         if (item != null) {
-            userRepo.logout(item.appSecret, item.refreshToken).subscribeOn(appRxSchedulers.io())
+            userRepo.logout(item.appSecret, item.refreshToken, "true").subscribeOn(appRxSchedulers.io())
                     .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<LogoutResponseItem>(mAppContext, _networkState) {
                 @Override
                 protected void onSuccess(LogoutResponseItem logoutResponseItem) {

@@ -15,6 +15,7 @@ import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by Tan Phirum on 3/7/20
@@ -44,7 +45,7 @@ public interface UserApi {
 
     @FormUrlEncoded
     @HTTP(method = "DELETE", path = "api/v1.4/user/logout", hasBody = true)
-    Observable<LogoutResponseItem> logout(@Header("app_secret") String appSecret, @Field("refresh_token") String refreshToken);
+    Observable<LogoutResponseItem> logout(@Header("app_secret") String appSecret, @Field("refresh_token") String refreshToken, @Query("all") String all);
 
     @GET("api/v1.4/user/verify/token")
     Observable<TokenVerify> getVerifyToken(@Header("app_secret") String appSecret, @Header("Authorization") String token);

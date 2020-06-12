@@ -52,8 +52,8 @@ public class UserRepo implements UserApi {
     }
 
     @Override
-    public Observable<LogoutResponseItem> logout(String appSecret, String refreshToken) {
-        return this.userApi.logout(appSecret, refreshToken);
+    public Observable<LogoutResponseItem> logout(String appSecret, String refreshToken, String all) {
+        return this.userApi.logout(appSecret, refreshToken, all);
     }
 
     @Override

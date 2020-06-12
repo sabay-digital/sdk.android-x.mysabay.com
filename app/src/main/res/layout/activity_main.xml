@@ -46,16 +46,16 @@
             android:text="Validate token" />
 
             <android.support.v7.widget.AppCompatButton
-                android:id="@+id/btn_logout"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Logout" />
-
-            <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_user_profile"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="Get User Info" />
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btn_logout"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Logout" />
         </android.support.v7.widget.LinearLayoutCompat>
 
         <LinearLayout
