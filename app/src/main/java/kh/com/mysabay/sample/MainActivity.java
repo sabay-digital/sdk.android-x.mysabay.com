@@ -1,5 +1,6 @@
 package kh.com.mysabay.sample;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,11 +12,9 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
-import kh.com.mysabay.sdk.pojo.payment.DataPayment;
 import kh.com.mysabay.sdk.pojo.payment.PaymentResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.utils.MessageUtil;
-import kh.com.mysabay.sdk.pojo.payment.DataIAP;
 import kh.com.mysabay.sdk.utils.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
@@ -30,20 +29,11 @@ public class MainActivity extends AppCompatActivity {
         mViewBinding.viewPb.setVisibility(View.GONE);
         findViewById(R.id.show_login_screen).setOnClickListener(v -> {
             mViewBinding.viewPb.setVisibility(View.VISIBLE);
-            if (MySabaySDK.getInstance().isLogIn()) {
-                MessageUtil.displayDialog(v.getContext(), "User already login", "choose option below",
-                        "Logout", "Get user information",
-                        (dialog, which) -> {
-                            MySabaySDK.getInstance().logout();
-                        }, (dialog, which) -> MySabaySDK.getInstance().getUserProfile(info -> {
-                            MessageUtil.displayDialog(v.getContext(), info);
-                        }));
-                mViewBinding.viewPb.setVisibility(View.GONE);
-            } else
                 MySabaySDK.getInstance().showLoginView(new LoginListener() {
                     @Override
                     public void loginSuccess(String accessToken) {
                         MessageUtil.displayToast(v.getContext(), "accessToken = " + accessToken);
+                        mViewBinding.viewPb.setVisibility(View.GONE);
                     }
 
                     @Override
@@ -120,6 +110,27 @@ public class MainActivity extends AppCompatActivity {
                     MessageUtil.displayToast(v.getContext(), "Token is valid =" + MySabaySDK.getInstance().isTokenValid());
                 else
                     MessageUtil.displayToast(v.getContext(), "Need user login");
+            }
+        });
+
+        mViewBinding.btnLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MySabaySDK.getInstance().logout();
+            }
+        });
+
+        mViewBinding.btnUserProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (MySabaySDK.getInstance().isLogIn()) {
+                    MySabaySDK.getInstance().getUserProfile(info -> {
+                        LogUtil.info("test", info);
+                        MessageUtil.displayDialog(v.getContext(), info);
+                    });
+                } else {
+                    MessageUtil.displayToast(v.getContext(), "Need user login");
+                }
             }
         });
     }

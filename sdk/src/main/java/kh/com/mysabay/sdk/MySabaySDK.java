@@ -5,6 +5,7 @@ import android.app.Application;
 import android.arch.lifecycle.MediatorLiveData;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -26,9 +27,11 @@ import kh.com.mysabay.sdk.di.DaggerBaseAppComponent;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
+import kh.com.mysabay.sdk.pojo.logout.LogoutResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
+import kh.com.mysabay.sdk.pojo.refreshToken.TokenVerify;
 import kh.com.mysabay.sdk.repository.UserRepo;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
@@ -103,7 +106,46 @@ public class MySabaySDK {
     public void showLoginView(LoginListener listener) {
         if (listener != null)
             this.loginListner = listener;
-        mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        AppItem item = gson.fromJson(getAppItem(), AppItem.class);
+        if (item != null) {
+            userRepo.getVerifyToken(item.appSecret, item.token).subscribeOn(appRxSchedulers.io())
+                    .observeOn(appRxSchedulers.mainThread())
+                    .subscribe(new AbstractDisposableObs<TokenVerify>(mAppContext, _networkState) {
+                        @Override
+                        protected void onSuccess(TokenVerify tokenVerify) {
+                            LogUtil.info(TAG, "Token is valid");
+                            userRepo.postRefreshToken(item.appSecret,item.refreshToken)
+                                    .subscribeOn(appRxSchedulers.io())
+                                    .observeOn(appRxSchedulers.mainThread()).subscribe(
+                                    new AbstractDisposableObs<RefreshTokenItem>(mAppContext, _networkState, null) {
+                                        @Override
+                                        protected void onSuccess(RefreshTokenItem refreshTokenItem) {
+                                                if (refreshTokenItem.status == 200) {
+                                                    item.withToken(refreshTokenItem.data.accessToken);
+                                                    item.withExpired(refreshTokenItem.data.expire);
+                                                    item.withRefreshToken(refreshTokenItem.data.refreshToken);
+                                                    MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
+                                                    EventBus.getDefault().post(new SubscribeLogin(item.token, null));
+                                                } else
+                                                    onErrors(new Error(gson.toJson(refreshTokenItem)));
+                                        }
+
+                                        @Override
+                                        protected void onErrors(@NotNull Throwable error) {
+                                            LogUtil.info(TAG, error.getMessage());
+                                        }
+                                    });
+                        }
+
+                        @Override
+                        protected void onErrors(Throwable error) {
+                            LogUtil.info(TAG, "Token is invalid");
+                            mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                        }
+                    });
+        } else {
+            mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        }
     }
 
     /**
@@ -116,7 +158,22 @@ public class MySabaySDK {
     }
 
     public void logout() {
-        saveAppItem("");
+        AppItem item = gson.fromJson(getAppItem(), AppItem.class);
+        if (item != null) {
+            userRepo.logout(item.appSecret, item.refreshToken, "true").subscribeOn(appRxSchedulers.io())
+                    .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<LogoutResponseItem>(mAppContext, _networkState) {
+                @Override
+                protected void onSuccess(LogoutResponseItem logoutResponseItem) {
+                    saveAppItem("");
+                    LogUtil.error(TAG, logoutResponseItem.data);
+                }
+
+                @Override
+                protected void onErrors(Throwable error) {
+                    LogUtil.error(TAG, error.getLocalizedMessage());
+                }
+            });
+        }
     }
 
     /**
@@ -181,6 +238,7 @@ public class MySabaySDK {
                     if (refreshTokenItem.status == 200) {
                         item.withToken(refreshTokenItem.data.accessToken);
                         item.withExpired(refreshTokenItem.data.expire);
+                        item.withRefreshToken(refreshTokenItem.data.refreshToken);
                         MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
                         listener.refreshSuccess(refreshTokenItem.data.refreshToken);
                     } else
@@ -196,7 +254,6 @@ public class MySabaySDK {
             }
         });
     }
-
 
     /**
      * @return with token that valid

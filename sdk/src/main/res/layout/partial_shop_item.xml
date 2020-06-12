@@ -20,6 +20,7 @@
         android:focusable="true"
         android:orientation="vertical"
         app:strokeColor="@color/colorYellow"
+        app:cardCornerRadius="0dp"
         app:strokeWidth="1dp">
 
         <LinearLayout

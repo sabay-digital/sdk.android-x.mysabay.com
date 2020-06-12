@@ -154,6 +154,10 @@ public class Data implements Parcelable {
         return "$" + this.priceInUsd;
     }
 
+    public String toSabayCoin() {
+        return  this.priceInSc + " SC";
+    }
+
     public static final String PLAY_STORE = "play_store";
 
 }

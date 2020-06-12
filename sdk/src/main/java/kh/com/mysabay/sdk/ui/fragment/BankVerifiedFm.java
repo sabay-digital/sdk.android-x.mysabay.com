@@ -22,10 +22,10 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.PartialBankProviderVerifiedBinding;
+import kh.com.mysabay.sdk.pojo.onetime.OneTime;
 import kh.com.mysabay.sdk.pojo.payment.DataPayment;
 import kh.com.mysabay.sdk.pojo.thirdParty.payment.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
-import kh.com.mysabay.sdk.pojo.payment.DataIAP;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.viewmodel.StoreApiVM;
@@ -120,7 +120,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                                 dataPayment.withAssetCode(data.assetCode);
                                 dataPayment.withHash(mPaymentResponseItem.hash);
                                 dataPayment.withPackageId(mData.packageId);
-                                
+
                                 EventBus.getDefault().post(new SubscribePayment(Globals.ONE_TIME, dataPayment));
                             }
                         });
@@ -150,7 +150,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
 
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (getActivity() != null)
-                getActivity().onBackPressed();
+                getActivity().finish();
         });
     }
 

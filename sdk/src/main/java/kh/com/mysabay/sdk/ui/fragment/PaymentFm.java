@@ -3,7 +3,6 @@ package kh.com.mysabay.sdk.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,9 +21,11 @@ import com.anjlab.android.iab.v3.PurchaseData;
 import com.anjlab.android.iab.v3.PurchaseInfo;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -38,6 +39,7 @@ import kh.com.mysabay.sdk.databinding.PartialBankProviderBinding;
 import kh.com.mysabay.sdk.pojo.googleVerify.DataBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.ReceiptBody;
+import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.FontUtils;
@@ -59,6 +61,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
     private Data mData;
     private static String PURCHASE_ID = "android.test.purchased";
     private MaterialDialog dialogBank;
+    private Float balance;
 
     @NotNull
     @Contract("_ -> new")
@@ -116,8 +119,15 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         viewModel.getMySabayProvider().observe(this, mySabayItem -> {
             if (mySabayItem.status == 200) {
-                if (mySabayItem.data.size() > 0)
+                if (mySabayItem.data.size() > 0) {
                     mViewBinding.rdbMySabay.setVisibility(View.VISIBLE);
+                    MySabaySDK.getInstance().getUserProfile(info -> {
+                        Gson g = new Gson();
+                        UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
+                        balance = userProfile.data.balance;
+                        mViewBinding.rdbMySabay.setText("MySabay" + "  " + userProfile.data.toSabayCoin());
+                    });
+                }
                 else
                     mViewBinding.rdbMySabay.setVisibility(View.GONE);
             } else
@@ -141,6 +151,35 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
     @Override
     public void addListeners() {
+        mViewBinding.rdbMySabay.setOnClickListener(v -> {
+            Data data = viewModel.getItemSelected().getValue();
+            if (data.priceInSc > balance) {
+                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toSabayCoin()));
+                mViewBinding.btnPay.setEnabled(false);
+            } else {
+                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toSabayCoin()));
+                mViewBinding.btnPay.setEnabled(true);
+            }
+        });
+
+        mViewBinding.rdbInAppPurchase.setOnClickListener(v -> {
+            Data data = viewModel.getItemSelected().getValue();
+            mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
+            mViewBinding.btnPay.setEnabled(true);
+        });
+
+        mViewBinding.rdbPreAuthPay.setOnClickListener(v -> {
+            Data data = viewModel.getItemSelected().getValue();
+            mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
+            mViewBinding.btnPay.setEnabled(true);
+        });
+
+        mViewBinding.rdbThirdBankProvider.setOnClickListener(v -> {
+            Data data = viewModel.getItemSelected().getValue();
+            mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
+            mViewBinding.btnPay.setEnabled(true);
+        });
+
         mViewBinding.btnPay.setOnClickListener(v -> {
             int checkedId = mViewBinding.radioGroup.getCheckedRadioButtonId();
 
@@ -157,6 +196,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
             } else if (checkedId == R.id.rdb_my_sabay) {
                 Data data = viewModel.getItemSelected().getValue();
+
                 if (data == null) return;
 
                 MessageUtil.displayDialog(v.getContext(), getString(R.string.payment_confirmation),
@@ -181,8 +221,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (getActivity() != null) {
-                getActivity().getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                getActivity().onBackPressed();
+                getActivity().finish();
             }
         });
 

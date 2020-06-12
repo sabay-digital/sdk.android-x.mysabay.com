@@ -76,6 +76,7 @@ public class MessageUtil {
         new MaterialDialog.Builder(context)
                 .typeface(FontUtils.getTypefaceKhmer(context), FontUtils.getTypefaceKhmer(context))
                 .content(msg)
+                .positiveColorRes(R.color.colorYellow)
                 .positiveText(R.string.label_close)
                 .onPositive((dialog, which) -> dialog.dismiss())
                 .build().show();
@@ -92,9 +93,12 @@ public class MessageUtil {
         new MaterialDialog.Builder(context)
                 .typeface(FontUtils.getTypefaceKhmerBold(context), FontUtils.getTypefaceKhmer(context))
                 .title(title)
+                .titleColorRes(R.color.colorYellow)
                 .content(msg).canceledOnTouchOutside(false)
+                .positiveColorRes(R.color.colorYellow)
                 .negativeText(txtNeg)
                 .positiveText(txtPos)
+                .negativeColorRes(R.color.colorYellow)
                 .onNegative((dialog, which) -> {
                     if (negListener != null)
                         negListener.onClick(dialog, which);

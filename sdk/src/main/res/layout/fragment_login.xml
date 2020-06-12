@@ -11,6 +11,16 @@
         tools:context=".ui.activity.LoginActivity">
 
         <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_20"
+            android:layout_marginEnd="@dimen/padding_20"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close" />
+
+        <android.support.v7.widget.AppCompatImageView
             android:id="@+id/img_logo"
             android:layout_width="100dp"
             android:layout_height="100dp"
