@@ -12,6 +12,7 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
+import kh.com.mysabay.sdk.pojo.onetime.Data;
 import kh.com.mysabay.sdk.pojo.payment.PaymentResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.utils.MessageUtil;
@@ -60,7 +61,10 @@ public class MainActivity extends AppCompatActivity {
                             LogUtil.info(data.getType(), data.data.toString());
                             MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
                         } else {
-                            LogUtil.info(data.getType(), data.data.toString());
+                            if (data.data instanceof Data) {
+                                Data dataPayment = (Data) data.data;
+                                LogUtil.info(data.getType(), dataPayment.toString());
+                            }
                             MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
                         }
                     }
