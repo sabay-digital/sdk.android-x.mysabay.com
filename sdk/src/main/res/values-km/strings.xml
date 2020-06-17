@@ -17,7 +17,8 @@
     <string name="msg_phone_incorrect">ទម្រង់លេខទូរស័ព្ទរបស់លោកអ្នកមិនត្រឹមត្រូវទេ</string>
     <string name="msg_input_phone">បញ្ចូលលេខទូរស័ព្ទ</string>
     <string name="verify_code_required">លេខកូដចាំបាច់ត្រូវបញ្ចូល</string>
-    <string name="pay">បង់</string>
+    <string name="pay">បង់ %s</string>
+    <string name="payment">​ការ​ទូទាត់</string>
     <string name="shops">ហាង</string>
     <string name="total_s">សរុប: %s</string>
     <string name="payment_options">ជម្រើស​ការ​ទូទាត់</string>

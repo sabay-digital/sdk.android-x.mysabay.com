@@ -44,6 +44,17 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="Validate token" />
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_user_profile"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Get User Info" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_logout"
+                android:layout_width="200dp"
+                android:layout_height="wrap_content"
+                android:text="Logout" />
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <LinearLayout

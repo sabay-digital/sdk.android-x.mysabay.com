@@ -5,6 +5,7 @@
     <color name="colorBackground">#1E2026</color>
     <color name="colorYellow">#E3B852</color>
     <color name="colorPrimary">#E3B852</color>
+    <color name="secondary">#AAAAAA</color>
     <color name="colorPrimaryDark">#E3B852</color>
     <color name="colorAccent">#E3B852</color>
     <color name="colorYellow500">#FFC107</color>

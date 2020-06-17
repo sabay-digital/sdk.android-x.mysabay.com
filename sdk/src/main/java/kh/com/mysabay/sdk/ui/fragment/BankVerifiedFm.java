@@ -13,18 +13,16 @@ import android.webkit.WebViewClient;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import kh.com.mysabay.sdk.BuildConfig;
-import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.PartialBankProviderVerifiedBinding;
+import kh.com.mysabay.sdk.pojo.onetime.OneTime;
 import kh.com.mysabay.sdk.pojo.payment.DataPayment;
-import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.pojo.thirdParty.payment.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.LogUtil;
@@ -79,6 +77,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
         } else {
             WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
             mViewBinding.wv.getSettings().setJavaScriptEnabled(true);
+            mViewBinding.wv.addJavascriptInterface(new OneTime(), "onetime");
             mViewBinding.wv.getSettings().setLoadsImagesAutomatically(true);
             mViewBinding.wv.getSettings().setLoadWithOverviewMode(true);
             mViewBinding.wv.getSettings().setUseWideViewPort(true);
@@ -119,8 +118,6 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                                 dataPayment.withAssetCode(data.assetCode);
                                 dataPayment.withHash(mPaymentResponseItem.hash);
                                 dataPayment.withPackageId(mData.packageId);
-
-                                EventBus.getDefault().post(new SubscribePayment(Globals.ONE_TIME, dataPayment));
                             }
                         });
                         LogUtil.debug(TAG, "payment success");
@@ -149,7 +146,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
 
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (getActivity() != null)
-                getActivity().onBackPressed();
+                getActivity().finish();
         });
     }
 
@@ -204,6 +201,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                 "        <input type=\"hidden\" name=\"hash\" value=\"" + item.hash + "\">\n" +
                 "        <input type=\"hidden\" name=\"signature\" value=\"" + item.signature + "\">\n" +
                 "        <input type=\"hidden\" name=\"public_key\" value=\"" + item.publicKey + "\">\n" +
+                "        <input type=\"hidden\" name=\"redirect\" value=\"" + item.redirect + "\">\n" +
                 "    </form>\n" +
                 "    <script>\n" +
                 "        $( document ).ready(function() {\n" +

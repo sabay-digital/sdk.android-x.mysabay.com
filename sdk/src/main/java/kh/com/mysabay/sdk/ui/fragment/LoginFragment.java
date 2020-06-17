@@ -10,7 +10,6 @@ import androidx.appcompat.widget.AppCompatEditText;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -48,6 +47,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
     public void initializeObjects(View v, Bundle args) {
         mViewBinding.viewMainLogin.setBackgroundResource(colorCodeBackground());
         mViewBinding.tvMySabayAppName.setText(MySabaySDK.getInstance().getSdkConfiguration().mySabayAppName);
+        mViewBinding.btnLogin.setTextColor(textColorCode());
+        mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
         this.viewModel = LoginActivity.loginActivity.viewModel;
     }
 
@@ -86,6 +87,10 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.btnLoginMysabay.setOnClickListener(v ->
                 viewModel.postToLoginWithMySabay(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret));
 
+        mViewBinding.btnClose.setOnClickListener(v -> {
+            if (getActivity() != null)
+                getActivity().onBackPressed();
+        });
 
     }
 

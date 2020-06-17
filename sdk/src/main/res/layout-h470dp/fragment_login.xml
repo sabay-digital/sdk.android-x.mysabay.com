@@ -10,14 +10,25 @@
         android:background="@color/colorBackground"
         tools:context=".ui.activity.LoginActivity">
 
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/btn_close"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/padding_20"
+            android:layout_marginEnd="@dimen/padding_20"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_close" />
+
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/view_login"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical"
             android:orientation="vertical"
+            android:layout_marginTop="80dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent">
 
             <androidx.appcompat.widget.AppCompatImageView
@@ -36,8 +47,7 @@
                 android:layout_marginBottom="@dimen/padding_35"
                 android:textAllCaps="true"
                 android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
-                android:textStyle="bold"
-                app:textAllCaps="true" />
+                android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/txt_input_phone"
@@ -49,6 +59,10 @@
                 android:layout_marginEnd="50dp"
                 android:layout_marginBottom="@dimen/padding_35"
                 android:focusedByDefault="true"
+                app:boxCornerRadiusTopStart="0dp"
+                app:boxCornerRadiusBottomEnd="0dp"
+                app:boxCornerRadiusBottomStart="0dp"
+                app:boxCornerRadiusTopEnd="0dp"
                 android:gravity="center"
                 android:hint="@string/phone_number"
                 app:boxStrokeColor="@color/text_input_bg"
@@ -67,6 +81,13 @@
                     app:hintTextAppearance="@style/MyAppearanceBody1.Primary" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="80dp"
+                android:gravity="center|bottom"
+                android:orientation="vertical">
+
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_login"
                 style="@style/ButtonPrimary"
@@ -74,11 +95,20 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="@dimen/padding_10"
                 android:fontFamily="@font/font_battambang_regular"
+                android:stateListAnimator="@null"
                 android:gravity="center"
                 android:paddingStart="20dp"
                 android:paddingEnd="20dp"
                 android:text="@string/login"
                 android:textAppearance="@style/MyAppearanceBody1" />
+            <View
+                android:id="@+id/divider2"
+                android:layout_width="220dp"
+                android:layout_height="1dp"
+                android:layout_marginBottom="@dimen/padding_10"
+                android:layout_gravity="center_horizontal"
+                android:background="?android:attr/listDivider"
+                android:backgroundTint="@color/colorYellow" />
 
             <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_login_mysabay"
@@ -86,10 +116,11 @@
                 android:layout_width="220dp"
                 android:layout_gravity="center"
                 android:fontFamily="@font/font_battambang_regular"
+                android:stateListAnimator="@null"
                 android:gravity="center"
                 android:text="@string/login_mysabay"
                 android:textAppearance="@style/MyAppearanceBody1" />
-
+            </LinearLayout>
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <include

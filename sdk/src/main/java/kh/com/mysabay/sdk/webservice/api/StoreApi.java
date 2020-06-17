@@ -21,24 +21,24 @@ import retrofit2.http.Query;
  */
 public interface StoreApi {
 
-    @GET("api/v1/store")
+    @GET("api/v1.6/store")
     Observable<ShopItem> getShopItem(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
-    @GET("api/v1/checkout")
+    @GET("api/v1.6/checkout")
     Observable<MySabayItem> getMySabayCheckout(@Header("app_secret") String appSecret, @Header("Authorization") String token, @Query("uuid") String uuid);
 
-    @GET("api/v1/cashier")
+    @GET("api/v1.6/cashier")
     Observable<ThirdPartyItem> get3PartyCheckout(@Header("app_secret") String appSecret, @Header("Authorization") String token, @Query("uuid") String uuid);
 
-    @POST("api/v1/verify_receipt/google")
+    @POST("api/v1.6/verify_receipt/google")
     Observable<GoogleVerifyResponse> postToVerifyGoogle(@Header("app_secret") String appSecret, @Header("Authorization") String token,
                                                         @Body() GoogleVerifyBody body);
 
-    @POST("api/v1/charge/auth")
+    @POST("api/v1.6/charge/auth")
     Observable<PaymentResponseItem> postToPaid(@Header("app_secret") String appSecret, @Header("Authorization") String token,
                                                @Body() PaymentBody body);
 
-    @POST("api/v1/charge/onetime")
+    @POST("api/v1.6/charge/onetime")
     Observable<ResponseItem> postToChargeOneTime(@Header("app_secret") String appSecret, @Header("Authorization") String token,
                                                  @Body() PaymentBody body);
 
