@@ -45,6 +45,9 @@ public class Data implements Parcelable {
     @SerializedName("updated_at")
     @Expose
     public String updatedAt;
+    @SerializedName("balance")
+    @Expose
+    public Float balance;
     public final static Parcelable.Creator<Data> CREATOR = new Creator<Data>() {
 
 
@@ -75,6 +78,7 @@ public class Data implements Parcelable {
         this.lastLogin = ((String) in.readValue((String.class.getClassLoader())));
         this.createdAt = ((String) in.readValue((String.class.getClassLoader())));
         this.updatedAt = ((String) in.readValue((String.class.getClassLoader())));
+        this.balance = ((Float) in.readValue((Integer.class.getClassLoader())));
     }
 
     /**
@@ -94,9 +98,10 @@ public class Data implements Parcelable {
      * @param lastLogin
      * @param createdAt
      * @param updatedAt
+     * @param balance
      */
     public Data(Integer id, String uuid, Integer serviceId, Integer mysabayUserId,
-                String serviceUserId, Integer status, String lastLogin, String createdAt, String updatedAt) {
+                String serviceUserId, Integer status, String lastLogin, String createdAt, String updatedAt, Float balance) {
         super();
         this.id = id;
         this.uuid = uuid;
@@ -107,6 +112,7 @@ public class Data implements Parcelable {
         this.lastLogin = lastLogin;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.balance = balance;
     }
 
     public Data withId(Integer id) {
@@ -154,14 +160,19 @@ public class Data implements Parcelable {
         return this;
     }
 
+    public Data withBalance(Float balance) {
+        this.balance = balance;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("uuid", uuid).append("serviceId", serviceId).append("mysabayUserId", mysabayUserId).append("serviceUserId", serviceUserId).append("status", status).append("lastLogin", lastLogin).append("createdAt", createdAt).append("updatedAt", updatedAt).toString();
+        return new ToStringBuilder(this).append("id", id).append("uuid", uuid).append("serviceId", serviceId).append("mysabayUserId", mysabayUserId).append("serviceUserId", serviceUserId).append("status", status).append("lastLogin", lastLogin).append("createdAt", createdAt).append("updatedAt", updatedAt).append("balance", balance).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(mysabayUserId).append(lastLogin).append(createdAt).append(serviceUserId).append(id).append(serviceId).append(uuid).append(status).append(updatedAt).toHashCode();
+        return new HashCodeBuilder().append(mysabayUserId).append(lastLogin).append(createdAt).append(serviceUserId).append(id).append(serviceId).append(uuid).append(status).append(updatedAt).append(balance).toHashCode();
     }
 
     @Override
@@ -173,7 +184,7 @@ public class Data implements Parcelable {
             return false;
         }
         Data rhs = ((Data) other);
-        return new EqualsBuilder().append(mysabayUserId, rhs.mysabayUserId).append(lastLogin, rhs.lastLogin).append(createdAt, rhs.createdAt).append(serviceUserId, rhs.serviceUserId).append(id, rhs.id).append(serviceId, rhs.serviceId).append(uuid, rhs.uuid).append(status, rhs.status).append(updatedAt, rhs.updatedAt).isEquals();
+        return new EqualsBuilder().append(mysabayUserId, rhs.mysabayUserId).append(lastLogin, rhs.lastLogin).append(createdAt, rhs.createdAt).append(serviceUserId, rhs.serviceUserId).append(id, rhs.id).append(serviceId, rhs.serviceId).append(uuid, rhs.uuid).append(status, rhs.status).append(updatedAt, rhs.updatedAt).append(balance, rhs.balance).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
@@ -186,10 +197,15 @@ public class Data implements Parcelable {
         dest.writeValue(lastLogin);
         dest.writeValue(createdAt);
         dest.writeValue(updatedAt);
+        dest.writeValue(balance);
     }
 
     public int describeContents() {
         return 0;
+    }
+
+    public String toSabayCoin() {
+        return  balance + " SC";
     }
 
 }

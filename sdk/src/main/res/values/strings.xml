@@ -12,13 +12,14 @@
     <string name="msg_can_not_connect_internet">Unable to connect to the Internet</string>
     <string name="msg_can_not_connect_server">Unable to communicate with the server, please try again</string>
     <string name="msg_no_data">No data</string>
-    <string name="title_retry">Retry</string>
+    <string name="title_retry">Retrzsy</string>
     <string name="msg_phone_incorrect">your phone number format is incorrect</string>
     <string name="msg_input_phone">Input phone number</string>
     <string name="verify_code_required">verify code is required</string>
-    <string name="pay">pay</string>
+    <string name="pay">pay %s</string>
+    <string name="payment">Payment</string>
     <string name="shops">Shops</string>
-    <string name="total_s">Total: %s</string>
+    <string name="total_s">Total</string>
     <string name="payment_options">Payment Options</string>
     <string name="upgrade_google_play">In-app billing service is unavailable, please upgrade Google Play</string>
     <string name="select_a_partner_bank">Select a partner bank</string>

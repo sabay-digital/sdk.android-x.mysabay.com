@@ -15,8 +15,8 @@
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="@dimen/padding_20"
+                android:layout_marginTop="@dimen/padding_20"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_back" />
@@ -25,8 +25,8 @@
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginTop="@dimen/padding_20"
+                android:layout_marginEnd="@dimen/padding_20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_close" />
@@ -51,6 +51,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="@dimen/padding_10"
+                    android:paddingTop="@dimen/padding_10"
+                    android:paddingBottom="@dimen/padding_10"
                     android:layout_marginBottom="@dimen/padding_10">
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -62,6 +64,7 @@
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintVertical_bias="0.066"
                         app:srcCompat="@drawable/ic_game_shop" />
 
                     <androidx.appcompat.widget.AppCompatTextView
@@ -71,11 +74,22 @@
                         android:layout_marginStart="32dp"
                         android:gravity="center"
                         android:text="@string/app_name"
-                        android:textAppearance="@style/MyAppearanceBody1.Primary"
+                        android:textColor="@color/colorYellow"
                         app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
                         app:layout_constraintEnd_toStartOf="@+id/tv_price"
                         app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
                         app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left"
+                        android:text="@string/app_name"
+                        android:textColor="@color/secondary"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="@id/tv_point"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_point"/>
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_price"
@@ -93,14 +107,38 @@
             </com.google.android.material.card.MaterialCardView>
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_total"
+                android:id="@+id/txt_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:layout_marginEnd="@dimen/padding_20"
-                android:text="@string/app_name"
+                android:layout_marginTop="16dp"
+                android:text="@string/total_s"
                 android:textAppearance="@style/MyAppearanceBody1.Primary"
-                app:layout_constraintEnd_toStartOf="@+id/guideline6"
+                app:layout_constraintEnd_toEndOf="@+id/materialCardView"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="@+id/divider1"
+                app:layout_constraintTop_toBottomOf="@+id/divider1" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_total"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/app_name"
+                android:gravity="right"
+                android:includeFontPadding="false"
+                android:textAppearance="@style/MyAppearanceBody1.Primary"
+                app:layout_constraintEnd_toEndOf="@+id/materialCardView"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/txt_total"
+                app:layout_constraintTop_toBottomOf="@+id/divider1" />
+
+            <View
+                android:id="@+id/divider1"
+                android:layout_width="120dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="16dp"
+                android:background="@color/colorYellow"
+                app:layout_constraintEnd_toEndOf="@+id/materialCardView"
                 app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
             <androidx.constraintlayout.widget.Guideline
@@ -138,6 +176,7 @@
                     android:layout_gravity="center|start"
                     android:button="@drawable/radio_button_state"
                     android:gravity="start|center"
+                    android:paddingStart="@dimen/padding_5"
                     android:text="Android In-app Purchase"
                     android:textColor="@color/colorYellow" />
 
@@ -146,7 +185,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|start"
-                    android:layout_marginTop="@dimen/padding_5"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:paddingStart="@dimen/padding_5"
                     android:button="@drawable/radio_button_state"
                     android:gravity="start|center"
                     android:text="@string/mysabay"
@@ -158,7 +198,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|start"
-                    android:layout_marginTop="@dimen/padding_5"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:paddingStart="@dimen/padding_5"
                     android:button="@drawable/radio_button_state"
                     android:gravity="start|center"
                     android:text="ABA Bank"
@@ -170,7 +211,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center|start"
-                    android:layout_marginTop="@dimen/padding_5"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:paddingStart="@dimen/padding_5"
                     android:button="@drawable/radio_button_state"
                     android:gravity="start|center"
                     android:text="@string/select_a_partner_bank"
@@ -187,6 +229,7 @@
                 android:fontFamily="@font/font_battambang_regular"
                 android:gravity="center"
                 android:text="@string/pay"
+                android:textAllCaps="true"
                 android:textAppearance="@style/MyAppearanceBody1"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

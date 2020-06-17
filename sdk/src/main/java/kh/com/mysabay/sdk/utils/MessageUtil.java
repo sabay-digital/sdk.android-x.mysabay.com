@@ -77,6 +77,7 @@ public class MessageUtil {
         new MaterialDialog.Builder(context)
                 .typeface(FontUtils.getTypefaceKhmer(context), FontUtils.getTypefaceKhmer(context))
                 .content(msg)
+                .positiveColorRes(R.color.colorYellow)
                 .positiveText(R.string.label_close)
                 .onPositive((dialog, which) -> dialog.dismiss())
                 .build().show();
