@@ -159,6 +159,7 @@ public class MySabaySDK {
                                         @Override
                                         protected void onErrors(@NotNull Throwable error) {
                                             LogUtil.info(TAG, error.getMessage());
+                                            mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                                         }
                                     });
                         }
@@ -204,12 +205,13 @@ public class MySabaySDK {
     public void getUserProfile(UserInfoListener listener) {
         AppItem item = gson.fromJson(getAppItem(), AppItem.class);
         userRepo.getUserProfile(item.appSecret, item.token).subscribeOn(appRxSchedulers.io())
-                .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<UserProfileItem>(mAppContext) {
+                .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<UserProfileItem>(mAppContext, _networkState) {
             @Override
             protected void onSuccess(UserProfileItem userProfileItem) {
                 if (listener != null) {
                     if (userProfileItem.status == 200) {
                         item.withUuid(userProfileItem.data.uuid);
+                        item.withMySabayUserId(userProfileItem.data.mysabayUserId);
                         MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
                         listener.userInfo(gson.toJson(userProfileItem));
                     } else
@@ -240,7 +242,24 @@ public class MySabaySDK {
             MessageUtil.displayToast(mAppContext, "You need to login first");
             return;
         }
-        mAppContext.startActivity(new Intent(mAppContext, StoreActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+
+        userRepo.getVerifyToken(appItem.appSecret, appItem.token).subscribeOn(appRxSchedulers.io())
+                .observeOn(appRxSchedulers.mainThread())
+                .subscribe(new AbstractDisposableObs<TokenVerify>(mAppContext, _networkState) {
+
+                    @Override
+                    protected void onSuccess(TokenVerify tokenVerify) {
+                        LogUtil.info(TAG, tokenVerify.message);
+                        mAppContext.startActivity(new Intent(mAppContext, StoreActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
+
+                    @Override
+                    protected void onErrors(Throwable error) {
+                        LogUtil.info(TAG, error.getMessage());
+                        MessageUtil.displayToast(mAppContext, "Token is invalid");
+                    }
+                });
+//        mAppContext.startActivity(new Intent(mAppContext, StoreActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
     }
 
     /**
