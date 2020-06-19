@@ -34,6 +34,10 @@ public class AppItem implements Parcelable {
     @Expose
     public long expire;
 
+    @SerializedName("mysabay_user_id")
+    @Expose
+    public Integer mysabayUserId;
+
     public AppItem(String appSecret, String token, String refreshToken, String uuid, long expire) {
         this.appSecret = appSecret;
         this.token = token;
@@ -95,6 +99,11 @@ public class AppItem implements Parcelable {
         return this;
     }
 
+    public AppItem withMySabayUserId(Integer mySabayUserId) {
+        this.mysabayUserId = mySabayUserId;
+        return this;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -107,5 +116,6 @@ public class AppItem implements Parcelable {
         dest.writeString(refreshToken);
         dest.writeString(uuid);
         dest.writeLong(expire);
+        dest.writeValue(mysabayUserId);
     }
 }
