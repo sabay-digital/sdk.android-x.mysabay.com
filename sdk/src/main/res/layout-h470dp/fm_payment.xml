@@ -23,6 +23,18 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_back" />
 
+            <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_mysabayid"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:layout_marginTop="@dimen/padding_20"
+                android:textColor="@color/colorYellow"
+                android:gravity="center"
+                app:layout_constraintBottom_toBottomOf="@id/btn_back"
+                app:layout_constraintStart_toStartOf="@id/btn_back"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
@@ -116,7 +128,6 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_point"
                         app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
-
 
                 </android.support.constraint.ConstraintLayout>
             </android.support.design.card.MaterialCardView>

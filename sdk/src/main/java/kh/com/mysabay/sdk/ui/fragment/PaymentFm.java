@@ -6,9 +6,9 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -25,7 +25,6 @@ import com.google.gson.Gson;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -36,6 +35,7 @@ import kh.com.mysabay.sdk.adapter.BankProviderAdapter;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmPaymentBinding;
 import kh.com.mysabay.sdk.databinding.PartialBankProviderBinding;
+import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.googleVerify.DataBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.ReceiptBody;
@@ -88,9 +88,11 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
     @Override
     public void initializeObjects(@NotNull View v, Bundle args) {
+        AppItem item = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         mViewBinding.viewMainPayment.setBackgroundResource(colorCodeBackground());
         mViewBinding.materialCardView.setBackgroundResource(colorCodeBackground());
         mViewBinding.btnPay.setTextColor(textColorCode());
+        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id),item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
         viewModel.getMySabayCheckout(v.getContext());
@@ -125,7 +127,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                         Gson g = new Gson();
                         UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
                         balance = userProfile.data.balance;
-                        mViewBinding.rdbMySabay.setText("MySabay" + "  " + userProfile.data.toSabayCoin());
+                        String sabayBalance = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+                        mViewBinding.rdbMySabay.setText(Html.fromHtml(getString(R.string.mysabay) + "("+  String.format(getString(R.string.balance), sabayBalance) +")"));
                     });
                 }
                 else

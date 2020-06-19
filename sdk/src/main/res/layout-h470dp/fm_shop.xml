@@ -8,6 +8,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBackground">
+
+        <android.support.v7.widget.AppCompatTextView
+            android:id="@+id/tv_mysabayid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/app_name"
+            android:textColor="@color/colorYellow"
+            app:layout_constraintBottom_toBottomOf="@id/btn_close"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <android.support.v7.widget.AppCompatImageView
             android:id="@+id/btn_close"
             android:layout_width="wrap_content"
@@ -49,11 +62,12 @@
             layout="@layout/view_empty"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
