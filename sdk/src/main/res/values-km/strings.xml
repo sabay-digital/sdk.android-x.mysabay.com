@@ -18,6 +18,7 @@
     <string name="msg_input_phone">បញ្ចូលលេខទូរស័ព្ទ</string>
     <string name="verify_code_required">លេខកូដចាំបាច់ត្រូវបញ្ចូល</string>
     <string name="pay">បង់ %s</string>
+    <string name="mysabay_id">MySabay ID: %s</string>
     <string name="payment">​ការ​ទូទាត់</string>
     <string name="shops">ហាង</string>
     <string name="total_s">សរុប: %s</string>
@@ -25,6 +26,7 @@
     <string name="upgrade_google_play">In-app billing service is unavailable, please upgrade Google Play</string>
     <string name="select_a_partner_bank">Select a partner bank</string>
     <string name="mysabay">MySabay</string>
+    <string name="balance">Balance: %s</string>
     <string name="please_choose_payment_option">Please choose payment options</string>
     <string name="cancel">Cancel</string>
     <string name="payment_confirmation">បញ្ជាក់ការទូទាត់</string>

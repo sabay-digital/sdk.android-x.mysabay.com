@@ -3,6 +3,7 @@ package kh.com.mysabay.sdk.ui.fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -35,6 +36,7 @@ import kh.com.mysabay.sdk.adapter.BankProviderAdapter;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmPaymentBinding;
 import kh.com.mysabay.sdk.databinding.PartialBankProviderBinding;
+import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.googleVerify.DataBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.ReceiptBody;
@@ -87,9 +89,11 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
     @Override
     public void initializeObjects(@NotNull View v, Bundle args) {
+        AppItem item = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         mViewBinding.viewMainPayment.setBackgroundResource(colorCodeBackground());
         mViewBinding.materialCardView.setBackgroundResource(colorCodeBackground());
         mViewBinding.btnPay.setTextColor(textColorCode());
+        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id),item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
         viewModel.getMySabayCheckout(v.getContext());
@@ -124,7 +128,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                         Gson g = new Gson();
                         UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
                         balance = userProfile.data.balance;
-                        mViewBinding.rdbMySabay.setText("MySabay" + "  " + userProfile.data.toSabayCoin());
+                        String sabayBalance = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+                        mViewBinding.rdbMySabay.setText(Html.fromHtml(getString(R.string.mysabay) + "("+  String.format(getString(R.string.balance), sabayBalance) +")"));
                     });
                 }
                 else

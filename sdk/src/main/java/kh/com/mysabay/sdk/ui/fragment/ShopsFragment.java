@@ -8,14 +8,18 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.google.gson.Gson;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.adapter.ShopAdapter;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmShopBinding;
+import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.viewmodel.StoreApiVM;
@@ -57,6 +61,12 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> {
         mLayoutManager = new GridLayoutManager(v.getContext(), getResources().getInteger(R.integer.layout_size));
         mViewBinding.rcv.setLayoutManager(mLayoutManager);
         mViewBinding.rcv.setAdapter(mAdapter);
+
+        MySabaySDK.getInstance().getUserProfile(info -> {
+            Gson g = new Gson();
+            UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
+            mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), userProfile.data.mysabayUserId.toString()));
+        });
 
         viewModel.getNetworkState().observe(this, this::showProgressState);
         viewModel.getShopItem().observe(this, item -> {
