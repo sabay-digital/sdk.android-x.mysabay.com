@@ -1,6 +1,8 @@
 package kh.com.mysabay.sample;
 
 import android.app.Application;
+import android.content.res.Configuration;
+import android.support.annotation.NonNull;
 
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.SdkConfiguration;
@@ -25,5 +27,10 @@ public class SampleApp extends Application {
                 .setSdkTheme(SdkTheme.Light)
                 .setToUseSandBox(true).build();
         MySabaySDK.Impl.setDefaultInstanceConfiguration(this, configuration);
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
     }
 }
