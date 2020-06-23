@@ -65,6 +65,7 @@
                 android:layout_marginTop="@dimen/padding_30"
                 app:cardBackgroundColor="@color/colorBackground"
                 app:cardElevation="0dp"
+                app:cardCornerRadius="0dp"
                 app:layout_constraintEnd_toStartOf="@+id/btn_close"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/btn_back"
