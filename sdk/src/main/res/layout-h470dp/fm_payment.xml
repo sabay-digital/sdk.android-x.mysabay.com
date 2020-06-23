@@ -23,18 +23,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_back" />
 
-            <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/tv_mysabayid"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="40dp"
-                android:layout_marginTop="@dimen/padding_20"
-                android:textColor="@color/colorYellow"
-                android:gravity="center"
-                app:layout_constraintBottom_toBottomOf="@id/btn_back"
-                app:layout_constraintStart_toStartOf="@id/btn_back"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
@@ -49,7 +37,7 @@
                 android:id="@+id/appCompatTextView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="60dp"
                 android:gravity="center_horizontal"
                 android:text="@string/payment"
                 android:textAllCaps="true"
@@ -57,6 +45,40 @@
                 android:textColor="@color/colorYellow"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <android.support.design.card.MaterialCardView
+                android:id="@+id/cd_sabayId"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/appCompatTextView2"
+                app:strokeColor="#DBDBDB"
+                app:cardElevation="0dp"
+                app:cardCornerRadius="0dp"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/padding_10">
+                    <android.support.v7.widget.AppCompatTextView
+                        android:id="@+id/tv_mysabayid"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/app_name"
+                        android:layout_gravity="center_vertical"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/colorYellow" />
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/btn_copy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/padding_30"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:srcCompat="@drawable/ic_content_copy" />
+                </LinearLayout>
+            </android.support.design.card.MaterialCardView>
 
             <android.support.design.card.MaterialCardView
                 android:id="@+id/materialCardView"
@@ -69,7 +91,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/btn_close"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toEndOf="@+id/btn_back"
-                app:layout_constraintTop_toBottomOf="@+id/appCompatTextView2"
+                app:layout_constraintTop_toBottomOf="@+id/cd_sabayId"
                 app:strokeColor="@color/colorYellow"
                 app:strokeWidth="1dp">
 
@@ -86,7 +108,7 @@
                         android:id="@+id/appCompatImageView"
                         android:layout_width="30dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="32dp"
+                        android:layout_marginStart="@dimen/padding_20"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
@@ -97,9 +119,10 @@
                         android:id="@+id/tv_point"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="32dp"
+                        android:layout_marginStart="@dimen/padding_20"
                         android:gravity="center"
                         android:text="@string/app_name"
+                        android:textSize="16sp"
                         android:textColor="@color/colorYellow"
                         app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView"
                         app:layout_constraintEnd_toStartOf="@+id/tv_price"
@@ -112,6 +135,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="@string/app_name"
+                        android:textSize="14sp"
                         android:textColor="@color/secondary"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="@id/tv_point"
@@ -137,7 +161,7 @@
                 android:id="@+id/txt_total"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/padding_10"
                 android:text="@string/total_s"
                 android:includeFontPadding="false"
                 android:textAppearance="@style/MyAppearanceBody1.Primary"
@@ -150,7 +174,7 @@
                 android:id="@+id/tv_total"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="@dimen/padding_10"
                 android:text="@string/app_name"
                 android:gravity="right"
                 android:includeFontPadding="false"

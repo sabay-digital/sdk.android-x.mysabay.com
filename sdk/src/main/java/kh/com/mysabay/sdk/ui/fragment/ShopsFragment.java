@@ -1,5 +1,7 @@
 package kh.com.mysabay.sdk.ui.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -18,9 +20,11 @@ import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.adapter.ShopAdapter;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmShopBinding;
+import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
+import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.StoreApiVM;
 
 /**
@@ -33,6 +37,9 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> {
 
     private ShopAdapter mAdapter;
     private GridLayoutManager mLayoutManager;
+    private ClipboardManager myClipboard;
+    private ClipData myClip;
+    private String mySabayId;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,6 +71,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> {
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
             UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
+            mySabayId = userProfile.data.mysabayUserId.toString();
             mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), userProfile.data.mysabayUserId.toString()));
         });
 
@@ -90,6 +98,18 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> {
     @Override
     public void addListeners() {
         assert mViewBinding.btnClose != null;
+        AppItem item = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+
+        mViewBinding.btnCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myClipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                myClip = ClipData.newPlainText("text", mySabayId);
+                myClipboard.setPrimaryClip(myClip);
+                MessageUtil.displayToast(v.getContext(), "Copied");
+            }
+        });
+
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (v.getContext() instanceof StoreActivity)
                 ((StoreActivity) v.getContext()).onBackPressed();
