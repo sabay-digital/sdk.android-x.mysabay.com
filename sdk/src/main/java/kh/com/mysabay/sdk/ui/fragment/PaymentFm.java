@@ -1,5 +1,7 @@
 package kh.com.mysabay.sdk.ui.fragment;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -62,6 +64,9 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
     private static String PURCHASE_ID = "android.test.purchased";
     private MaterialDialog dialogBank;
     private Float balance;
+    private ClipboardManager myClipboard;
+    private ClipData myClip;
+    private String mySabayId;
 
     @NotNull
     @Contract("_ -> new")
@@ -154,8 +159,20 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
     @Override
     public void addListeners() {
+        AppItem item = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        mViewBinding.btnCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                myClipboard = (ClipboardManager) getActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+                myClip = ClipData.newPlainText("text", item.mysabayUserId.toString());
+                myClipboard.setPrimaryClip(myClip);
+                MessageUtil.displayToast(v.getContext(), "Copied");
+            }
+        });
+
         mViewBinding.rdbMySabay.setOnClickListener(v -> {
             Data data = viewModel.getItemSelected().getValue();
+            mViewBinding.tvTotal.setText(data.toSabayCoin());
             if (data.priceInSc > balance) {
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toSabayCoin()));
                 mViewBinding.btnPay.setEnabled(false);
@@ -167,18 +184,21 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         mViewBinding.rdbInAppPurchase.setOnClickListener(v -> {
             Data data = viewModel.getItemSelected().getValue();
+            mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
         });
 
         mViewBinding.rdbPreAuthPay.setOnClickListener(v -> {
             Data data = viewModel.getItemSelected().getValue();
+            mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
         });
 
         mViewBinding.rdbThirdBankProvider.setOnClickListener(v -> {
             Data data = viewModel.getItemSelected().getValue();
+            mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
         });
