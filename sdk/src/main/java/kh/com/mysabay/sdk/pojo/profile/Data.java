@@ -205,7 +205,7 @@ public class Data implements Parcelable {
     }
 
     public String toSabayCoin() {
-        return  balance + " SC";
+        return (String.format("%,.2f", balance)) + " SC";
     }
 
 }

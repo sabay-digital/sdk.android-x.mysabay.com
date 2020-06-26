@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.text.Html;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -91,8 +92,23 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> {
 
     @Override
     public void assignValues() {
+        viewModel.getNetworkState().observe(this, this::showProgressState);
+
         if (getContext() != null)
             viewModel.getShopFromServer(getContext());
+
+        MySabaySDK.getInstance().getUserProfile(info -> {
+            Gson g = new Gson();
+            UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
+            if (userProfile.data.balance > 0) {
+                String sabayBalance = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+                mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
+                mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayBalance));
+                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayBalance));
+            } else {
+                mViewBinding.sabayBalance.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

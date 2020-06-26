@@ -60,6 +60,14 @@
                 android:textStyle="bold"
                 app:textAllCaps="true" />
 
+            <Spinner
+                android:id="@+id/spinner_countries"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="18dp" />
+
             <android.support.design.widget.TextInputLayout
                 android:id="@+id/txt_input_phone"
                 style="@style/SdkAppTheme.MyStyleOutlineBox"

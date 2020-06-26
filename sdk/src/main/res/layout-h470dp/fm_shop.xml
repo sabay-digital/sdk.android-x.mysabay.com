@@ -65,6 +65,49 @@
             </LinearLayout>
         </android.support.design.card.MaterialCardView>
 
+        <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/sabay_balance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="@dimen/padding_10"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cd_sabayId">
+            <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/img_wallet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_account_balance_wallet"/>
+            <TextView
+                android:id="@+id/tv_sabay_gold_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_10"
+                android:paddingEnd="@dimen/padding_5"
+                android:textColor="@color/secondary"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/secondary" />
+
+            <TextView
+                android:id="@+id/tv_sabay_coin_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingStart="@dimen/padding_5"
+                android:textColor="@color/secondary"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </android.support.v7.widget.LinearLayoutCompat>
+
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rcv"
             android:layout_width="0dp"
@@ -75,7 +118,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cd_sabayId"
+            app:layout_constraintTop_toBottomOf="@+id/sabay_balance"
             app:spanCount="2"
             tools:listitem="@layout/partial_shop_item" />
 
@@ -86,10 +129,10 @@
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="1.0" />
+            app:layout_constraintVertical_bias="0.0" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>
