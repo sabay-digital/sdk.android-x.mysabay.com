@@ -124,17 +124,25 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             }
         });
 
+        MySabaySDK.getInstance().getUserProfile(info -> {
+            Gson g = new Gson();
+            UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
+            balance = userProfile.data.balance;
+            if (balance > 0) {
+                String sabayBalance = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+                mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
+                mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayBalance));
+                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayBalance));
+                mViewBinding.rdbMySabay.setText(Html.fromHtml(getString(R.string.mysabay) + "("+  String.format(getString(R.string.balance), sabayBalance) +")"));
+            } else  {
+                mViewBinding.sabayBalance.setVisibility(View.GONE);
+            }
+        });
+
         viewModel.getMySabayProvider().observe(this, mySabayItem -> {
             if (mySabayItem.status == 200) {
                 if (mySabayItem.data.size() > 0) {
                     mViewBinding.rdbMySabay.setVisibility(View.VISIBLE);
-                    MySabaySDK.getInstance().getUserProfile(info -> {
-                        Gson g = new Gson();
-                        UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-                        balance = userProfile.data.balance;
-                        String sabayBalance = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
-                        mViewBinding.rdbMySabay.setText(Html.fromHtml(getString(R.string.mysabay) + "("+  String.format(getString(R.string.balance), sabayBalance) +")"));
-                    });
                 }
                 else
                     mViewBinding.rdbMySabay.setVisibility(View.GONE);

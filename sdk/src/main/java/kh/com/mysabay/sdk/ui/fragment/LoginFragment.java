@@ -6,21 +6,36 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import kh.com.mysabay.sdk.BuildConfig;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
+import kh.com.mysabay.sdk.adapter.CountryAdapter;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FragmentLoginBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
+import kh.com.mysabay.sdk.pojo.login.CurrentCountry;
+import kh.com.mysabay.sdk.pojo.login.TaskComplete;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
+import kh.com.mysabay.sdk.ui.holder.CountryItem;
+import kh.com.mysabay.sdk.utils.CountryUtils;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 
@@ -28,9 +43,12 @@ import kh.com.mysabay.sdk.viewmodel.UserApiVM;
  * Created by Tan Phirum on 3/7/20
  * Gmail phirumtan@gmail.com
  */
-public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM> {
+public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM> implements TaskComplete {
 
     public static final String TAG = LoginFragment.class.getSimpleName();
+    private ArrayList<CountryItem> mCountryList;
+    private CountryAdapter mAdapter;
+    String currentCountry;
 
     @NotNull
     @Contract(" -> new")
@@ -50,6 +68,9 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.btnLogin.setTextColor(textColorCode());
         mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
         this.viewModel = LoginActivity.loginActivity.viewModel;
+
+        CurrentCountry testAsyncTask = new CurrentCountry(this);
+        testAsyncTask.execute("https://ipinfo.io/json");
     }
 
     @Override
@@ -58,6 +79,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             mViewBinding.edtPhone.setText("098637352");
         }
         mViewBinding.edtPhone.requestFocus();
+        if (currentCountry != null)
+            LogUtil.info("AAA", currentCountry);
 
         new Handler().postDelayed(() -> showProgressState(new NetworkState(NetworkState.Status.SUCCESS)), 500);
     }
@@ -128,5 +151,53 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             view.requestFocus();
         }
         MessageUtil.displayToast(getContext(), getString(msg));
+    }
+
+    private void initList() {
+        mCountryList = new ArrayList<CountryItem>();
+        String jsonFileString = CountryUtils.getJsonFromAssets(getContext(), "countries.json");
+        Gson gson = new Gson();
+        Type countryTypes = new TypeToken<List<CountryItem>>() { }.getType();
+
+        List<CountryItem> country = gson.fromJson(jsonFileString, countryTypes);
+
+        for (int i = 0; i < country.size(); i++) {
+            LogUtil.info("data", "> Item " + i + "\n" + country.get(i).getName());
+            mCountryList.add(country.get(i));
+        }
+    }
+
+    @Override
+    public void onTaskCompleted(String result) {
+        try {
+            initList();
+            JSONObject jsonObj = new JSONObject(result);
+            currentCountry = jsonObj.get("country").toString();
+
+            Spinner spinnerCountries = mViewBinding.spinnerCountries;
+            mAdapter = new CountryAdapter(getContext(), mCountryList);
+            spinnerCountries.setAdapter(mAdapter);
+            int index = 0;
+            for (int i =0; i < mCountryList.size(); i++) {
+                LogUtil.info("Test", mCountryList.get(i).getCode() + "" + currentCountry + i);
+                if (mCountryList.get(i).getCode().equals(currentCountry)) {
+                    spinnerCountries.setSelection(i);
+                }
+            }
+            spinnerCountries.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    CountryItem clickedItem = (CountryItem) parent.getItemAtPosition(position);
+                    String clickedCountryName = clickedItem.getCode();
+                    MessageUtil.displayToast(getContext(), clickedCountryName);
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

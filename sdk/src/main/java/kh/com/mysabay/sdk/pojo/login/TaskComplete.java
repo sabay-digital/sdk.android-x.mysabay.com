@@ -1,4 +1,5 @@
 package kh.com.mysabay.sdk.pojo.login;
 
-public class TaskComplete {
+public interface TaskComplete {
+    void onTaskCompleted(String result);
 }
