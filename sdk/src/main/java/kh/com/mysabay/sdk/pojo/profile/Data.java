@@ -208,4 +208,8 @@ public class Data implements Parcelable {
         return (String.format("%,.2f", balance)) + " SC";
     }
 
+    public String toSabayGold() {
+        return (String.format("%,.2f", balance)) + " SG";
+    }
+
 }

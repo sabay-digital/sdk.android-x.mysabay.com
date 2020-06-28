@@ -6,4 +6,7 @@
             <solid />
         </shape>
     </item>
+    <item android:state_pressed="true">
+        <color android:color="@color/secondary" />
+    </item>
 </selector>

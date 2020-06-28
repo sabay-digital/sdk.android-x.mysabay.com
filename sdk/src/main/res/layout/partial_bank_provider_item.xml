@@ -51,7 +51,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/padding_15"
-                android:text="+5 Diamonds"
+                android:text="5 Diamonds"
                 app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:tint="@color/colorYellow"

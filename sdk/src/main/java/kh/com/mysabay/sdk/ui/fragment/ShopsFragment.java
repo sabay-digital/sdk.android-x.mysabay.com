@@ -101,10 +101,11 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> {
             Gson g = new Gson();
             UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
             if (userProfile.data.balance > 0) {
-                String sabayBalance = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+                String sabayCoin = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+                String sabayGold = "<b>" + userProfile.data.toSabayGold() + "</b> ";
                 mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
-                mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayBalance));
-                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayBalance));
+                mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
+                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
             } else {
                 mViewBinding.sabayBalance.setVisibility(View.GONE);
             }

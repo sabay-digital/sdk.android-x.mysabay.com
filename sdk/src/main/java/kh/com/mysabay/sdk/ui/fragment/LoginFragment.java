@@ -12,7 +12,6 @@ import android.widget.Spinner;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import org.apache.commons.lang3.StringUtils;
@@ -79,9 +78,6 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             mViewBinding.edtPhone.setText("098637352");
         }
         mViewBinding.edtPhone.requestFocus();
-        if (currentCountry != null)
-            LogUtil.info("AAA", currentCountry);
-
         new Handler().postDelayed(() -> showProgressState(new NetworkState(NetworkState.Status.SUCCESS)), 500);
     }
 
@@ -177,9 +173,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             Spinner spinnerCountries = mViewBinding.spinnerCountries;
             mAdapter = new CountryAdapter(getContext(), mCountryList);
             spinnerCountries.setAdapter(mAdapter);
-            int index = 0;
             for (int i =0; i < mCountryList.size(); i++) {
-                LogUtil.info("Test", mCountryList.get(i).getCode() + "" + currentCountry + i);
                 if (mCountryList.get(i).getCode().equals(currentCountry)) {
                     spinnerCountries.setSelection(i);
                 }
@@ -188,7 +182,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     CountryItem clickedItem = (CountryItem) parent.getItemAtPosition(position);
-                    String clickedCountryName = clickedItem.getCode();
+                    String clickedCountryName = clickedItem.getName();
                     MessageUtil.displayToast(getContext(), clickedCountryName);
                 }
                 @Override

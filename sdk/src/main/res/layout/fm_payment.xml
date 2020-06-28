@@ -82,18 +82,6 @@
                         app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
 
                     <android.support.v7.widget.AppCompatTextView
-                        android:id="@+id/tv_label"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:textSize="14dp"
-                        android:text="@string/app_name"
-                        android:textColor="@color/secondary"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="@id/tv_point"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_point" />
-
-                    <android.support.v7.widget.AppCompatTextView
                         android:id="@+id/tv_price"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -242,6 +230,87 @@
                 app:layout_constraintTop_toBottomOf="@+id/sabay_balance"
                 app:layout_constraintStart_toStartOf="@+id/guideline6" />
 
+            <LinearLayout
+                android:id="@+id/btn_group"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="30dp"
+                android:gravity="center_horizontal"
+                android:layout_marginBottom="32dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline6"
+                app:layout_constraintTop_toBottomOf="@+id/tv_payment_option"
+                android:layout_marginStart="@dimen/padding_20"
+                android:layout_marginEnd="@dimen/padding_20">
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_in_app_purchase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Android In-app Purchas"
+                    android:textAllCaps="false"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/padding_20"
+                    android:background="@drawable/payment_button"
+                    android:textColor="@color/colorYellow"
+                    />
+
+                <LinearLayout
+                    android:id="@+id/btn_mysabay"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/payment_button"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:gravity="left|center_vertical"
+                    android:layout_marginTop="@dimen/padding_10">
+                    <TextView
+                        android:id="@+id/tv_my_sabay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left|center_vertical"
+                        android:paddingLeft="@dimen/padding_20"
+                        android:text="Mysabay"
+                        android:textColor="@color/colorYellow" />
+
+                    <TextView
+                        android:id="@+id/btn_label"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="@dimen/padding_20"
+                        android:gravity="right|center_vertical"
+                        android:text="bonus"
+                        android:textColor="@color/secondary" />
+                </LinearLayout>
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_pre_auth_pay"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@drawable/payment_button"
+                    android:text="ABA Bank"
+                    android:textAllCaps="false"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/padding_20"
+                    android:textColor="@color/colorYellow"
+                    android:visibility="gone" />
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_third_bank_provider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/padding_10"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:background="@drawable/payment_button"
+                    android:text="@string/select_a_partner_bank"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/padding_20"
+                    android:textAllCaps="false"
+                    android:textColor="@color/colorYellow" />
+            </LinearLayout>
+
             <RadioGroup
                 android:id="@+id/radioGroup"
                 android:layout_width="0dp"
@@ -249,6 +318,7 @@
                 android:layout_marginTop="@dimen/padding_20"
                 android:layout_marginStart="@dimen/padding_20"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="@+id/guideline6"
                 app:layout_constraintTop_toBottomOf="@+id/tv_payment_option">
 
