@@ -202,7 +202,7 @@
                     app:layout_constraintStart_toStartOf="parent" />
 
                 <View
-                    android:id="@+id/sabay_divider"
+                    android:id="@+id/divider_balance"
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
                     android:background="@color/secondary" />

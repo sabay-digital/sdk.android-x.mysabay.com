@@ -63,7 +63,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
     private Data mData;
     private static String PURCHASE_ID = "android.test.purchased";
     private MaterialDialog dialogBank;
-    private Float balance;
+    private Float balanceCoin;
+    private Float balanceGold;
     private ClipboardManager myClipboard;
     private ClipData myClip;
     private String mySabayId;
@@ -127,16 +128,26 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
             UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            balance = userProfile.data.balance;
+            balanceCoin = userProfile.data.balance.coin;
+            balanceGold = userProfile.data.balance.gold;
 
-            if (balance > 0) {
-                String sabayCoin = "<b style=\"color:blue;\">" + userProfile.data.toSabayCoin() + "</b>";
-                String sabayGold = "<b style=\"color:blue;\">" + userProfile.data.toSabayGold() + "</b>";
-                mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
+            if (balanceCoin > 0) {
+                String sabayCoin = "<b>" + userProfile.data.toSabayCoin() + "</b>";
                 mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
-                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
                 mViewBinding.tvMySabay.setText(getString(R.string.mysabay));
-            } else  {
+            }
+            if (balanceGold > 0) {
+                String sabayGold = "<b style=\"color:blue;\">" + userProfile.data.toSabayGold() + "</b>";
+                mViewBinding.dividerBalance.setVisibility(View.VISIBLE);
+                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
+            } else {
+                mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
+                mViewBinding.dividerBalance.setVisibility(View.GONE);
+            }
+
+            if (balanceCoin > 0 || balanceGold > 0) {
+                mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
+            } else {
                 mViewBinding.sabayBalance.setVisibility(View.GONE);
             }
         });
@@ -217,7 +228,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
-            if (data.priceInSc > balance) {
+            if (data.priceInSc > balanceCoin) {
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toSabayCoin()));
                 mViewBinding.btnPay.setEnabled(false);
             } else {

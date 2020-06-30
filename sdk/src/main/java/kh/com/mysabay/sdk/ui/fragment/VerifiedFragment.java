@@ -1,19 +1,28 @@
 package kh.com.mysabay.sdk.ui.fragment;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import org.apache.commons.lang3.StringUtils;
-
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FragmentVerifiedBinding;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
+import kh.com.mysabay.sdk.receiver.MessageListener;
+import kh.com.mysabay.sdk.receiver.SmsBroadcastReceiver;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.KeyboardUtils;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.utils.SdkTheme;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
@@ -25,6 +34,9 @@ import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, UserApiVM> {
 
     public static final String TAG = VerifiedFragment.class.getSimpleName();
+    private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 1;
+    private SmsBroadcastReceiver smsBroadcastReceiver;
+
 
     public VerifiedFragment() {
         super();
@@ -42,8 +54,51 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light)
             mViewBinding.tvResendOtp.setTextColor(getResources().getColor(R.color.colorWhite700));
             mViewBinding.btnVerify.setTextColor(textColorCode());
-
         this.viewModel = LoginActivity.loginActivity.viewModel;
+        checkForSmsPermission();
+
+        smsBroadcastReceiver = new SmsBroadcastReceiver();
+        getContext().registerReceiver(smsBroadcastReceiver, new IntentFilter(Telephony.Sms.Intents.SMS_RECEIVED_ACTION));
+
+    }
+
+    private void checkForSmsPermission() {
+        if (ActivityCompat.checkSelfPermission(getContext(),
+                Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            Log.d(TAG, "Permission Granted");
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.RECEIVE_MMS)) {
+                LogUtil.info("AAA", "Permission already dined");
+            } else {
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.RECEIVE_SMS},
+                        MY_PERMISSIONS_REQUEST_SEND_SMS);
+            }
+
+        } else {
+           LogUtil.info("AAA", "Permission already granted");
+        }
+    }
+
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        if (requestCode == MY_PERMISSIONS_REQUEST_SEND_SMS) {
+//            Log.i("TAG", "permission granted");
+//        } else {
+//            Log.i("TAG", "permission denied");
+//        }
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_SEND_SMS: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(getContext(), "Thanks", Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), "Failed", Toast.LENGTH_LONG).show();;
+                }
+            }
+            break;
+        }
     }
 
     @Override

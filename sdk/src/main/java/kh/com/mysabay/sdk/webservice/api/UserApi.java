@@ -40,7 +40,7 @@ public interface UserApi {
     @POST("api/v1.4/user/mysabay/login")
     Observable<String> postLoginWithMySabay(@Header("app_secret") String appSecret);
 
-    @GET("api/v1.4/user/profile")
+    @GET("api/v1.5/user/profile")
     Observable<UserProfileItem> getUserProfile(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
     @FormUrlEncoded

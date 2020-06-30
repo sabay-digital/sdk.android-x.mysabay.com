@@ -48,7 +48,6 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
     private ArrayList<CountryItem> mCountryList;
     private CountryAdapter mAdapter;
     String currentCountry;
-
     @NotNull
     @Contract(" -> new")
     public static LoginFragment newInstance() {
