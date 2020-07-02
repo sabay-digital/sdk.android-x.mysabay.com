@@ -21,11 +21,11 @@ public class SampleApp extends Application {
         final SdkConfiguration configuration = new SdkConfiguration.Builder(
                 "55", // mysabay app Id
                 "ARENA OF GLORY", //mysabay  app name
-                "d41faee946f531794d18a152eafeb5fd8fc81ce4de520e97fcfe41fefdd0381c", //MySabay App Secret
+                "9c85c50a4362f687cd4507771ba81db5cf50eaa0b3008f4f943f77ba3ac6386b", //MySabay App Secret
                 "", // license key
                 "") // merchant id
                 .setSdkTheme(SdkTheme.Light)
-                .setToUseSandBox(false).build();
+                .setToUseSandBox(true).build();
         MySabaySDK.Impl.setDefaultInstanceConfiguration(this, configuration);
     }
 
@@ -34,7 +34,3 @@ public class SampleApp extends Application {
         super.onConfigurationChanged(newConfig);
     }
 }
-
-
-//"9c85c50a4362f687cd4507771ba81db5cf50eaa0b3008f4f943f77ba3ac6386b",
-//"d41faee946f531794d18a152eafeb5fd8fc81ce4de520e97fcfe41fefdd0381c"
