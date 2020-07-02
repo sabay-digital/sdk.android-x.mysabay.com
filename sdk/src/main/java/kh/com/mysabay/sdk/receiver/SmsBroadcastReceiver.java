@@ -1,26 +1,23 @@
 package kh.com.mysabay.sdk.receiver;
 
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsMessage;
-import android.widget.Toast;
 
 import kh.com.mysabay.sdk.utils.LogUtil;
 
 public class SmsBroadcastReceiver extends BroadcastReceiver {
 
     private static final String TAG = SmsBroadcastReceiver.class.getSimpleName();
-    public static final String pdu_type = "pdus";
     private static final String SMS_RECEIVED = "android.provider.Telephony.SMS_RECEIVED";
-    String phoneNo, msg = "";
+    String msg = "";
+    private static MessageListener messageListener;
 
     @Override
     public void onReceive(Context context, Intent intent) {
-       LogUtil.info("Hello", "Receive message" + intent.getAction());
        if (intent.getAction().equals(SMS_RECEIVED)) {
            Bundle dataBundle = intent.getExtras();
            if (dataBundle != null) {
@@ -33,11 +30,15 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                     } else {
                         messages[i] = SmsMessage.createFromPdu((byte[]) mypdu[i]);
                     }
+
                     msg = messages[i].getMessageBody();
-                    phoneNo = messages[i].getOriginatingAddress();
+                    messageListener.messageReceived(msg);
                 }
-               Toast.makeText(context, "Message " + msg + "\nNumber " + phoneNo, Toast.LENGTH_LONG).show();
            }
        }
+    }
+
+    public static void bindListener(MessageListener listener){
+        messageListener = listener;
     }
 }

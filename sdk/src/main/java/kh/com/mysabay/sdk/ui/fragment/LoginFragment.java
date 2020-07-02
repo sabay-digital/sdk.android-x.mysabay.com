@@ -13,6 +13,8 @@ import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
@@ -36,6 +38,7 @@ import kh.com.mysabay.sdk.ui.holder.CountryItem;
 import kh.com.mysabay.sdk.utils.CountryUtils;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
+import kh.com.mysabay.sdk.utils.PhoneNumberFormat;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 
 /**
@@ -48,6 +51,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
     private ArrayList<CountryItem> mCountryList;
     private CountryAdapter mAdapter;
     String currentCountry;
+    String dialCode;
+
     @NotNull
     @Contract(" -> new")
     public static LoginFragment newInstance() {
@@ -90,6 +95,9 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             if (mViewBinding.edtPhone.getText() == null) return;
 
             String phoneNo = mViewBinding.edtPhone.getText().toString();
+
+            PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+
             /*Editable phoneNo = mViewBinding.edtPhone.getText();
             if (StringUtils.isAnyBlank(phoneNo)) {
                 showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
@@ -98,8 +106,21 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             }*/
             if (StringUtils.isAnyBlank(phoneNo)) {
                 showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
-            } else
-                viewModel.postToLogin(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret, phoneNo);
+            } else {
+                if (phoneNo.length() == 1) {
+                    showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
+                } else {
+                    Phonenumber.PhoneNumber phoneNumber = PhoneNumberFormat.validatePhoneNumber(dialCode, phoneNo);
+                    boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
+                    if (isValid) {
+                        String phNumber = String.valueOf(phoneNumber.getNationalNumber());
+                        String dialCode = String.valueOf(phoneNumber.getCountryCode());
+                        viewModel.postToLogin(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret, phNumber, dialCode);
+                    } else {
+                        showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
+                    }
+                }
+            }
         });
 
         mViewBinding.btnLoginMysabay.setOnClickListener(v ->
@@ -175,14 +196,14 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             for (int i =0; i < mCountryList.size(); i++) {
                 if (mCountryList.get(i).getCode().equals(currentCountry)) {
                     spinnerCountries.setSelection(i);
+                    dialCode = mCountryList.get(i).getDial_code();
                 }
             }
             spinnerCountries.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     CountryItem clickedItem = (CountryItem) parent.getItemAtPosition(position);
-                    String clickedCountryName = clickedItem.getName();
-                    MessageUtil.displayToast(getContext(), clickedCountryName);
+                    dialCode = clickedItem.getDial_code();
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {

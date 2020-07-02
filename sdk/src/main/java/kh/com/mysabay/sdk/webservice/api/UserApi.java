@@ -23,11 +23,11 @@ import retrofit2.http.Query;
  */
 public interface UserApi {
 
-    @GET("api/v1.4/user/login/{phone}")
+    @GET("api/v1.5/user/login/{phone}")
     Observable<LoginItem> getUserLogin(@Header("app_secret") String appSecret, @Path("phone") String phone);
 
     @FormUrlEncoded
-    @POST("api/v1.4/user/verify_code")
+    @POST("api/v1.5/user/verify_code")
     Observable<VerifiedItem> postVerifyCode(@Header("app_secret") String appSecret,
                                             @Field("phone") String phone, @Field("verify_code") int verifyCode);
     @FormUrlEncoded

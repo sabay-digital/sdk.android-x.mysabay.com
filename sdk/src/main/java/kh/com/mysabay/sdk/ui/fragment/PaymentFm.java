@@ -227,6 +227,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnThirdBankProvider.setTextColor(0xFFE3B852);
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
+            mViewBinding.btnLabel.setTextColor(0xFFAAAAAA);
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
             if (data.priceInSc > balanceCoin) {
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toSabayCoin()));

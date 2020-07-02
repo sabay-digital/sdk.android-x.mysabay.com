@@ -8,10 +8,7 @@ import android.os.Bundle;
 import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
-
 import org.apache.commons.lang3.StringUtils;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
@@ -31,11 +28,12 @@ import kh.com.mysabay.sdk.viewmodel.UserApiVM;
  * Created by Tan Phirum on 3/7/20
  * Gmail phirumtan@gmail.com
  */
-public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, UserApiVM> {
+public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, UserApiVM>  implements MessageListener {
 
     public static final String TAG = VerifiedFragment.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_SEND_SMS = 1;
     private SmsBroadcastReceiver smsBroadcastReceiver;
+    String otpCode;
 
 
     public VerifiedFragment() {
@@ -55,6 +53,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
             mViewBinding.tvResendOtp.setTextColor(getResources().getColor(R.color.colorWhite700));
             mViewBinding.btnVerify.setTextColor(textColorCode());
         this.viewModel = LoginActivity.loginActivity.viewModel;
+        SmsBroadcastReceiver.bindListener(this);
         checkForSmsPermission();
 
         smsBroadcastReceiver = new SmsBroadcastReceiver();
@@ -65,17 +64,16 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
     private void checkForSmsPermission() {
         if (ActivityCompat.checkSelfPermission(getContext(),
                 Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
-            Log.d(TAG, "Permission Granted");
+                LogUtil.info(TAG, "Permission Granted");
             if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.RECEIVE_MMS)) {
-                LogUtil.info("AAA", "Permission already dined");
+                LogUtil.info(TAG, "Permission dined");
             } else {
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.RECEIVE_SMS},
                         MY_PERMISSIONS_REQUEST_SEND_SMS);
             }
-
         } else {
-           LogUtil.info("AAA", "Permission already granted");
+           LogUtil.info(TAG, "Permission already granted");
         }
     }
 
@@ -83,18 +81,12 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == MY_PERMISSIONS_REQUEST_SEND_SMS) {
-//            Log.i("TAG", "permission granted");
-//        } else {
-//            Log.i("TAG", "permission denied");
-//        }
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_SEND_SMS: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(getContext(), "Thanks", Toast.LENGTH_LONG).show();
+                    LogUtil.info(TAG, "Permitting read sms");
                 } else {
-                    Toast.makeText(getContext(), "Failed", Toast.LENGTH_LONG).show();;
+                    LogUtil.info(TAG, "Denying read sms");
                 }
             }
             break;
@@ -117,15 +109,21 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
             LoginItem item = viewModel.getResponseLogin().getValue();
             if (item == null) return;
 
-            if (Integer.parseInt(str.toString()) == item.data.verifyCode) {
-                KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
-                viewModel.postToVerified(getContext(), Integer.parseInt(str.toString()));
-            } else {
-                KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
-                //MessageUtil.displayToast(getContext(), "verified failed");
-                mViewBinding.edtVerifyCode.setError(true);
-                mViewBinding.edtVerifyCode.postDelayed(() ->
-                        mViewBinding.edtVerifyCode.setText(null), 1000);
+            if (Integer.parseInt(str.toString()) != 0) {
+                if (MySabaySDK.getInstance().getSdkConfiguration().isSandBox) {
+
+                    if (Integer.parseInt(str.toString()) == item.data.verifyCode) {
+                        KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
+                        viewModel.postToVerified(getContext(), Integer.parseInt(str.toString()));
+                    } else {
+                        KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
+                        mViewBinding.edtVerifyCode.setError(true);
+                        mViewBinding.edtVerifyCode.postDelayed(() ->
+                                mViewBinding.edtVerifyCode.setText(null), 1000);
+                    }
+                } else {
+                    viewModel.postToVerified(getContext(), Integer.parseInt(str.toString()));
+                }
             }
         });
 
@@ -145,11 +143,16 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                 MessageUtil.displayToast(v.getContext(), getString(R.string.verify_code_required));
         });
 
-        //
         mViewBinding.btnBack.setOnClickListener(v -> {
             if (getActivity() != null)
                 getActivity().onBackPressed();
         });
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getContext().unregisterReceiver(smsBroadcastReceiver);
     }
 
     @Override
@@ -178,5 +181,12 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         ((LoginActivity) context).userComponent.inject(this);
         // Now you can access loginViewModel here and onCreateView too
         // (shared instance with the Activity and the other Fragment)
+    }
+
+    @Override
+    public void messageReceived(String message) {
+        otpCode = message.substring(1, 7);
+        mViewBinding.edtVerifyCode.setText(otpCode);
+        LogUtil.info("Message", otpCode);
     }
 }
