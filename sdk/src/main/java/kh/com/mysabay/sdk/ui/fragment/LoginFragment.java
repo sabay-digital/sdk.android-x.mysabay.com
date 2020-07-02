@@ -6,31 +6,52 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Spinner;
 
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import kh.com.mysabay.sdk.BuildConfig;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
+import kh.com.mysabay.sdk.adapter.CountryAdapter;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FragmentLoginBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
+import kh.com.mysabay.sdk.pojo.login.CurrentCountry;
+import kh.com.mysabay.sdk.pojo.login.TaskComplete;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
+import kh.com.mysabay.sdk.ui.holder.CountryItem;
+import kh.com.mysabay.sdk.utils.CountryUtils;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
+import kh.com.mysabay.sdk.utils.PhoneNumberFormat;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 
 /**
  * Created by Tan Phirum on 3/7/20
  * Gmail phirumtan@gmail.com
  */
-public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM> {
+public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM> implements TaskComplete {
 
     public static final String TAG = LoginFragment.class.getSimpleName();
+    private ArrayList<CountryItem> mCountryList;
+    private CountryAdapter mAdapter;
+    String currentCountry;
+    String dialCode;
 
     @NotNull
     @Contract(" -> new")
@@ -50,6 +71,9 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.btnLogin.setTextColor(textColorCode());
         mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
         this.viewModel = LoginActivity.loginActivity.viewModel;
+
+        CurrentCountry testAsyncTask = new CurrentCountry(this);
+        testAsyncTask.execute("https://ipinfo.io/json");
     }
 
     @Override
@@ -58,7 +82,6 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             mViewBinding.edtPhone.setText("098637352");
         }
         mViewBinding.edtPhone.requestFocus();
-
         new Handler().postDelayed(() -> showProgressState(new NetworkState(NetworkState.Status.SUCCESS)), 500);
     }
 
@@ -72,6 +95,9 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             if (mViewBinding.edtPhone.getText() == null) return;
 
             String phoneNo = mViewBinding.edtPhone.getText().toString();
+
+            PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
+
             /*Editable phoneNo = mViewBinding.edtPhone.getText();
             if (StringUtils.isAnyBlank(phoneNo)) {
                 showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
@@ -80,8 +106,21 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             }*/
             if (StringUtils.isAnyBlank(phoneNo)) {
                 showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
-            } else
-                viewModel.postToLogin(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret, phoneNo);
+            } else {
+                if (phoneNo.length() == 1) {
+                    showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
+                } else {
+                    Phonenumber.PhoneNumber phoneNumber = PhoneNumberFormat.validatePhoneNumber(dialCode, phoneNo);
+                    boolean isValid = phoneNumberUtil.isValidNumber(phoneNumber);
+                    if (isValid) {
+                        String phNumber = String.valueOf(phoneNumber.getNationalNumber());
+                        String dialCode = String.valueOf(phoneNumber.getCountryCode());
+                        viewModel.postToLogin(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret, phNumber, dialCode);
+                    } else {
+                        showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
+                    }
+                }
+            }
         });
 
         mViewBinding.btnLoginMysabay.setOnClickListener(v ->
@@ -128,5 +167,51 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             view.requestFocus();
         }
         MessageUtil.displayToast(getContext(), getString(msg));
+    }
+
+    private void initList() {
+        mCountryList = new ArrayList<CountryItem>();
+        String jsonFileString = CountryUtils.getJsonFromAssets(getContext(), "countries.json");
+        Gson gson = new Gson();
+        Type countryTypes = new TypeToken<List<CountryItem>>() { }.getType();
+
+        List<CountryItem> country = gson.fromJson(jsonFileString, countryTypes);
+
+        for (int i = 0; i < country.size(); i++) {
+            LogUtil.info("data", "> Item " + i + "\n" + country.get(i).getName());
+            mCountryList.add(country.get(i));
+        }
+    }
+
+    @Override
+    public void onTaskCompleted(String result) {
+        try {
+            initList();
+            JSONObject jsonObj = new JSONObject(result);
+            currentCountry = jsonObj.get("country").toString();
+
+            Spinner spinnerCountries = mViewBinding.spinnerCountries;
+            mAdapter = new CountryAdapter(getContext(), mCountryList);
+            spinnerCountries.setAdapter(mAdapter);
+            for (int i =0; i < mCountryList.size(); i++) {
+                if (mCountryList.get(i).getCode().equals(currentCountry)) {
+                    spinnerCountries.setSelection(i);
+                    dialCode = mCountryList.get(i).getDial_code();
+                }
+            }
+            spinnerCountries.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    CountryItem clickedItem = (CountryItem) parent.getItemAtPosition(position);
+                    dialCode = clickedItem.getDial_code();
+                }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

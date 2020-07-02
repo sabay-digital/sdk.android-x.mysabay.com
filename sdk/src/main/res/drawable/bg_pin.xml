@@ -23,7 +23,7 @@
     </item>
     <!--Space contains text and not focused -->
     <item android:state_checked="true" android:state_focused="false">
-        <shape android:shape="oval">
+        <shape android:shape="rectangle">
             <stroke android:width="2dp" android:color="@color/colorYellow" />
             <solid />
         </shape>

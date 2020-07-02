@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.text.Html;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -91,8 +92,32 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> {
 
     @Override
     public void assignValues() {
+        viewModel.getNetworkState().observe(this, this::showProgressState);
+
         if (getContext() != null)
             viewModel.getShopFromServer(getContext());
+
+        MySabaySDK.getInstance().getUserProfile(info -> {
+            Gson g = new Gson();
+            UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
+            if (userProfile.data.balance.coin > 0) {
+                String sabayCoin = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+                mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
+            }
+            if (userProfile.data.balance.gold > 0) {
+                String sabayGold = "<b>" + userProfile.data.toSabayGold() + "</b> ";
+                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
+                mViewBinding.deviderBalance.setVisibility(View.VISIBLE);
+            } else {
+                mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
+                mViewBinding.deviderBalance.setVisibility(View.GONE);
+            }
+            if (userProfile.data.balance.gold > 0 || userProfile.data.balance.coin > 0) {
+                mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
+            } else {
+                mViewBinding.sabayBalance.setVisibility(View.GONE);
+            }
+        });
     }
 
     @Override

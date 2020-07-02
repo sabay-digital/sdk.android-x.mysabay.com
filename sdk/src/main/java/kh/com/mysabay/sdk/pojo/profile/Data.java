@@ -47,7 +47,8 @@ public class Data implements Parcelable {
     public String updatedAt;
     @SerializedName("balance")
     @Expose
-    public Float balance;
+    public Balance balance;
+
 
     public final static Creator<Data> CREATOR = new Creator<Data>() {
 
@@ -79,7 +80,7 @@ public class Data implements Parcelable {
         this.lastLogin = ((String) in.readValue((String.class.getClassLoader())));
         this.createdAt = ((String) in.readValue((String.class.getClassLoader())));
         this.updatedAt = ((String) in.readValue((String.class.getClassLoader())));
-        this.balance = ((Float) in.readValue((Integer.class.getClassLoader())));
+        this.balance = ((Balance) in.readValue((Integer.class.getClassLoader())));
     }
 
     /**
@@ -101,7 +102,7 @@ public class Data implements Parcelable {
      * @param balance
      */
     public Data(Integer id, String uuid, Integer serviceId, Integer mysabayUserId,
-                String serviceUserId, Integer status, String lastLogin, String createdAt, String updatedAt, Float balance) {
+                String serviceUserId, Integer status, String lastLogin, String createdAt, String updatedAt, Balance balance) {
         super();
         this.id = id;
         this.uuid = uuid;
@@ -145,7 +146,7 @@ public class Data implements Parcelable {
         return this;
     }
 
-    public Data withBalance(Float balance) {
+    public Data withBalance(Balance balance) {
         this.balance = balance;
         return this;
     }
@@ -205,7 +206,11 @@ public class Data implements Parcelable {
     }
 
     public String toSabayCoin() {
-        return  balance + " SC";
+        return (String.format("%,.2f", balance.coin)) + " SC";
+    }
+
+    public String toSabayGold() {
+        return (String.format("%,.2f", balance.gold)) + " SG";
     }
 
 }

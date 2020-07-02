@@ -8,8 +8,7 @@
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp"
         app:strokeColor="@color/colorYellow"
-        app:strokeWidth="1dp"
-        android:layout_margin="@dimen/padding_5">
+        app:strokeWidth="1dp">
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/view_bank_item"
@@ -47,16 +46,28 @@
                 app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"
                 app:textAllCaps="true" />
 
-            <android.support.v7.widget.AppCompatImageView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/img_right"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/padding_15"
+                android:text="5 Diamonds"
                 app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
                 app:layout_constraintEnd_toEndOf="parent"
                 android:tint="@color/colorYellow"
                 app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"
-                app:srcCompat="@drawable/ic_chevron_right" />
+                />
+
+<!--            <android.support.v7.widget.AppCompatImageView-->
+<!--                android:id="@+id/img_right"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginEnd="@dimen/padding_15"-->
+<!--                app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"-->
+<!--                app:layout_constraintEnd_toEndOf="parent"-->
+<!--                android:tint="@color/colorYellow"-->
+<!--                app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"-->
+<!--                app:srcCompat="@drawable/ic_chevron_right" />-->
         </android.support.constraint.ConstraintLayout>
     </android.support.design.card.MaterialCardView>
 

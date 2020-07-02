@@ -79,15 +79,15 @@ public class UserApiVM extends ViewModel {
         return _responseLogin;
     }
 
-    public void postToLogin(Context context, String appSecret, String phone) {
+    public void postToLogin(Context context, String appSecret, String phone, String dialCode) {
         _login.setValue(phone);
-        this.userRepo.getUserLogin(appSecret, phone).subscribeOn(appRxSchedulers.io())
+        this.userRepo.getUserLogin(appSecret, dialCode + phone ).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread())
                 .subscribe(new AbstractDisposableObs<LoginItem>(context, _networkState, null) {
                     @Override
                     protected void onSuccess(LoginItem item) {
                         if (item.status == 200) {
-                            item.data.withPhone(phone);
+                            item.data.withPhone(dialCode + phone);
                             item.data.withAppSecret(appSecret);
                             _responseLogin.setValue(item);
 
@@ -138,6 +138,7 @@ public class UserApiVM extends ViewModel {
             _networkState.setValue(new NetworkState(NetworkState.Status.ERROR, "Something went wrong, please login again"));
             return;
         }
+        LogUtil.info("Phone Number", item.data.phone);
         mCompositeDisposable.add(this.userRepo.postVerifyCode(item.data.appSecret, item.data.phone, code).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(response -> {
                     if (response.status == 200) {
@@ -162,7 +163,7 @@ public class UserApiVM extends ViewModel {
 
                 }, throwable -> {
                     EventBus.getDefault().post(new SubscribeLogin("", throwable));
-                    LogUtil.error(TAG, throwable.getLocalizedMessage());
+                    LogUtil.error("verify code response with status", throwable.getLocalizedMessage());
                 }));
     }
 
