@@ -37,6 +37,9 @@ public class AppItem implements Parcelable {
     @SerializedName("mysabay_user_id")
     @Expose
     public Integer mysabayUserId;
+    @SerializedName("enable_local_pay")
+    @Expose
+    public Boolean enableLocalPay;
 
     public AppItem(String appSecret, String token, String refreshToken, String uuid, long expire) {
         this.appSecret = appSecret;
@@ -61,6 +64,7 @@ public class AppItem implements Parcelable {
         uuid = in.readString();
         expire = in.readLong();
         mysabayUserId = in.readInt();
+        enableLocalPay = in.readBoolean();
     }
 
     public static final Creator<AppItem> CREATOR = new Creator<AppItem>() {
@@ -105,6 +109,11 @@ public class AppItem implements Parcelable {
         return this;
     }
 
+    public AppItem withEnableLocaPay(Boolean enableLocalPay) {
+        this.enableLocalPay = enableLocalPay;
+        return this;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -118,5 +127,6 @@ public class AppItem implements Parcelable {
         dest.writeString(uuid);
         dest.writeLong(expire);
         dest.writeValue(mysabayUserId);
+        dest.writeValue(enableLocalPay);
     }
 }

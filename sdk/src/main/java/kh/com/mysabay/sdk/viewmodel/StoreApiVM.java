@@ -141,9 +141,9 @@ public class StoreApiVM extends ViewModel {
      *
      * @param context
      */
-    public void getMySabayCheckout(@NotNull Context context) {
+    public void getMySabayCheckout(@NotNull Context context, String packageCode) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-        storeRepo.getMySabayCheckout(sdkConfiguration.appSecret, appItem.token, appItem.uuid).subscribeOn(appRxSchedulers.io())
+        storeRepo.getMySabayCheckout(sdkConfiguration.appSecret, appItem.token, packageCode).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new Observer<MySabayItem>() {
             @Override
             public void onSubscribe(Disposable d) {

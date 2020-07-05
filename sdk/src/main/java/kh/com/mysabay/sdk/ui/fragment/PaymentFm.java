@@ -101,7 +101,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id),item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
-        viewModel.getMySabayCheckout(v.getContext());
+        viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);
         if (!BillingProcessor.isIabServiceAvailable(v.getContext()))
             MessageUtil.displayDialog(v.getContext(), getString(R.string.upgrade_google_play));
 
@@ -117,11 +117,11 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         viewModel.getItemSelected().observe(this, data -> {
             if (data != null) {
-                mViewBinding.tvPoint.setText(data.name);
+                mViewBinding.tvPoint.setText(data.packageName);
                 mViewBinding.tvPrice.setText(data.toUSDPrice());
                 mViewBinding.tvTotal.setText(data.toUSDPrice());
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
-                mViewBinding.btnLabel.setText(data.label);
+                mViewBinding.btnLabel.setText(data.packageLabel);
             }
         });
 

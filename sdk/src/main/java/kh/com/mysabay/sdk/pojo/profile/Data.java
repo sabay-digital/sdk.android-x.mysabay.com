@@ -48,6 +48,9 @@ public class Data implements Parcelable {
     @SerializedName("balance")
     @Expose
     public Balance balance;
+    @SerializedName("enable_local_pay")
+    @Expose
+    public Boolean enableLocalPay;
 
 
     public final static Creator<Data> CREATOR = new Creator<Data>() {
@@ -81,6 +84,7 @@ public class Data implements Parcelable {
         this.createdAt = ((String) in.readValue((String.class.getClassLoader())));
         this.updatedAt = ((String) in.readValue((String.class.getClassLoader())));
         this.balance = ((Balance) in.readValue((Integer.class.getClassLoader())));
+        this.enableLocalPay = ((Boolean) in.readValue((Integer.class.getClassLoader())));
     }
 
     /**
@@ -101,8 +105,8 @@ public class Data implements Parcelable {
      * @param updatedAt
      * @param balance
      */
-    public Data(Integer id, String uuid, Integer serviceId, Integer mysabayUserId,
-                String serviceUserId, Integer status, String lastLogin, String createdAt, String updatedAt, Balance balance) {
+    public Data(Integer id, String uuid, Integer serviceId, Integer mysabayUserId, String serviceUserId,
+                Integer status, String lastLogin, String createdAt, String updatedAt, Balance balance, Boolean enableLocalPay) {
         super();
         this.id = id;
         this.uuid = uuid;
@@ -114,6 +118,7 @@ public class Data implements Parcelable {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.balance =balance;
+        this.enableLocalPay = enableLocalPay;
     }
 
     public Data withId(Integer id) {
@@ -166,14 +171,20 @@ public class Data implements Parcelable {
         return this;
     }
 
+    public Data withEnableLocalPay(Boolean enableLocalPay ) {
+        this.enableLocalPay = enableLocalPay;
+        return this;
+    }
+
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("id", id).append("uuid", uuid).append("serviceId", serviceId).append("mysabayUserId", mysabayUserId).append("serviceUserId", serviceUserId).append("status", status).append("lastLogin", lastLogin).append("createdAt", createdAt).append("updatedAt", updatedAt).append("balance", balance).toString();
+        return new ToStringBuilder(this).append("id", id).append("uuid", uuid).append("serviceId", serviceId).append("mysabayUserId", mysabayUserId).append("serviceUserId", serviceUserId).append("status", status).append("lastLogin", lastLogin).append("createdAt", createdAt).append("updatedAt", updatedAt).append("balance", balance).append("enableLocalPay", enableLocalPay).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(mysabayUserId).append(lastLogin).append(createdAt).append(serviceUserId).append(id).append(serviceId).append(uuid).append(status).append(updatedAt).append(balance).toHashCode();
+        return new HashCodeBuilder().append(mysabayUserId).append(lastLogin).append(createdAt).append(serviceUserId).append(id).append(serviceId).append(uuid).append(status).append(updatedAt).append(balance).append(enableLocalPay).toHashCode();
     }
 
     @Override
@@ -185,7 +196,7 @@ public class Data implements Parcelable {
             return false;
         }
         Data rhs = ((Data) other);
-        return new EqualsBuilder().append(mysabayUserId, rhs.mysabayUserId).append(lastLogin, rhs.lastLogin).append(createdAt, rhs.createdAt).append(serviceUserId, rhs.serviceUserId).append(id, rhs.id).append(serviceId, rhs.serviceId).append(uuid, rhs.uuid).append(status, rhs.status).append(updatedAt, rhs.updatedAt).append(balance, rhs.balance).isEquals();
+        return new EqualsBuilder().append(mysabayUserId, rhs.mysabayUserId).append(lastLogin, rhs.lastLogin).append(createdAt, rhs.createdAt).append(serviceUserId, rhs.serviceUserId).append(id, rhs.id).append(serviceId, rhs.serviceId).append(uuid, rhs.uuid).append(status, rhs.status).append(updatedAt, rhs.updatedAt).append(balance, rhs.balance).append(enableLocalPay, rhs.enableLocalPay).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
@@ -199,6 +210,7 @@ public class Data implements Parcelable {
         dest.writeValue(createdAt);
         dest.writeValue(updatedAt);
         dest.writeValue(balance);
+        dest.writeValue(enableLocalPay);
     }
 
     public int describeContents() {
