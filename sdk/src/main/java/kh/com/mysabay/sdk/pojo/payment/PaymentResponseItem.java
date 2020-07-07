@@ -21,9 +21,24 @@ public class PaymentResponseItem implements Parcelable {
     @SerializedName("status")
     @Expose
     public Integer status;
-    @SerializedName("data")
+    @SerializedName("hash")
     @Expose
-    public Data data;
+    public String hash;
+    @SerializedName("message")
+    @Expose
+    public String message;
+    @SerializedName("amount")
+    @Expose
+    public String amount;
+    @SerializedName("psp_asset_code")
+    @Expose
+    public String pspAssetCode;
+    @SerializedName("package_id")
+    @Expose
+    public String packageId;
+    @SerializedName("bonus")
+    @Expose
+    public String bonus;
     public final static Parcelable.Creator<PaymentResponseItem> CREATOR = new Creator<PaymentResponseItem>() {
 
 
@@ -43,7 +58,12 @@ public class PaymentResponseItem implements Parcelable {
 
     protected PaymentResponseItem(@NotNull Parcel in) {
         this.status = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.data = ((Data) in.readValue((Data.class.getClassLoader())));
+        this.hash = ((String) in.readValue((String.class.getClassLoader())));
+        this.message = ((String) in.readValue((String.class.getClassLoader())));
+        this.amount = ((String) in.readValue((String.class.getClassLoader())));
+        this.pspAssetCode = ((String) in.readValue((String.class.getClassLoader())));
+        this.packageId = ((String) in.readValue((String.class.getClassLoader())));
+        this.bonus = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     /**
@@ -53,13 +73,25 @@ public class PaymentResponseItem implements Parcelable {
     }
 
     /**
+     *
      * @param status
      * @param data
+     * @param hash
+     * @param message
+     * @param amount
+     * @param pspAssetCode
+     * @param packageId
+     * @param bonus
      */
-    public PaymentResponseItem(Integer status, Data data) {
+    public PaymentResponseItem(Integer status, Data data, String hash, String message, String amount, String pspAssetCode, String packageId, String bonus) {
         super();
         this.status = status;
-        this.data = data;
+        this.hash = hash;
+        this.message = message;
+        this.amount = amount;
+        this.pspAssetCode = pspAssetCode;
+        this.packageId = packageId;
+        this.bonus = bonus;
     }
 
     public PaymentResponseItem withStatus(Integer status) {
@@ -67,19 +99,44 @@ public class PaymentResponseItem implements Parcelable {
         return this;
     }
 
-    public PaymentResponseItem withData(Data data) {
-        this.data = data;
+    public PaymentResponseItem withHash(String hash) {
+        this.hash = hash;
+        return this;
+    }
+
+    public PaymentResponseItem withMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public PaymentResponseItem withAmount(String amount) {
+        this.amount = amount;
+        return this;
+    }
+
+    public PaymentResponseItem withPspAssetCode(String pspAssetCode) {
+        this.pspAssetCode = pspAssetCode;
+        return this;
+    }
+
+    public PaymentResponseItem withPackageId(String packageId) {
+        this.packageId = packageId;
+        return this;
+    }
+
+    public PaymentResponseItem withBonus(String bonus) {
+        this.bonus = bonus;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("status", status).append("data", data).toString();
+        return new ToStringBuilder(this).append("status", status).append("hash", hash).append("message", message).append("amount", amount).append("pspAssetCode", pspAssetCode).append("packageId", packageId).append("bonus", bonus).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(data).append(status).toHashCode();
+        return new HashCodeBuilder().append(status).append(amount).append(pspAssetCode).append(message).append(hash).append(packageId).append(bonus).toHashCode();
     }
 
     @Override
@@ -91,12 +148,17 @@ public class PaymentResponseItem implements Parcelable {
             return false;
         }
         PaymentResponseItem rhs = ((PaymentResponseItem) other);
-        return new EqualsBuilder().append(data, rhs.data).append(status, rhs.status).isEquals();
+        return new EqualsBuilder().append(status, rhs.status).append(amount, rhs.amount).append(pspAssetCode, rhs.pspAssetCode).append(message, rhs.message).append(hash, rhs.hash).append(packageId, rhs.packageId).append(bonus, rhs.bonus).isEquals();
     }
 
     public void writeToParcel(@NotNull Parcel dest, int flags) {
         dest.writeValue(status);
-        dest.writeValue(data);
+        dest.writeValue(hash);
+        dest.writeValue(message);
+        dest.writeValue(amount);
+        dest.writeValue(pspAssetCode);
+        dest.writeValue(packageId);
+        dest.writeValue(bonus);
     }
 
     public int describeContents() {

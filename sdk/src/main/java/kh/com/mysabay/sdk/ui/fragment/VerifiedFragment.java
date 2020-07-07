@@ -97,7 +97,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
     public void assignValues() {
         viewModel.getResponseLogin().observe(this, item -> {
             if (item != null && item.data.verifyCode > 0)
-                MessageUtil.displayDialog(getContext(), String.valueOf(item.data.verifyCode));
+                MessageUtil.displayDialog(getContext(), String.valueOf(item.data.verifyCode), colorCodeBackground());
 //                mViewBinding.edtVerifyCode.setText(String.valueOf(item.data.verifyCode));
         });
     }

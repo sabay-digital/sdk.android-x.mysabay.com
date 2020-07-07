@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import kh.com.mysabay.sdk.R;
+import kh.com.mysabay.sdk.callback.ShopListener;
 import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.ui.holder.ShopItmVH;
 
@@ -22,16 +23,18 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopItmVH> {
 
     private Context context;
     private LinkedList<Data> shopItems;
+    private ShopListener mListener;
 
-    public ShopAdapter(Context context) {
+    public ShopAdapter(Context context, ShopListener listener) {
         this.context = context;
+        this.mListener = listener;
         this.shopItems = new LinkedList<>();
     }
 
     @NonNull
     @Override
     public ShopItmVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ShopItmVH(LayoutInflater.from(context).inflate(R.layout.partial_shop_item, parent, false));
+        return new ShopItmVH(LayoutInflater.from(context).inflate(R.layout.partial_shop_item, parent, false), mListener);
     }
 
     @Override

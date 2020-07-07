@@ -24,7 +24,7 @@ public class SampleApp extends Application {
                 "9c85c50a4362f687cd4507771ba81db5cf50eaa0b3008f4f943f77ba3ac6386b", //MySabay App Secret
                 "", // license key
                 "") // merchant id
-                .setSdkTheme(SdkTheme.Light)
+                .setSdkTheme(SdkTheme.Dark)
                 .setToUseSandBox(true).build();
         MySabaySDK.Impl.setDefaultInstanceConfiguration(this, configuration);
     }

@@ -10,7 +10,7 @@ import java.util.List;
 
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.callback.OnRcvItemClick;
-import kh.com.mysabay.sdk.pojo.thirdParty.Data;
+import kh.com.mysabay.sdk.pojo.mysabay.Data;
 import kh.com.mysabay.sdk.ui.holder.BankProviderVH;
 
 /**
@@ -40,8 +40,9 @@ public class BankProviderAdapter extends RecyclerView.Adapter<BankProviderVH> {
     @Override
     public void onBindViewHolder(@NonNull BankProviderVH holder, int position) {
         Data item = dataList.get(position);
-        holder.setBankName(item.serviceName);
+        holder.setBankName(item.pspName);
         holder.showBankIcon(mContext, item.logo);
+        holder.setBonus(item.label);
         holder.view.viewBankItem.setOnClickListener(v -> {
             if (mListener != null) mListener.onItemClick(item);
         });

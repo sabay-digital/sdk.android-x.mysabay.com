@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kh.com.mysabay.sdk.BuildConfig;
@@ -98,10 +99,11 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         mViewBinding.viewMainPayment.setBackgroundResource(colorCodeBackground());
         mViewBinding.materialCardView.setBackgroundResource(colorCodeBackground());
         mViewBinding.btnPay.setTextColor(textColorCode());
+        mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
         mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id),item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
-        viewModel.getMySabayCheckout(v.getContext());
+        viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);
         if (!BillingProcessor.isIabServiceAvailable(v.getContext()))
             MessageUtil.displayDialog(v.getContext(), getString(R.string.upgrade_google_play));
 
@@ -115,13 +117,14 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
     public void assignValues() {
         viewModel.getNetworkState().observe(this, this::showProgressState);
 
+        mViewBinding.btnPay.setEnabled(false);
+        mViewBinding.btnPay.setBackgroundResource(R.color.secondary);
         viewModel.getItemSelected().observe(this, data -> {
             if (data != null) {
                 mViewBinding.tvPoint.setText(data.name);
                 mViewBinding.tvPrice.setText(data.toUSDPrice());
                 mViewBinding.tvTotal.setText(data.toUSDPrice());
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
-                mViewBinding.btnLabel.setText(data.label);
             }
         });
 
@@ -155,31 +158,31 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         viewModel.getMySabayProvider().observe(this, mySabayItem -> {
             if (mySabayItem.status == 200) {
                 if (mySabayItem.data.size() > 0) {
-                    mViewBinding.rdbMySabay.setVisibility(View.VISIBLE);
+                    for (kh.com.mysabay.sdk.pojo.mysabay.Data item : mySabayItem.data) {
+                        if (item.paymentType.equals("pre-authorized")) {
+                            mViewBinding.btnLabel.setText(item.label);
+                        }
+                    }
                     mViewBinding.btnMysabay.setVisibility(View.VISIBLE);
                 }
                 else {
-                    mViewBinding.rdbMySabay.setVisibility(View.GONE);
                     mViewBinding.btnMysabay.setVisibility(View.GONE);
                 }
             } else {
-                mViewBinding.rdbMySabay.setVisibility(View.GONE);
                 mViewBinding.btnMysabay.setVisibility(View.GONE);
             }
         });
 
-        viewModel.getThirdPartyProviders().observe(this, thirdPartyItem -> {
-            if (thirdPartyItem != null && thirdPartyItem.status == 200) {
-                if (thirdPartyItem.data.size() > 0)
-                    showBankProviders(getContext(), thirdPartyItem.data);
-            }
+        viewModel.getThirdPartyProviders().observe(this, data -> {
+            if (data.size() > 0)
+                showBankProviders(getContext(), data);
         });
 
         kh.com.mysabay.sdk.pojo.thirdParty.Data paidMethod = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.thirdParty.Data.class);
         if (paidMethod != null) {
-            mViewBinding.rdbPreAuthPay.setText(paidMethod.serviceName);
-            mViewBinding.rdbPreAuthPay.setVisibility(paidMethod.isPaidWith ? View.VISIBLE : View.GONE);
-            mViewBinding.rdbPreAuthPay.setChecked(paidMethod.isPaidWith);
+            mViewBinding.btnPreAuthPay.setText(paidMethod.serviceName);
+            mViewBinding.btnPreAuthPay.setVisibility(paidMethod.isPaidWith ? View.VISIBLE : View.GONE);
+//            mViewBinding.rdbPreAuthPay.setChecked(paidMethod.isPaidWith);
         }
     }
 
@@ -205,6 +208,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
+            mViewBinding.btnPay.setBackgroundResource(R.color.colorYellow);
             mViewBinding.btnInAppPurchase.setTextColor(textColorCode());
             mViewBinding.btnInAppPurchase.setBackgroundResource(R.drawable.shape_button_primary);
             mViewBinding.tvMySabay.setTextColor(0xFFE3B852);
@@ -213,13 +217,14 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
+            mViewBinding.btnLabel.setTextColor(0xFF828181);
 
         });
 
         mViewBinding.btnMysabay.setOnClickListener(v -> {
             checkedId[0] = v.getId();
             Data data = viewModel.getItemSelected().getValue();
-            mViewBinding.tvTotal.setText(data.toSabayCoin());
+            mViewBinding.tvTotal.setText(data.toRoundSabayCoin());
             mViewBinding.tvMySabay.setTextColor(textColorCode());
             mViewBinding.btnMysabay.setBackgroundResource(R.drawable.shape_button_primary);
             mViewBinding.btnInAppPurchase.setTextColor(0xFFE3B852);
@@ -227,14 +232,16 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnThirdBankProvider.setTextColor(0xFFE3B852);
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
-            mViewBinding.btnLabel.setTextColor(0xFFAAAAAA);
+            mViewBinding.btnLabel.setTextColor(textColorCode());
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
             if (data.priceInSc > balanceCoin) {
-                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toSabayCoin()));
+                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toRoundSabayCoin()));
                 mViewBinding.btnPay.setEnabled(false);
+                mViewBinding.btnPay.setBackgroundResource(R.color.secondary);
             } else {
-                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toSabayCoin()));
+                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toRoundSabayCoin()));
                 mViewBinding.btnPay.setEnabled(true);
+                mViewBinding.btnPay.setBackgroundResource(R.color.colorYellow);
             }
         });
 
@@ -244,6 +251,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
+            mViewBinding.btnPay.setBackgroundResource(R.color.colorYellow);
             mViewBinding.btnPreAuthPay.setTextColor(textColorCode());
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.shape_button_primary);
             mViewBinding.tvMySabay.setTextColor(0xFFE3B852);
@@ -252,6 +260,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnInAppPurchase.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnThirdBankProvider.setTextColor(0xFFE3B852);
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
+            mViewBinding.btnLabel.setTextColor(0xFF828181);
         });
 
         mViewBinding.btnThirdBankProvider.setOnClickListener(v -> {
@@ -260,6 +269,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
+            mViewBinding.btnPay.setBackgroundResource(R.color.colorYellow);
             mViewBinding.btnThirdBankProvider.setTextColor(textColorCode());
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.shape_button_primary);
             mViewBinding.tvMySabay.setTextColor(0xFFE3B852);
@@ -268,6 +278,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnInAppPurchase.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
+            viewModel.get3PartyCheckout(v.getContext());
+            mViewBinding.btnLabel.setTextColor(0xFF828181);
         });
 
         mViewBinding.btnPay.setOnClickListener(v -> {
@@ -289,13 +301,13 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
                 MessageUtil.displayDialog(v.getContext(), getString(R.string.payment_confirmation),
                         String.format(getString(R.string.are_you_pay_with_my_sabay_provider), data.priceInSc.toString()), getString(R.string.cancel),
-                        getString(R.string.confirm), null,
+                        getString(R.string.confirm), colorCodeBackground(), null,
                         (dialog, which) -> viewModel.postToPaidWithMySabayProvider(v.getContext()));
 
             } else if (checkedId[0] == R.id.btn_third_bank_provider) {
                 viewModel.get3PartyCheckout(v.getContext());
             } else if (checkedId[0] == R.id.btn_pre_auth_pay) {
-                kh.com.mysabay.sdk.pojo.thirdParty.Data paidItem = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.thirdParty.Data.class);
+                kh.com.mysabay.sdk.pojo.mysabay.Data paidItem = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.mysabay.Data.class);
                 if (paidItem != null)
                     viewModel.postToPaidWithBank((StoreActivity) getActivity(), paidItem);
             } else
@@ -413,6 +425,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             e.printStackTrace();
         }
 
+
     }
 
     @Override
@@ -427,7 +440,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         super.onDestroy();
     }
 
-    private void showBankProviders(Context context, List<kh.com.mysabay.sdk.pojo.thirdParty.Data> data) {
+    private void showBankProviders(Context context, List<kh.com.mysabay.sdk.pojo.mysabay.Data> data) {
         if (dialogBank != null) {
             dialogBank.dismiss();
         }
@@ -435,10 +448,10 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         view.viewPaymentProvider.setBackgroundResource(colorCodeBackground());
         RecyclerView rcv = view.bankRcv;
         BankProviderAdapter adapter = new BankProviderAdapter(context, data, item -> {
-            viewModel.postToPaidWithBank((StoreActivity) getActivity(), (kh.com.mysabay.sdk.pojo.thirdParty.Data) item);
+            viewModel.postToPaidWithBank((StoreActivity) getActivity(), (kh.com.mysabay.sdk.pojo.mysabay.Data) item);
             if (dialogBank != null)
                 dialogBank.dismiss();
-            viewModel._thirdPartyItemMediatorLiveData.setValue(null);
+            viewModel._thirdPartyItemMediatorLiveData.setValue(new ArrayList<>());
             dialogBank = null;
         });
         rcv.setLayoutManager(new LinearLayoutManager(context));
@@ -454,7 +467,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                 .positiveText(R.string.label_close).onPositive((dialog, which) -> {
                     dialog.dismiss();
                     dialogBank = null;
-                    viewModel._thirdPartyItemMediatorLiveData.setValue(null);
+                    viewModel._thirdPartyItemMediatorLiveData.setValue(new ArrayList<>());
 
                 }).build();
         dialogBank.show();

@@ -31,13 +31,13 @@ public interface UserApi {
     Observable<VerifiedItem> postVerifyCode(@Header("app_secret") String appSecret,
                                             @Field("phone") String phone, @Field("verify_code") int verifyCode);
     @FormUrlEncoded
-    @POST("api/v1.4/user/refresh/token")
+    @POST("api/v1.5/user/refresh/token")
     Observable<RefreshTokenItem> postRefreshToken(@Header("app_secret") String appSecret, @Field("refresh_token") String refreshToken);
 
     @Headers({
             "Accept: */*"
     })
-    @POST("api/v1.4/user/mysabay/login")
+    @POST("api/v1.5/user/mysabay/login")
     Observable<String> postLoginWithMySabay(@Header("app_secret") String appSecret);
 
     @GET("api/v1.5/user/profile")
@@ -47,7 +47,7 @@ public interface UserApi {
     @HTTP(method = "DELETE", path = "api/v1.4/user/logout", hasBody = true)
     Observable<LogoutResponseItem> logout(@Header("app_secret") String appSecret, @Field("refresh_token") String refreshToken, @Query("all") String all);
 
-    @GET("api/v1.4/user/verify/token")
+    @GET("api/v1.5/user/verify/token")
     Observable<TokenVerify> getVerifyToken(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
 }

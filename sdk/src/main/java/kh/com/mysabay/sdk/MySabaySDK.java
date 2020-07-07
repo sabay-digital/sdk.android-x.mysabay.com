@@ -212,6 +212,7 @@ public class MySabaySDK {
                     if (userProfileItem.status == 200) {
                         item.withUuid(userProfileItem.data.uuid);
                         item.withMySabayUserId(userProfileItem.data.mysabayUserId);
+                        item.withEnableLocaPay(userProfileItem.data.enableLocalPay);
                         MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
                         listener.userInfo(gson.toJson(userProfileItem));
                     } else

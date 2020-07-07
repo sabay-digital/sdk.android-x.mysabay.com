@@ -223,19 +223,19 @@ public abstract class BaseFragment<D extends ViewDataBinding, V extends ViewMode
 
     public int textColorCode() {
         int colorCode;
-        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Dark) {
-            colorCode = 0xFF000000;
-        } else
+        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light) {
             colorCode = 0xFFFFFFFF;
+        } else
+            colorCode = 0xFF000000;
         return colorCode;
     }
 
     public int colorCodeBackground() {
         int colorCode;
-        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Dark) {
-            colorCode = R.color.colorBackground;
-        } else
+        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light) {
             colorCode = R.color.colorWhite;
+        } else
+            colorCode = R.color.colorBackground;
         return colorCode;
     }
 }

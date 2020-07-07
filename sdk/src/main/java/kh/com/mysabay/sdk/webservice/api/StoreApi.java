@@ -22,24 +22,28 @@ import retrofit2.http.Query;
  */
 public interface StoreApi {
 
-    @GET("api/v1.6/store")
+    @GET("api/v1.7/store")
     Observable<ShopItem> getShopItem(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
-    @GET("api/v1.6/checkout")
-    Observable<MySabayItem> getMySabayCheckout(@Header("app_secret") String appSecret, @Header("Authorization") String token, @Query("uuid") String uuid);
+    @GET("api/v1.7/checkout")
+    Observable<MySabayItem> getMySabayCheckout(@Header("app_secret") String appSecret, @Header("Authorization") String token, @Query("package_code") String packageCode);
 
-    @GET("api/v1.6/cashier")
+
+//    @GET("api/v1.7/checkout")
+//    Observable<MySabayItem> getMySabayCheckout(@Header("app_secret") String appSecret, @Header("Authorization") String token, @Query("uuid") String uuid);
+
+    @GET("api/v1.7/cashier")
     Observable<ThirdPartyItem> get3PartyCheckout(@Header("app_secret") String appSecret, @Header("Authorization") String token, @Query("uuid") String uuid);
 
-    @POST("api/v1.6/verify_receipt/google")
+    @POST("api/v1.7/verify_receipt/google")
     Observable<GoogleVerifyResponse> postToVerifyGoogle(@Header("app_secret") String appSecret, @Header("Authorization") String token,
                                                         @Body() GoogleVerifyBody body);
 
-    @POST("api/v1.6/charge/auth")
+    @POST("api/v1.7/charge/auth")
     Observable<PaymentResponseItem> postToPaid(@Header("app_secret") String appSecret, @Header("Authorization") String token,
                                                @Body() PaymentBody body);
 
-    @POST("api/v1.6/charge/onetime")
+    @POST("api/v1.7/charge/onetime")
     Observable<ResponseItem> postToChargeOneTime(@Header("app_secret") String appSecret, @Header("Authorization") String token,
                                                  @Body() PaymentBody body);
 

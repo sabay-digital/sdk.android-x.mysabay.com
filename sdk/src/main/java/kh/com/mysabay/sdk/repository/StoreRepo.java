@@ -33,9 +33,14 @@ public class StoreRepo implements StoreApi {
         return storeApi.getShopItem(appSecret, "Bearer " + token);
     }
 
+//    @Override
+//    public Observable<MySabayItem> getMySabayCheckout(String appSecret, String token, String uuid) {
+//        return this.storeApi.getMySabayCheckout(appSecret, "Bearer " + token, uuid);
+//    }
+
     @Override
-    public Observable<MySabayItem> getMySabayCheckout(String appSecret, String token, String uuid) {
-        return this.storeApi.getMySabayCheckout(appSecret, "Bearer " + token, uuid);
+    public Observable<MySabayItem> getMySabayCheckout(String appSecret, String token, String packageCode) {
+        return this.storeApi.getMySabayCheckout(appSecret, "Bearer " + token, packageCode);
     }
 
     @Override
