@@ -107,8 +107,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                kh.com.mysabay.sdk.pojo.thirdParty.Data data = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.thirdParty.Data.class);
-                                data.withIsPaidWith(true);
+                                LogUtil.debug(TAG, "payment completed");
                             }
                         });
                         LogUtil.debug(TAG, "payment success");

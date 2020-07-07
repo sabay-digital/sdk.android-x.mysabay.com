@@ -1,5 +1,6 @@
 package kh.com.mysabay.sdk.viewmodel;
 
+import android.app.Activity;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.ViewModel;
@@ -186,6 +187,7 @@ public class StoreApiVM extends ViewModel {
     public void postToVerifyAppInPurchase(@NotNull Context context, @NotNull GoogleVerifyBody body) {
         EventBus.getDefault().post(new SubscribePayment(Globals.APP_IN_PURCHASE, body.receipt));
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        ((Activity) context).finish();
         mCompos.add(storeRepo.postToVerifyGoogle(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new Consumer<GoogleVerifyResponse>() {
                     @Override
@@ -227,6 +229,7 @@ public class StoreApiVM extends ViewModel {
                         @Override
                         protected void onSuccess(PaymentResponseItem item) {
                             EventBus.getDefault().post(new SubscribePayment(Globals.MY_SABAY, item));
+                            ((Activity) context).finish();
                         }
 
                         @Override

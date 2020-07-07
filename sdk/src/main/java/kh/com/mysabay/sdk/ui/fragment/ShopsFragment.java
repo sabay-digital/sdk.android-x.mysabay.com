@@ -76,6 +76,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
     public void initializeObjects(@NotNull View v, Bundle args) {
         mViewBinding.viewMainShop.setBackgroundResource(colorCodeBackground());
         mViewBinding.rcv.setBackgroundResource(colorCodeBackground());
+        mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
 
         bp = new BillingProcessor(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().licenseKey, MySabaySDK.getInstance().getSdkConfiguration().merchantId, this);
         bp.initialize();
@@ -83,6 +84,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
             if (bp.isOneTimePurchaseSupported() && (item != null)) {
             if (!BuildConfig.DEBUG)
                 PURCHASE_ID = item.packageId;
+
                 boolean isPurchase = bp.purchase(getActivity(), PURCHASE_ID);
                 boolean isConsumePurchase = bp.consumePurchase(PURCHASE_ID);
                 LogUtil.info(TAG, "purchase =" + isPurchase + ", comsumePurcase = " + isConsumePurchase);

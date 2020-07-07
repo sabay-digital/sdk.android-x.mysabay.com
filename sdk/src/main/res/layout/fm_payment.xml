@@ -38,10 +38,11 @@
                 app:cardCornerRadius="0dp"
                 app:cardElevation="0dp"
                 android:layout_marginStart="@dimen/padding_20"
+
                 app:layout_constraintEnd_toStartOf="@+id/guideline6"
                 app:layout_constraintStart_toEndOf="@+id/btn_back"
                 app:layout_constraintTop_toBottomOf="@+id/btn_close"
-                app:strokeColor="@color/border"
+                app:strokeColor="@color/secondary"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -248,19 +249,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/tv_payment_option"
                 android:layout_marginStart="@dimen/padding_20"
                 android:layout_marginEnd="@dimen/padding_20">
-                <android.support.v7.widget.AppCompatButton
-                    android:id="@+id/btn_in_app_purchase"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Android In-app Purchas"
-                    android:textAllCaps="false"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:textAppearance="@style/MyAppearanceBody1"
-                    android:gravity="left|center_vertical"
-                    android:paddingLeft="@dimen/padding_20"
-                    android:background="@drawable/payment_button"
-                    android:textColor="@color/colorYellow"
-                    />
 
                 <LinearLayout
                     android:id="@+id/btn_mysabay"
@@ -268,8 +256,7 @@
                     android:layout_height="match_parent"
                     android:background="@drawable/payment_button"
                     style="?android:attr/borderlessButtonStyle"
-                    android:gravity="left|center_vertical"
-                    android:layout_marginTop="@dimen/padding_10">
+                    android:gravity="left|center_vertical">
                     <TextView
                         android:id="@+id/tv_my_sabay"
                         android:layout_width="wrap_content"
@@ -284,10 +271,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:paddingEnd="@dimen/padding_20"
+                        android:textSize="11sp"
                         android:gravity="right|center_vertical"
                         android:text="bonus"
                         android:textColor="@color/colorWhite700" />
                 </LinearLayout>
+
+                <android.support.v7.widget.AppCompatButton
+                    android:id="@+id/btn_in_app_purchase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Android In App Billing"
+                    android:textAllCaps="false"
+                    android:layout_marginTop="@dimen/padding_10"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:textAppearance="@style/MyAppearanceBody1"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="@dimen/padding_20"
+                    android:background="@drawable/payment_button"
+                    android:textColor="@color/colorYellow"
+                    />
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/btn_pre_auth_pay"

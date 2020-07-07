@@ -106,6 +106,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             }*/
             if (StringUtils.isAnyBlank(phoneNo)) {
                 showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
+            } else if (StringUtils.isAnyBlank(dialCode)) {
+               MessageUtil.displayToast(getContext(), R.string.msg_input_phone);
             } else {
                 if (phoneNo.length() == 1) {
                     showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
