@@ -8,6 +8,7 @@
         app:cardBackgroundColor="@android:color/transparent"
         app:cardElevation="0dp"
         app:strokeColor="@color/colorYellow"
+        android:layout_marginBottom="@dimen/padding_10"
         app:strokeWidth="1dp">
 
         <android.support.constraint.ConstraintLayout
@@ -41,19 +42,20 @@
                 android:textColor="@color/colorYellow"
                 android:textAppearance="@style/MyAppearanceCaption"
                 app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
-                app:layout_constraintEnd_toStartOf="@+id/img_right"
+                app:layout_constraintEnd_toStartOf="@+id/tv_label"
                 app:layout_constraintStart_toEndOf="@+id/appCompatImageView2"
                 app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"
                 app:textAllCaps="true" />
 
             <android.support.v7.widget.AppCompatTextView
-                android:id="@+id/img_right"
+                android:id="@+id/tv_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="@dimen/padding_15"
-                android:text="5 Diamonds"
+                android:textSize="11sp"
                 app:layout_constraintBottom_toBottomOf="@+id/appCompatImageView2"
                 app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/secondary"
                 android:tint="@color/colorYellow"
                 app:layout_constraintTop_toTopOf="@+id/appCompatImageView2"
                 />

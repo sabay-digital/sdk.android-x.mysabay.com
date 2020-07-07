@@ -28,6 +28,7 @@ import com.google.gson.Gson;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import kh.com.mysabay.sdk.BuildConfig;
@@ -117,11 +118,11 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         viewModel.getItemSelected().observe(this, data -> {
             if (data != null) {
-                mViewBinding.tvPoint.setText(data.packageName);
+                mViewBinding.tvPoint.setText(data.name);
                 mViewBinding.tvPrice.setText(data.toUSDPrice());
                 mViewBinding.tvTotal.setText(data.toUSDPrice());
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
-                mViewBinding.btnLabel.setText(data.packageLabel);
+                mViewBinding.btnLabel.setText(data.label);
             }
         });
 
@@ -155,31 +156,33 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         viewModel.getMySabayProvider().observe(this, mySabayItem -> {
             if (mySabayItem.status == 200) {
                 if (mySabayItem.data.size() > 0) {
-                    mViewBinding.rdbMySabay.setVisibility(View.VISIBLE);
                     mViewBinding.btnMysabay.setVisibility(View.VISIBLE);
                 }
                 else {
-                    mViewBinding.rdbMySabay.setVisibility(View.GONE);
                     mViewBinding.btnMysabay.setVisibility(View.GONE);
                 }
             } else {
-                mViewBinding.rdbMySabay.setVisibility(View.GONE);
                 mViewBinding.btnMysabay.setVisibility(View.GONE);
             }
         });
 
-        viewModel.getThirdPartyProviders().observe(this, thirdPartyItem -> {
-            if (thirdPartyItem != null && thirdPartyItem.status == 200) {
-                if (thirdPartyItem.data.size() > 0)
-                    showBankProviders(getContext(), thirdPartyItem.data);
-            }
+//        viewModel.getThirdPartyProviders().observe(this, thirdPartyItem -> {
+//            if (thirdPartyItem != null && thirdPartyItem.status == 200) {
+//                if (thirdPartyItem.data.size() > 0)
+//                    showBankProviders(getContext(), thirdPartyItem.data);
+//            }
+//        });
+
+        viewModel.getThirdPartyProviders().observe(this, data -> {
+            if (data.size() > 0)
+                showBankProviders(getContext(), data);
         });
 
         kh.com.mysabay.sdk.pojo.thirdParty.Data paidMethod = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.thirdParty.Data.class);
         if (paidMethod != null) {
-            mViewBinding.rdbPreAuthPay.setText(paidMethod.serviceName);
-            mViewBinding.rdbPreAuthPay.setVisibility(paidMethod.isPaidWith ? View.VISIBLE : View.GONE);
-            mViewBinding.rdbPreAuthPay.setChecked(paidMethod.isPaidWith);
+            mViewBinding.btnPreAuthPay.setText(paidMethod.serviceName);
+            mViewBinding.btnPreAuthPay.setVisibility(paidMethod.isPaidWith ? View.VISIBLE : View.GONE);
+//            mViewBinding.rdbPreAuthPay.setChecked(paidMethod.isPaidWith);
         }
     }
 
@@ -227,7 +230,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnThirdBankProvider.setTextColor(0xFFE3B852);
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
-            mViewBinding.btnLabel.setTextColor(0xFFAAAAAA);
+            mViewBinding.btnLabel.setTextColor(0xFF828181);
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
             if (data.priceInSc > balanceCoin) {
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toSabayCoin()));
@@ -295,7 +298,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             } else if (checkedId[0] == R.id.btn_third_bank_provider) {
                 viewModel.get3PartyCheckout(v.getContext());
             } else if (checkedId[0] == R.id.btn_pre_auth_pay) {
-                kh.com.mysabay.sdk.pojo.thirdParty.Data paidItem = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.thirdParty.Data.class);
+                kh.com.mysabay.sdk.pojo.mysabay.Data paidItem = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.mysabay.Data.class);
                 if (paidItem != null)
                     viewModel.postToPaidWithBank((StoreActivity) getActivity(), paidItem);
             } else
@@ -413,6 +416,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             e.printStackTrace();
         }
 
+
     }
 
     @Override
@@ -427,7 +431,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         super.onDestroy();
     }
 
-    private void showBankProviders(Context context, List<kh.com.mysabay.sdk.pojo.thirdParty.Data> data) {
+    private void showBankProviders(Context context, List<kh.com.mysabay.sdk.pojo.mysabay.Data> data) {
         if (dialogBank != null) {
             dialogBank.dismiss();
         }
@@ -435,10 +439,10 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         view.viewPaymentProvider.setBackgroundResource(colorCodeBackground());
         RecyclerView rcv = view.bankRcv;
         BankProviderAdapter adapter = new BankProviderAdapter(context, data, item -> {
-            viewModel.postToPaidWithBank((StoreActivity) getActivity(), (kh.com.mysabay.sdk.pojo.thirdParty.Data) item);
+            viewModel.postToPaidWithBank((StoreActivity) getActivity(), (kh.com.mysabay.sdk.pojo.mysabay.Data) item);
             if (dialogBank != null)
                 dialogBank.dismiss();
-            viewModel._thirdPartyItemMediatorLiveData.setValue(null);
+            viewModel._thirdPartyItemMediatorLiveData.setValue(new ArrayList<>());
             dialogBank = null;
         });
         rcv.setLayoutManager(new LinearLayoutManager(context));
@@ -454,7 +458,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                 .positiveText(R.string.label_close).onPositive((dialog, which) -> {
                     dialog.dismiss();
                     dialogBank = null;
-                    viewModel._thirdPartyItemMediatorLiveData.setValue(null);
+                    viewModel._thirdPartyItemMediatorLiveData.setValue(new ArrayList<>());
 
                 }).build();
         dialogBank.show();

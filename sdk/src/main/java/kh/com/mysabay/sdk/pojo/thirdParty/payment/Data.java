@@ -33,7 +33,6 @@ public class Data implements Parcelable {
     public String redirect;
     public final static Creator<Data> CREATOR = new Creator<Data>() {
 
-
         @SuppressWarnings({
                 "unchecked"
         })

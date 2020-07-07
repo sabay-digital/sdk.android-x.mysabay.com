@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.text.Html;
 import android.view.View;
-
 import com.anjlab.android.iab.v3.BillingCommunicationException;
 import com.anjlab.android.iab.v3.BillingHistoryRecord;
 import com.anjlab.android.iab.v3.BillingProcessor;
@@ -20,19 +19,14 @@ import com.anjlab.android.iab.v3.PurchaseInfo;
 import com.anjlab.android.iab.v3.SkuDetails;
 import com.anjlab.android.iab.v3.TransactionDetails;
 import com.google.gson.Gson;
-
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
 import java.util.List;
-
 import kh.com.mysabay.sdk.BuildConfig;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.adapter.ShopAdapter;
 import kh.com.mysabay.sdk.base.BaseFragment;
-import kh.com.mysabay.sdk.callback.ShopListener;
 import kh.com.mysabay.sdk.databinding.FmShopBinding;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.googleVerify.DataBody;
@@ -41,7 +35,6 @@ import kh.com.mysabay.sdk.pojo.googleVerify.ReceiptBody;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
-import kh.com.mysabay.sdk.ui.holder.ShopItmVH;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.StoreApiVM;
@@ -50,7 +43,7 @@ import kh.com.mysabay.sdk.viewmodel.StoreApiVM;
  * Created by Tan Phirum on 3/13/20
  * Gmail phirumtan@gmail.com
  */
-public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> implements ShopListener, BillingProcessor.IBillingHandler {
+public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> implements BillingProcessor.IBillingHandler {
 
     public static final String TAG = ShopsFragment.class.getSimpleName();
 
@@ -83,16 +76,23 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
     public void initializeObjects(@NotNull View v, Bundle args) {
         mViewBinding.viewMainShop.setBackgroundResource(colorCodeBackground());
         mViewBinding.rcv.setBackgroundResource(colorCodeBackground());
-        ShopItmVH.bindListener(this);
 
-        mAdapter = new ShopAdapter(v.getContext());
+        bp = new BillingProcessor(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().licenseKey, MySabaySDK.getInstance().getSdkConfiguration().merchantId, this);
+        bp.initialize();
+        mAdapter = new ShopAdapter(v.getContext(), item -> {
+            if (bp.isOneTimePurchaseSupported() && (item != null)) {
+            if (!BuildConfig.DEBUG)
+                PURCHASE_ID = item.packageId;
+                boolean isPurchase = bp.purchase(getActivity(), PURCHASE_ID);
+                boolean isConsumePurchase = bp.consumePurchase(PURCHASE_ID);
+                LogUtil.info(TAG, "purchase =" + isPurchase + ", comsumePurcase = " + isConsumePurchase);
+            } else
+                MessageUtil.displayDialog(getContext(), "sorry your device not support in app purchase");
+        });
         mAdapter.setHasStableIds(true);
         mLayoutManager = new GridLayoutManager(v.getContext(), getResources().getInteger(R.integer.layout_size));
         mViewBinding.rcv.setLayoutManager(mLayoutManager);
         mViewBinding.rcv.setAdapter(mAdapter);
-
-        bp = new BillingProcessor(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().licenseKey, MySabaySDK.getInstance().getSdkConfiguration().merchantId, this);
-        bp.initialize();
 
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
@@ -107,7 +107,6 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
             mViewBinding.rcv.setLayoutManager(mLayoutManager);
             mAdapter.clear();
             for (Data ob : item.data) {
-//                if (StringUtils.equalsIgnoreCase(ob.p, Data.PLAY_STORE))
                     mAdapter.insert(ob);
             }
 
@@ -192,20 +191,6 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         ((StoreActivity) context).userComponent.inject(this);
         // Now you can access loginViewModel here and onCreateView too
         // (shared instance with the Activity and the other Fragment)
-    }
-
-    @Override
-    public void shopInfo(Data item) {
-        if (bp.isOneTimePurchaseSupported() && (item != null)) {
-//            if (!BuildConfig.DEBUG)
-                PURCHASE_ID = item.packageId;
-            boolean isPurchase = bp.purchase(getActivity(), PURCHASE_ID);
-            boolean isConsumePurchase = bp.consumePurchase(PURCHASE_ID);
-
-            LogUtil.info(TAG, "purchase =" + isPurchase + ", comsumePurcase = " + isConsumePurchase);
-        } else
-            MessageUtil.displayDialog(getContext(), "sorry your device not support in app purchase");
-
     }
 
     @Override

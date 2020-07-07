@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
                         } else if (data.getType().equals(Globals.MY_SABAY)) {
                             if (data.data instanceof PaymentResponseItem) {
                                 PaymentResponseItem dataPayment = (PaymentResponseItem) data.data;
-                                LogUtil.info("PackageId",  dataPayment.data.packageId);
+                                LogUtil.info("PackageId",  dataPayment.toString());
                             }
                             LogUtil.info(data.getType(), data.data.toString());
                             MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");

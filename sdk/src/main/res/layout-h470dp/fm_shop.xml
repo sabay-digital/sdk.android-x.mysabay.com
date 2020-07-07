@@ -35,10 +35,11 @@
             android:id="@+id/cd_sabayId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:cardBackgroundColor="@color/colorBackground"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_shop"
-            app:strokeColor="#DBDBDB"
+            app:strokeColor="@color/border"
             app:cardElevation="0dp"
             app:cardCornerRadius="0dp"
             app:strokeWidth="1dp">
@@ -78,7 +79,7 @@
                 android:id="@+id/img_wallet"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_account_balance_wallet"/>
+                android:src="@drawable/wallet"/>
             <TextView
                 android:id="@+id/tv_sabay_gold_balance"
                 android:layout_width="wrap_content"
@@ -86,6 +87,8 @@
                 android:paddingStart="@dimen/padding_10"
                 android:paddingEnd="@dimen/padding_5"
                 android:textColor="@color/secondary"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
@@ -103,6 +106,8 @@
                 android:paddingStart="@dimen/padding_5"
                 android:textColor="@color/secondary"
                 android:textStyle="bold"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
 

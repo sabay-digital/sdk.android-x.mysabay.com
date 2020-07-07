@@ -26,11 +26,12 @@ import kh.com.mysabay.sdk.utils.SdkTheme;
 public class ShopItmVH extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     public PartialShopItemBinding viewBinding;
-    private static ShopListener sListener;
+    private ShopListener mListener;
 
-    public ShopItmVH(@NonNull View itemView) {
+    public ShopItmVH(@NonNull View itemView, ShopListener sListener) {
         super(itemView);
         this.viewBinding = DataBindingUtil.bind(itemView);
+        this.mListener = sListener;
         if (this.viewBinding != null) {
             this.viewBinding.card.setBackgroundResource(MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Dark ?
                     R.color.colorBackground : R.color.colorWhite);
@@ -47,12 +48,10 @@ public class ShopItmVH extends RecyclerView.ViewHolder implements View.OnClickLi
                 if (item.enableLocalPay)
                     ((StoreActivity) v.getContext()).initAddFragment(PaymentFm.newInstance(viewBinding.getItem()), PaymentFm.TAG, true);
                 else
-                    sListener.shopInfo(viewBinding.getItem());
+                this.viewBinding.card.setOnClickListener(view -> {
+                    if (mListener != null) mListener.shopInfo(viewBinding.getItem());
+                });
             }
         }
-    }
-
-    public static void bindListener(ShopListener listener){
-        sListener = listener;
     }
 }

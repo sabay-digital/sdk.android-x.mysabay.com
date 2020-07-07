@@ -6,6 +6,7 @@
     <color name="colorYellow">#E3B852</color>
     <color name="colorPrimary">#E3B852</color>
     <color name="secondary">#AAAAAA</color>
+    <color name="border">#6F6F6F</color>
     <color name="colorPrimaryDark">#E3B852</color>
     <color name="colorAccent">#E3B852</color>
     <color name="colorYellow500">#FFC107</color>

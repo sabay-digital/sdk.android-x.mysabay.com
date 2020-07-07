@@ -22,18 +22,18 @@ public class Data implements Parcelable {
     @SerializedName("package_id")
     @Expose
     public String packageId;
-    @SerializedName("package_name")
+    @SerializedName("name")
     @Expose
-    public String packageName;
+    public String name;
     @SerializedName("price_in_usd")
     @Expose
     public Float priceInUsd;
     @SerializedName("price_in_sabay_coin")
     @Expose
     public Float priceInSc;
-    @SerializedName("package_label")
+    @SerializedName("label")
     @Expose
-    public String packageLabel;
+    public String label;
 
     public final static Creator<Data> CREATOR = new Creator<Data>() {
 
@@ -54,10 +54,10 @@ public class Data implements Parcelable {
     protected Data(Parcel in) {
         this.packageCode = ((String) in.readValue((String.class.getClassLoader())));
         this.packageId = ((String) in.readValue((String.class.getClassLoader())));
-        this.packageName = ((String) in.readValue((String.class.getClassLoader())));
+        this.name = ((String) in.readValue((String.class.getClassLoader())));
         this.priceInUsd = ((Float) in.readValue((Float.class.getClassLoader())));
         this.priceInSc = ((Float) in.readValue((Float.class.getClassLoader())));
-        this.packageLabel = ((String) in.readValue((String.class.getClassLoader())));
+        this.label = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     /**
@@ -70,19 +70,19 @@ public class Data implements Parcelable {
      *
      * @param packageCode
      * @param packageId
-     * @param packageName
+     * @param name
      * @param priceInUsd
      * @param priceInSc
-     * @param packageLabel
+     * @param label
      */
-    public Data(String packageCode, String packageId, String packageName, Float priceInUsd, Float priceInSc, String packageLabel) {
+    public Data(String packageCode, String packageId, String name, Float priceInUsd, Float priceInSc, String label) {
         super();
         this.packageCode = packageCode;
         this.packageId = packageId;
-        this.packageName = packageName;
+        this.name = name;
         this.priceInUsd = priceInUsd;
         this.priceInSc = priceInSc;
-        this.packageLabel = packageLabel;
+        this.label = label;
     }
 
     public Data withPackageCode(String packageCode) {
@@ -95,8 +95,8 @@ public class Data implements Parcelable {
         return this;
     }
 
-    public Data withPackageName(String packageName) {
-        this.packageName = packageName;
+    public Data withName(String name) {
+        this.name = name;
         return this;
     }
 
@@ -110,19 +110,19 @@ public class Data implements Parcelable {
         return this;
     }
 
-    public Data withPackageLabel(String packageLabel) {
-        this.packageLabel = packageLabel;
+    public Data withPackageLabel(String label) {
+        this.label = label;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("packageCode", packageCode).append("packageId", packageId).append("packageName", packageName).append("priceInUsd", priceInUsd).append("priceInSc", priceInSc).append("packageLabel", packageLabel).toString();
+        return new ToStringBuilder(this).append("packageCode", packageCode).append("packageId", packageId).append("name", name).append("priceInUsd", priceInUsd).append("priceInSc", priceInSc).append("label", label).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(packageId).append(packageCode).append(priceInUsd).append(priceInSc).append(packageName).append(packageLabel).toHashCode();
+        return new HashCodeBuilder().append(packageId).append(packageCode).append(priceInUsd).append(priceInSc).append(name).append(label).toHashCode();
     }
 
     @Override
@@ -134,16 +134,16 @@ public class Data implements Parcelable {
             return false;
         }
         Data rhs = ((Data) other);
-        return new EqualsBuilder().append(packageId, rhs.packageId).append(packageCode, rhs.packageCode).append(priceInUsd, rhs.priceInUsd).append(priceInSc, rhs.priceInSc).append(packageName, rhs.packageName).append(packageLabel, rhs.packageLabel).isEquals();
+        return new EqualsBuilder().append(packageId, rhs.packageId).append(packageCode, rhs.packageCode).append(priceInUsd, rhs.priceInUsd).append(priceInSc, rhs.priceInSc).append(name, rhs.name).append(label, rhs.label).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(packageCode);
         dest.writeValue(packageId);
-        dest.writeValue(packageName);
+        dest.writeValue(name);
         dest.writeValue(priceInUsd);
         dest.writeValue(priceInSc);
-        dest.writeValue(packageLabel);
+        dest.writeValue(label);
     }
 
     public int describeContents() {

@@ -28,6 +28,10 @@ public class BankProviderVH extends RecyclerView.ViewHolder {
         view.bankName.setText(bankName);
     }
 
+    public void setBonus(String bonus) {
+        view.tvLabel.setText(bonus);
+    }
+
     public void showBankIcon(Context context, String url) {
         Glide.with(context)
                 .load(url)
