@@ -19,8 +19,6 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +29,6 @@ import kh.com.mysabay.sdk.adapter.CountryAdapter;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FragmentLoginBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
-import kh.com.mysabay.sdk.pojo.login.CurrentCountry;
-import kh.com.mysabay.sdk.pojo.login.TaskComplete;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.holder.CountryItem;
 import kh.com.mysabay.sdk.utils.CountryUtils;
@@ -45,12 +41,11 @@ import kh.com.mysabay.sdk.viewmodel.UserApiVM;
  * Created by Tan Phirum on 3/7/20
  * Gmail phirumtan@gmail.com
  */
-public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM> implements TaskComplete {
+public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM> {
 
     public static final String TAG = LoginFragment.class.getSimpleName();
     private ArrayList<CountryItem> mCountryList;
     private CountryAdapter mAdapter;
-    String currentCountry;
     String dialCode;
 
     @NotNull
@@ -71,9 +66,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.btnLogin.setTextColor(textColorCode());
         mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
         this.viewModel = LoginActivity.loginActivity.viewModel;
-
-        CurrentCountry testAsyncTask = new CurrentCountry(this);
-        testAsyncTask.execute("https://ipinfo.io/json");
+        this.onTaskCompleted();
     }
 
     @Override
@@ -185,18 +178,13 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         }
     }
 
-    @Override
-    public void onTaskCompleted(String result) {
-        try {
+    public void onTaskCompleted() {
             initList();
-            JSONObject jsonObj = new JSONObject(result);
-            currentCountry = jsonObj.get("country").toString();
-
             Spinner spinnerCountries = mViewBinding.spinnerCountries;
             mAdapter = new CountryAdapter(getContext(), mCountryList);
             spinnerCountries.setAdapter(mAdapter);
             for (int i =0; i < mCountryList.size(); i++) {
-                if (mCountryList.get(i).getCode().equals(currentCountry)) {
+                if (mCountryList.get(i).getCode().equals("KH")) {
                     spinnerCountries.setSelection(i);
                     dialCode = mCountryList.get(i).getDial_code();
                 }
@@ -211,9 +199,5 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
             });
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 }
