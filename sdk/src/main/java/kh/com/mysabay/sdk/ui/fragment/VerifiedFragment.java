@@ -111,7 +111,6 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
 
             if (Integer.parseInt(str.toString()) != 0) {
                 if (MySabaySDK.getInstance().getSdkConfiguration().isSandBox) {
-
                     if (Integer.parseInt(str.toString()) == item.data.verifyCode) {
                         KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
                         viewModel.postToVerified(getContext(), Integer.parseInt(str.toString()));

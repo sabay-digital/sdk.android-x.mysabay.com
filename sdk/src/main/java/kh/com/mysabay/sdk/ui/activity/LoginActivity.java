@@ -76,7 +76,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void assignValues() {
-        if (mDeepLink != null && StringUtils.contains(mDeepLink.toString(), "user.testing.mysabay.com/api/v1.4/user/mysabay/login/deeplink"))
+        if (mDeepLink != null && StringUtils.contains(mDeepLink.toString(), MySabaySDK.getInstance().userApiUrl() + "api/v1.5/user/mysabay/login/deeplink"))
             initAddFragment(MySabayLoginFm.newInstance(mDeepLink.toString()), MySabayLoginFm.TAG);
         else initAddFragment(LoginFragment.newInstance(), LoginFragment.TAG);
     }

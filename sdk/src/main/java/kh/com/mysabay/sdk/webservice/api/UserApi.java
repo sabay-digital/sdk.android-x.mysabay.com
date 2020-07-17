@@ -44,7 +44,7 @@ public interface UserApi {
     Observable<UserProfileItem> getUserProfile(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
     @FormUrlEncoded
-    @HTTP(method = "DELETE", path = "api/v1.4/user/logout", hasBody = true)
+    @HTTP(method = "DELETE", path = "api/v1.5/user/logout", hasBody = true)
     Observable<LogoutResponseItem> logout(@Header("app_secret") String appSecret, @Field("refresh_token") String refreshToken, @Query("all") String all);
 
     @GET("api/v1.5/user/verify/token")
