@@ -7,6 +7,7 @@ import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
 import kh.com.mysabay.sdk.pojo.refreshToken.TokenVerify;
 import kh.com.mysabay.sdk.pojo.verified.VerifiedItem;
+import kh.com.mysabay.sdk.webservice.Constant;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -23,31 +24,31 @@ import retrofit2.http.Query;
  */
 public interface UserApi {
 
-    @GET("api/v1.5/user/login/{phone}")
+    @GET("api/"+ Constant.userAPIVersion +"/user/login/{phone}")
     Observable<LoginItem> getUserLogin(@Header("app_secret") String appSecret, @Path("phone") String phone);
 
     @FormUrlEncoded
-    @POST("api/v1.5/user/verify_code")
+    @POST("api/"+ Constant.userAPIVersion +"/user/verify_code")
     Observable<VerifiedItem> postVerifyCode(@Header("app_secret") String appSecret,
                                             @Field("phone") String phone, @Field("verify_code") int verifyCode);
     @FormUrlEncoded
-    @POST("api/v1.5/user/refresh/token")
+    @POST("api/"+ Constant.userAPIVersion +"/user/refresh/token")
     Observable<RefreshTokenItem> postRefreshToken(@Header("app_secret") String appSecret, @Field("refresh_token") String refreshToken);
 
     @Headers({
             "Accept: */*"
     })
-    @POST("api/v1.5/user/mysabay/login")
+    @POST("api/"+ Constant.userAPIVersion +"/user/mysabay/login")
     Observable<String> postLoginWithMySabay(@Header("app_secret") String appSecret);
 
-    @GET("api/v1.5/user/profile")
+    @GET("api/"+ Constant.userAPIVersion +"/user/profile")
     Observable<UserProfileItem> getUserProfile(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
     @FormUrlEncoded
-    @HTTP(method = "DELETE", path = "api/v1.5/user/logout", hasBody = true)
+    @HTTP(method = "DELETE", path = "api/"+ Constant.userAPIVersion +"/user/logout", hasBody = true)
     Observable<LogoutResponseItem> logout(@Header("app_secret") String appSecret, @Field("refresh_token") String refreshToken, @Query("all") String all);
 
-    @GET("api/v1.5/user/verify/token")
+    @GET("api/"+ Constant.userAPIVersion +"/user/verify/token")
     Observable<TokenVerify> getVerifyToken(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
 }

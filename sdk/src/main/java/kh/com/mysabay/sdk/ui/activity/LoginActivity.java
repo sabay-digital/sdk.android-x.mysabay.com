@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.View;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,6 +24,7 @@ import kh.com.mysabay.sdk.ui.fragment.LoginFragment;
 import kh.com.mysabay.sdk.ui.fragment.MySabayLoginFm;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 public class LoginActivity extends BaseActivity {
 
@@ -76,7 +78,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void assignValues() {
-        if (mDeepLink != null && StringUtils.contains(mDeepLink.toString(), MySabaySDK.getInstance().userApiUrl() + "api/v1.5/user/mysabay/login/deeplink"))
+        if (mDeepLink != null && StringUtils.contains(mDeepLink.toString(), MySabaySDK.getInstance().userApiUrl() + Constant.mySabayDeepLink))
             initAddFragment(MySabayLoginFm.newInstance(mDeepLink.toString()), MySabayLoginFm.TAG);
         else initAddFragment(LoginFragment.newInstance(), LoginFragment.TAG);
     }

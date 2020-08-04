@@ -184,7 +184,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
 
     @Override
     public void messageReceived(String message) {
-        otpCode = message.substring(1, 7);
+        otpCode = message.substring(0, 6);
         mViewBinding.edtVerifyCode.setText(otpCode);
         LogUtil.info("Message", otpCode);
     }
