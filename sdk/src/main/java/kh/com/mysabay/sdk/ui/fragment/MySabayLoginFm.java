@@ -123,7 +123,7 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
             Map<String, String> header = new HashMap<>();
             header.put("app_secret", MySabaySDK.getInstance().getSdkConfiguration().appSecret);
 
-           mViewBinding.wv.loadUrl(MySabaySDK.getInstance().userApiUrl() + "api/v1.4/user/mysabay/login", header);
+           mViewBinding.wv.loadUrl(MySabaySDK.getInstance().userApiUrl() + "api/v1.5/user/mysabay/login", header);
         } else
             mViewBinding.wv.loadUrl(mDeepLink);
     }
