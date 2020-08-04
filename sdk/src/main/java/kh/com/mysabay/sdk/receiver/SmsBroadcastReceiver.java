@@ -32,7 +32,9 @@ public class SmsBroadcastReceiver extends BroadcastReceiver {
                     }
 
                     msg = messages[i].getMessageBody();
-                    messageListener.messageReceived(msg);
+                    if (msg != null) {
+                        messageListener.messageReceived(msg);
+                    }
                 }
            }
        }

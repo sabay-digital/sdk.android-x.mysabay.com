@@ -27,6 +27,7 @@ import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 /**
  * Created by Tan Phirum on 3/10/20
@@ -122,8 +123,7 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
         if (StringUtils.isBlank(mDeepLink)) {
             Map<String, String> header = new HashMap<>();
             header.put("app_secret", MySabaySDK.getInstance().getSdkConfiguration().appSecret);
-
-           mViewBinding.wv.loadUrl(MySabaySDK.getInstance().userApiUrl() + "api/v1.5/user/mysabay/login", header);
+            mViewBinding.wv.loadUrl(MySabaySDK.getInstance().userApiUrl() + Constant.mySabayUrl, header);
         } else
             mViewBinding.wv.loadUrl(mDeepLink);
     }
