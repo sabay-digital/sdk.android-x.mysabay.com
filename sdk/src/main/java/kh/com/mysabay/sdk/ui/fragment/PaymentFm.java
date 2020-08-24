@@ -141,7 +141,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             }
             if (balanceGold > 0) {
                 String sabayGold = "<b style=\"color:blue;\">" + userProfile.data.toSabayGold() + "</b>";
-                mViewBinding.dividerBalance.setVisibility(View.VISIBLE);
+                mViewBinding.dividerBalance.setVisibility(balanceCoin > 0 ? View.VISIBLE : View.GONE);
                 mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
             } else {
                 mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
@@ -234,14 +234,15 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
             mViewBinding.btnLabel.setTextColor(textColorCode());
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
-            if (data.priceInSc > balanceCoin) {
+            if (data.priceInSc <= balanceCoin || data.priceInSG <= balanceGold) {
+                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.priceInSG <= balanceGold ? data.toRoundSabayGold() : data.toRoundSabayCoin()));
+                mViewBinding.btnPay.setEnabled(true);
+                mViewBinding.btnPay.setBackgroundResource(R.color.colorYellow);
+
+            } else {
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toRoundSabayCoin()));
                 mViewBinding.btnPay.setEnabled(false);
                 mViewBinding.btnPay.setBackgroundResource(R.color.secondary);
-            } else {
-                mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toRoundSabayCoin()));
-                mViewBinding.btnPay.setEnabled(true);
-                mViewBinding.btnPay.setBackgroundResource(R.color.colorYellow);
             }
         });
 
@@ -287,6 +288,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                 if (bp.isOneTimePurchaseSupported() && (viewModel.getItemSelected().getValue() != null)) {
                     if (!BuildConfig.DEBUG)
                         PURCHASE_ID = viewModel.getItemSelected().getValue().packageId;
+
                     boolean isPurchase = bp.purchase(getActivity(), PURCHASE_ID);
                     boolean isConsumePurchase = bp.consumePurchase(PURCHASE_ID);
 
@@ -296,13 +298,12 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
             } else if (checkedId[0] == R.id.btn_mysabay) {
                 Data data = viewModel.getItemSelected().getValue();
-
                 if (data == null) return;
 
                 MessageUtil.displayDialog(v.getContext(), getString(R.string.payment_confirmation),
-                        String.format(getString(R.string.are_you_pay_with_my_sabay_provider), data.priceInSc.toString()), getString(R.string.cancel),
+                        String.format(getString(R.string.are_you_pay_with_my_sabay_provider), balanceGold >= data.priceInSG ? data.toRoundSabayGold() : data.toRoundSabayCoin()), getString(R.string.cancel),
                         getString(R.string.confirm), colorCodeBackground(), null,
-                        (dialog, which) -> viewModel.postToPaidWithMySabayProvider(v.getContext()));
+                        (dialog, which) -> viewModel.postToPaidWithMySabayProvider(v.getContext(), balanceGold));
 
             } else if (checkedId[0] == R.id.btn_third_bank_provider) {
                 viewModel.get3PartyCheckout(v.getContext());

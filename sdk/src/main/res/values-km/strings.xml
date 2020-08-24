@@ -30,7 +30,7 @@
     <string name="please_choose_payment_option">Please choose payment options</string>
     <string name="cancel">Cancel</string>
     <string name="payment_confirmation">បញ្ជាក់ការទូទាត់</string>
-    <string name="are_you_pay_with_my_sabay_provider">តើអ្នកពិតជាចង់បង់ប្រាក់ %s SC តាមរយ:ក្រុមហ៊ុនផ្តល់សេវាទូទាត់ប្រាក់ Mysabay មែនទេ?</string>
+    <string name="are_you_pay_with_my_sabay_provider">តើអ្នកពិតជាចង់បង់ប្រាក់ %s តាមរយ:ក្រុមហ៊ុនផ្តល់សេវាទូទាត់ប្រាក់ Mysabay មែនទេ?</string>
     <string name="partnered_payment_providers">អ្នកផ្តល់ការទូទាត់ជាដៃគូ</string>
     <string name="please_select_your_preferred_partnered_payment_provider">ជ្រើសរើសអ្នកផ្តល់ការទូទាត់ជាដៃគូសម្រាប់ការអនុញ្ញាតក្នុងការទូទាត់លើកក្រោយ។</string>
 </resources>

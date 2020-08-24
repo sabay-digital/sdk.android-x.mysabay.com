@@ -104,6 +104,8 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                     if (url.contains("https://explorer.ssn.digital/v1/payments/")) {
                         if (getActivity() == null) return;
 
+                        mViewBinding.btnBack.setVisibility(View.VISIBLE);
+                        mViewBinding.btnClose.setVisibility(View.VISIBLE);
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {

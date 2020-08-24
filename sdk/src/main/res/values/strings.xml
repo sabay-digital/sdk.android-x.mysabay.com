@@ -29,7 +29,7 @@
     <string name="please_choose_payment_option">Please choose payment options</string>
     <string name="cancel">Cancel</string>
     <string name="payment_confirmation">Payment Confirmation</string>
-    <string name="are_you_pay_with_my_sabay_provider">Are you sure you want to pay %s SC through Mysabay Payment Provider?</string>
+    <string name="are_you_pay_with_my_sabay_provider">Are you sure you want to pay %s through Mysabay Payment Provider?</string>
     <string name="partnered_payment_providers">partnered payment providers</string>
     <string name="please_select_your_preferred_partnered_payment_provider">Please select your preferred payment provider</string>
 </resources>

@@ -5,7 +5,6 @@ import android.app.Application;
 import android.arch.lifecycle.MediatorLiveData;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 import com.google.gson.Gson;
 
@@ -185,7 +184,8 @@ public class MySabaySDK {
                     .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<LogoutResponseItem>(mAppContext, _networkState) {
                 @Override
                 protected void onSuccess(LogoutResponseItem logoutResponseItem) {
-                    saveAppItem("");
+//                    saveAppItem("");
+                    clearAppItem();
                     LogUtil.error(TAG, logoutResponseItem.data);
                 }
 
@@ -358,6 +358,12 @@ public class MySabaySDK {
         SharedPreferences.Editor editor = getPreferences().edit();
         editor.putString(Globals.EXT_KEY_APP_ITEM, item);
         editor.apply();
+    }
+
+    public void clearAppItem() {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.remove(Globals.EXT_KEY_APP_ITEM);
+        editor.commit();
     }
 
     public String getAppItem() {
