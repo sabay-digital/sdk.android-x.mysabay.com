@@ -30,7 +30,6 @@ public interface StoreApi {
 
 
 //    @GET("api/v1.7/checkout")
-//    Observable<MySabayItem> getMySabayCheckout(@Header("app_secret") String appSecret, @Header("Authorization") String token, @Query("uuid") String uuid);
 
     @GET("api/v1.7/cashier")
     Observable<ThirdPartyItem> get3PartyCheckout(@Header("app_secret") String appSecret, @Header("Authorization") String token, @Query("uuid") String uuid);

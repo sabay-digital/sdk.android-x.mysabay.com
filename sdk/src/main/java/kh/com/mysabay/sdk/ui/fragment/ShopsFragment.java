@@ -91,7 +91,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
             } else
                 MessageUtil.displayDialog(getContext(), "sorry your device not support in app purchase");
         });
-        mAdapter.setHasStableIds(true);
+//        mAdapter.setHasStableIds(true);
         mLayoutManager = new GridLayoutManager(v.getContext(), getResources().getInteger(R.integer.layout_size));
         mViewBinding.rcv.setLayoutManager(mLayoutManager);
         mViewBinding.rcv.setAdapter(mAdapter);
@@ -133,7 +133,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
             if (userProfile.data.balance.gold > 0) {
                 String sabayGold = "<b>" + userProfile.data.toSabayGold() + "</b> ";
                 mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
-                mViewBinding.deviderBalance.setVisibility(View.VISIBLE);
+                mViewBinding.deviderBalance.setVisibility(userProfile.data.balance.coin > 0 ? View.VISIBLE : View.GONE);
             } else {
                 mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
                 mViewBinding.deviderBalance.setVisibility(View.GONE);

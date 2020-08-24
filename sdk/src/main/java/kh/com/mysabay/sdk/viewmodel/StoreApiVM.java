@@ -209,7 +209,7 @@ public class StoreApiVM extends ViewModel {
      *
      * @param context
      */
-    public void postToPaidWithMySabayProvider(Context context) {
+    public void postToPaidWithMySabayProvider(Context context, Float balanceGold) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         Data shopItem = getItemSelected().getValue();
         if (getMySabayProvider().getValue() == null) return;
@@ -217,12 +217,22 @@ public class StoreApiVM extends ViewModel {
         List<kh.com.mysabay.sdk.pojo.mysabay.Data> listMySabayProvider = new ArrayList<>();
         for (kh.com.mysabay.sdk.pojo.mysabay.Data item : getMySabayProvider().getValue().data) {
             if (item.paymentType.equals("pre-authorized")) {
-                listMySabayProvider.add(item);
+                if (item.pspCode.equals("sabay")) {
+                    listMySabayProvider.add(0, item);
+                } else {
+                    listMySabayProvider.add(item);
+                }
             }
         }
 
         if (listMySabayProvider.size() > 0 && shopItem != null) {
-            PaymentBody body = new PaymentBody(appItem.uuid, shopItem.priceInSc.toString(), listMySabayProvider.get(0).pspCode.toLowerCase(), listMySabayProvider.get(0).pspAssetCode.toLowerCase(), shopItem.packageCode);
+            PaymentBody body;
+            if (balanceGold >= shopItem.priceInSG) {
+                body = new PaymentBody(appItem.uuid, shopItem.priceInSG.toString(), listMySabayProvider.get(1).pspCode.toLowerCase(), listMySabayProvider.get(1).pspAssetCode.toLowerCase(), shopItem.packageCode);
+            } else {
+                body = new PaymentBody(appItem.uuid, shopItem.priceInSc.toString(), listMySabayProvider.get(0).pspCode.toLowerCase(), listMySabayProvider.get(0).pspAssetCode.toLowerCase(), shopItem.packageCode);
+            }
+//            PaymentBody body = new PaymentBody(appItem.uuid, shopItem.priceInSc.toString(), listMySabayProvider.get(0).pspCode.toLowerCase(), listMySabayProvider.get(0).pspAssetCode.toLowerCase(), shopItem.packageCode);
             storeRepo.postToPaid(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
                     .observeOn(appRxSchedulers.mainThread())
                     .subscribe(new AbstractDisposableObs<PaymentResponseItem>(context, _networkState) {
