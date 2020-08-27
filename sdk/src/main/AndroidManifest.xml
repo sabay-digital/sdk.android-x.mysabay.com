@@ -3,16 +3,8 @@
     package="kh.com.mysabay.sdk">
 
     <uses-permission android:name="com.android.vending.BILLING" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" />
-    <uses-permission android:name="android.permission.READ_SMS" />
 
     <application>
-        <receiver android:name=".receiver.SmsBroadcastReceiver" android:exported="true" android:enabled="true">
-            <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
-            </intent-filter>
-        </receiver>
-
         <activity
             android:name=".ui.activity.StoreActivity"
             android:theme="@style/SdkAppTheme.NoActionBar.FullScreen" />
