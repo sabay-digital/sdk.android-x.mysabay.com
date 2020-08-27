@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void loginFailed(Object error) {
-                        MessageUtil.displayToast(v.getContext(), "error = " + error);
+                        MessageUtil.displayToast(v.getContext(), "error = " + "Verify failed");
                     }
                 });
         });
