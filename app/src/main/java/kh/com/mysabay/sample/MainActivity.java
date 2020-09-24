@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.google.gson.Gson;
+
 import kh.com.mysabay.sample.databinding.ActivityMainBinding;
 import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
@@ -52,20 +54,20 @@ public class MainActivity extends AppCompatActivity {
                     public void purchaseSuccess(SubscribePayment data) {
                         if(data.getType().equals(Globals.APP_IN_PURCHASE)) {
                             LogUtil.info(data.getType(), data.data.toString());
-                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                            MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
                         } else if (data.getType().equals(Globals.MY_SABAY)) {
                             if (data.data instanceof PaymentResponseItem) {
                                 PaymentResponseItem dataPayment = (PaymentResponseItem) data.data;
                                 LogUtil.info("PackageId",  dataPayment.toString());
                             }
                             LogUtil.info(data.getType(), data.data.toString());
-                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                            MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
                         } else {
                             if (data.data instanceof Data) {
                                 Data dataPayment = (Data) data.data;
                                 LogUtil.info(data.getType(), dataPayment.toString());
                             }
-                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                            MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
                         }
                     }
 

@@ -48,9 +48,7 @@ public class ShopItmVH extends RecyclerView.ViewHolder implements View.OnClickLi
                 if (item.enableLocalPay)
                     ((StoreActivity) v.getContext()).initAddFragment(PaymentFm.newInstance(viewBinding.getItem()), PaymentFm.TAG, true);
                 else
-                this.viewBinding.card.setOnClickListener(view -> {
-                    if (mListener != null) mListener.shopInfo(viewBinding.getItem());
-                });
+                    mListener.shopInfo(viewBinding.getItem());
             }
         }
     }

@@ -141,7 +141,7 @@
         <include
             android:id="@+id/view_empty"
             layout="@layout/view_empty"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
     </android.support.constraint.ConstraintLayout>
 </layout>

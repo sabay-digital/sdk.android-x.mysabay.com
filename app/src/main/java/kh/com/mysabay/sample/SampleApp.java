@@ -19,13 +19,13 @@ public class SampleApp extends Application {
         super.onCreate();
 
         final SdkConfiguration configuration = new SdkConfiguration.Builder(
-                "57", // mysabay app Id
+                "55", // mysabay app Id
                 "ARENA OF GLORY", //mysabay  app name
-                "d41faee946f531794d18a152eafeb5fd8fc81ce4de520e97fcfe41fefdd0381c", //MySabay App Secret
-                "", // license key
+                "9c85c50a4362f687cd4507771ba81db5cf50eaa0b3008f4f943f77ba3ac6386b", //MySabay App Secret
+                "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAtvetByZxZJT4dqZ4LRM8wksF0+cx7xOB4qO4ZhDJHCeBMY9Biydq0vda24EKERP0Uv+Rr1SXDcP2mo4/GrbmFUHBHw9kiidXZCG7+RSoEu+BDNfMBHH8jSw2RbFN6Mox29qz4SrSNgGDOwW/REWkKSP8QkCUpeog85nw7cCcOoOKx7Fo46OwZLQBD744TAJlBeNK3FPVXaGlceDBPPjSrksGvnhKpdzl/6kFAX1Ufz0G+QJXQAJYAzRwYqt0SeMNKXv0vUjIbXtiJaDf9Ev8l5+OLZdFDaF6rxIiVs11X9r2m+D2ODEpQw1c0rM5JfVBkEr/Ty8yZh77cWTX9BdV6wIDAQAB", // license key
                 "") // merchant id
                 .setSdkTheme(SdkTheme.Dark)
-                .setToUseSandBox(false).build();
+                .setToUseSandBox(true).build();
         MySabaySDK.Impl.setDefaultInstanceConfiguration(this, configuration);
     }
 
