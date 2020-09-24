@@ -24,6 +24,7 @@ import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyResponse;
 import kh.com.mysabay.sdk.pojo.mysabay.MySabayItem;
 import kh.com.mysabay.sdk.pojo.payment.PaymentBody;
+import kh.com.mysabay.sdk.pojo.payment.PaymentReceiptItem;
 import kh.com.mysabay.sdk.pojo.payment.PaymentResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.pojo.shop.Data;
@@ -95,6 +96,7 @@ public class StoreApiVM extends ViewModel {
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<ShopItem>(context, _networkState) {
             @Override
             protected void onSuccess(ShopItem item) {
+                LogUtil.info("ITEM", item.toString());
                 if (item.status == 200)
                     _shopItem.setValue(item);
                 else MessageUtil.displayDialog(context, "something went wrong.");
@@ -184,22 +186,45 @@ public class StoreApiVM extends ViewModel {
         _thirdPartyItemMediatorLiveData.setValue(result);
     }
 
+    /**
+     * show list all bank provider
+     *
+     * @param context
+     */
+    public kh.com.mysabay.sdk.pojo.mysabay.Data getInAppPurchaseProvider(@NotNull Context context) {
+        if (getMySabayProvider().getValue() == null) return new kh.com.mysabay.sdk.pojo.mysabay.Data();
+
+        MySabayItem mySabayItem = getMySabayProvider().getValue();
+        kh.com.mysabay.sdk.pojo.mysabay.Data provider  = new kh.com.mysabay.sdk.pojo.mysabay.Data();
+
+        for (kh.com.mysabay.sdk.pojo.mysabay.Data item : mySabayItem.data) {
+            if (item.paymentType.equals("iap")) {
+                provider = item;
+            }
+        }
+        return provider;
+    }
+
     public void postToVerifyAppInPurchase(@NotNull Context context, @NotNull GoogleVerifyBody body) {
-        EventBus.getDefault().post(new SubscribePayment(Globals.APP_IN_PURCHASE, body.receipt));
+        PaymentReceiptItem receipt = new PaymentReceiptItem();
+        receipt.withHash(body.receipt.data.orderId);
+        receipt.withPackageId(body.receipt.data.productId);
+        receipt.withDataReceipt(body.receipt.data);
+
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-        ((Activity) context).finish();
         mCompos.add(storeRepo.postToVerifyGoogle(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new Consumer<GoogleVerifyResponse>() {
                     @Override
                     public void accept(GoogleVerifyResponse googleVerifyResponse) throws Exception {
-                        // EventBus.getDefault().post(new SubscribePayment(null, googleVerifyResponse.data, null));
-                        MessageUtil.displayDialog(context, googleVerifyResponse.message);
+                        LogUtil.info("accept", "accept");
+                        EventBus.getDefault().post(new SubscribePayment(Globals.APP_IN_PURCHASE, receipt));
+                        ((Activity) context).finish();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        //      EventBus.getDefault().post(new SubscribePayment(null, null, throwable));
-                        LogUtil.error(TAG, "error " + throwable.getLocalizedMessage());
+                        LogUtil.error(TAG, "error " + throwable.toString());
+                        MessageUtil.displayDialog(context, "Error" + throwable.toString());
                     }
                 }));
     }
@@ -232,7 +257,6 @@ public class StoreApiVM extends ViewModel {
             } else {
                 body = new PaymentBody(appItem.uuid, shopItem.priceInSc.toString(), listMySabayProvider.get(0).pspCode.toLowerCase(), listMySabayProvider.get(0).pspAssetCode.toLowerCase(), shopItem.packageCode);
             }
-//            PaymentBody body = new PaymentBody(appItem.uuid, shopItem.priceInSc.toString(), listMySabayProvider.get(0).pspCode.toLowerCase(), listMySabayProvider.get(0).pspAssetCode.toLowerCase(), shopItem.packageCode);
             storeRepo.postToPaid(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
                     .observeOn(appRxSchedulers.mainThread())
                     .subscribe(new AbstractDisposableObs<PaymentResponseItem>(context, _networkState) {

@@ -180,6 +180,7 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
     @NotNull
     @Contract(pure = true)
     private String scriptFormValidate(@NotNull Data item) {
+        LogUtil.info("Data", item.toString());
         return "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "<head>\n" +
