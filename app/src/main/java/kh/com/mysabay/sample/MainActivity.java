@@ -14,9 +14,11 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
+import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
 import kh.com.mysabay.sdk.pojo.onetime.Data;
 import kh.com.mysabay.sdk.pojo.payment.PaymentResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
+import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.utils.LogUtil;
 
@@ -53,20 +55,29 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void purchaseSuccess(SubscribePayment data) {
                         if(data.getType().equals(Globals.APP_IN_PURCHASE)) {
-                            LogUtil.info(data.getType(), data.data.toString());
+                            GoogleVerifyBody receipt = (GoogleVerifyBody) data.data;
+                            LogUtil.info("data", receipt.receipt.data.toString());
+                            LogUtil.info("signature", receipt.receipt.signature.toString());
+                            LogUtil.info("Profile balance gold", new Gson().toJson(receipt));
                             MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
                         } else if (data.getType().equals(Globals.MY_SABAY)) {
-                            if (data.data instanceof PaymentResponseItem) {
-                                PaymentResponseItem dataPayment = (PaymentResponseItem) data.data;
-                                LogUtil.info("PackageId",  dataPayment.toString());
-                            }
-                            LogUtil.info(data.getType(), data.data.toString());
+                            PaymentResponseItem dataPayment = (PaymentResponseItem) data.data;
+                            LogUtil.info("data", new Gson().toJson(data.data));
+                            LogUtil.info("satus",  dataPayment.status.toString());
+                            LogUtil.info("amount",  dataPayment.amount);
+                            LogUtil.info("hash",  dataPayment.hash);
+                            LogUtil.info("PackageId",  dataPayment.packageId);
+                            LogUtil.info("message",  dataPayment.message);
+                            LogUtil.info("pspAssetCode",  dataPayment.pspAssetCode);
+                            LogUtil.info("label",  dataPayment.label);
                             MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
                         } else {
-                            if (data.data instanceof Data) {
-                                Data dataPayment = (Data) data.data;
-                                LogUtil.info(data.getType(), dataPayment.toString());
-                            }
+                            Data dataPayment = (Data) data.data;
+                            LogUtil.info(data.getType(), new Gson().toJson(data.data));
+                            LogUtil.info("hash",  dataPayment.hash);
+                            LogUtil.info("amount",  dataPayment.amount);
+                            LogUtil.info("packageId",  dataPayment.packageId);
+                            LogUtil.info("assetCode", dataPayment.assetCode);
                             MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
                         }
                     }
@@ -96,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                     MySabaySDK.getInstance().refreshToken(new RefreshTokenListener() {
                         @Override
                         public void refreshSuccess(String token) {
+                            LogUtil.info("token", token);
                             MessageUtil.displayToast(v.getContext(), "refresh token = " + token);
                         }
 
@@ -131,7 +143,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (MySabaySDK.getInstance().isLogIn()) {
                     MySabaySDK.getInstance().getUserProfile(info -> {
-                        LogUtil.info("test", info);
+                        UserProfileItem userProfile = new Gson().fromJson(info, UserProfileItem.class);
+                        LogUtil.info("Profile uuid", userProfile.data.uuid);
+                        LogUtil.info("Profile mySabayUserId", userProfile.data.mysabayUserId.toString());
+                        LogUtil.info("Profile serviceUserId", userProfile.data.serviceUserId);
+                        LogUtil.info("Profile lastLogin", userProfile.data.lastLogin);
+                        LogUtil.info("Profile enableLocalPay", userProfile.data.enableLocalPay.toString());
+                        LogUtil.info("Profile createAt", userProfile.data.createdAt);
+                        LogUtil.info("Profile balance coin", userProfile.data.balance.coin.toString());
+                        LogUtil.info("Profile balance gold", userProfile.data.balance.gold.toString());
+
                         MessageUtil.displayDialog(v.getContext(), info);
                     });
                 } else {

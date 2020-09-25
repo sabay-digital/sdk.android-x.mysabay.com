@@ -36,9 +36,9 @@ public class PaymentResponseItem implements Parcelable {
     @SerializedName("package_id")
     @Expose
     public String packageId;
-    @SerializedName("bonus")
+    @SerializedName("label")
     @Expose
-    public String bonus;
+    public String label;
     public final static Parcelable.Creator<PaymentResponseItem> CREATOR = new Creator<PaymentResponseItem>() {
 
 
@@ -63,7 +63,7 @@ public class PaymentResponseItem implements Parcelable {
         this.amount = ((String) in.readValue((String.class.getClassLoader())));
         this.pspAssetCode = ((String) in.readValue((String.class.getClassLoader())));
         this.packageId = ((String) in.readValue((String.class.getClassLoader())));
-        this.bonus = ((String) in.readValue((String.class.getClassLoader())));
+        this.label = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     /**
@@ -81,9 +81,9 @@ public class PaymentResponseItem implements Parcelable {
      * @param amount
      * @param pspAssetCode
      * @param packageId
-     * @param bonus
+     * @param label
      */
-    public PaymentResponseItem(Integer status, Data data, String hash, String message, String amount, String pspAssetCode, String packageId, String bonus) {
+    public PaymentResponseItem(Integer status, Data data, String hash, String message, String amount, String pspAssetCode, String packageId, String label) {
         super();
         this.status = status;
         this.hash = hash;
@@ -91,7 +91,7 @@ public class PaymentResponseItem implements Parcelable {
         this.amount = amount;
         this.pspAssetCode = pspAssetCode;
         this.packageId = packageId;
-        this.bonus = bonus;
+        this.label = label;
     }
 
     public PaymentResponseItem withStatus(Integer status) {
@@ -124,19 +124,19 @@ public class PaymentResponseItem implements Parcelable {
         return this;
     }
 
-    public PaymentResponseItem withBonus(String bonus) {
-        this.bonus = bonus;
+    public PaymentResponseItem withBonus(String label) {
+        this.label = label;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("status", status).append("hash", hash).append("message", message).append("amount", amount).append("pspAssetCode", pspAssetCode).append("packageId", packageId).append("bonus", bonus).toString();
+        return new ToStringBuilder(this).append("status", status).append("hash", hash).append("message", message).append("amount", amount).append("pspAssetCode", pspAssetCode).append("packageId", packageId).append("label", label).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(status).append(amount).append(pspAssetCode).append(message).append(hash).append(packageId).append(bonus).toHashCode();
+        return new HashCodeBuilder().append(status).append(amount).append(pspAssetCode).append(message).append(hash).append(packageId).append(label).toHashCode();
     }
 
     @Override
@@ -148,7 +148,7 @@ public class PaymentResponseItem implements Parcelable {
             return false;
         }
         PaymentResponseItem rhs = ((PaymentResponseItem) other);
-        return new EqualsBuilder().append(status, rhs.status).append(amount, rhs.amount).append(pspAssetCode, rhs.pspAssetCode).append(message, rhs.message).append(hash, rhs.hash).append(packageId, rhs.packageId).append(bonus, rhs.bonus).isEquals();
+        return new EqualsBuilder().append(status, rhs.status).append(amount, rhs.amount).append(pspAssetCode, rhs.pspAssetCode).append(message, rhs.message).append(hash, rhs.hash).append(packageId, rhs.packageId).append(label, rhs.label).isEquals();
     }
 
     public void writeToParcel(@NotNull Parcel dest, int flags) {
@@ -158,7 +158,7 @@ public class PaymentResponseItem implements Parcelable {
         dest.writeValue(amount);
         dest.writeValue(pspAssetCode);
         dest.writeValue(packageId);
-        dest.writeValue(bonus);
+        dest.writeValue(label);
     }
 
     public int describeContents() {
