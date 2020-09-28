@@ -282,20 +282,34 @@
                         android:textColor="@color/colorWhite700" />
                 </LinearLayout>
 
-                <android.support.v7.widget.AppCompatButton
+                <LinearLayout
                     android:id="@+id/btn_in_app_purchase"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:text="Android In App Billing"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/padding_10"
-                    android:textAllCaps="false"
-                    android:textAppearance="@style/MyAppearanceBody1"
-                    style="?android:attr/borderlessButtonStyle"
                     android:background="@drawable/payment_button"
-                    android:gravity="left|center_vertical"
-                    android:paddingLeft="@dimen/padding_20"
-                    android:textColor="@color/colorYellow"
-                    />
+                    style="?android:attr/borderlessButtonStyle"
+                    android:gravity="left|center_vertical">
+                    <TextView
+                        android:id="@+id/tv_in_app_purchase"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left|center_vertical"
+                        android:paddingLeft="@dimen/padding_20"
+                        android:text="Android In App Billing"
+                        android:textColor="@color/colorYellow" />
+
+                    <TextView
+                        android:id="@+id/lbl_in_app_purchase"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingEnd="@dimen/padding_20"
+                        android:textSize="11sp"
+                        android:gravity="right|center_vertical"
+                        android:text="bonus"
+                        android:textColor="@color/colorWhite700" />
+                </LinearLayout>
 
                 <android.support.v7.widget.AppCompatButton
                     android:id="@+id/btn_pre_auth_pay"
