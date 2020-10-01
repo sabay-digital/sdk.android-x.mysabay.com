@@ -331,7 +331,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                 if (data == null) return;
 
                 MessageUtil.displayDialog(v.getContext(), getString(R.string.payment_confirmation),
-                        String.format(getString(R.string.are_you_pay_with_my_sabay_provider), data.toRoundSabayCoin()), getString(R.string.cancel),
+                        String.format(getString(R.string.are_you_pay_with_my_sabay_provider), balanceGold >= data.priceInSG ? data.toRoundSabayGold() : data.toRoundSabayCoin()), getString(R.string.cancel),
                         getString(R.string.confirm), colorCodeBackground(), null,
                         (dialog, which) -> viewModel.postToPaidWithMySabayProvider(v.getContext(), balanceGold));
 
