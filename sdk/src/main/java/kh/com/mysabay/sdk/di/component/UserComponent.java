@@ -5,6 +5,7 @@ import kh.com.mysabay.sdk.di.scopes.ActivityScope;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.fragment.LoginFragment;
 import kh.com.mysabay.sdk.ui.fragment.MySabayLoginFm;
+import kh.com.mysabay.sdk.ui.fragment.MySabayLoginFragment;
 import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
 
 /**
@@ -30,4 +31,6 @@ public interface UserComponent {
     void inject(MySabayLoginFm mySabayLoginFm);
 
     void inject(VerifiedFragment verifiedFragment);
+
+    void inject(MySabayLoginFragment mySabayLoginFragment);
 }

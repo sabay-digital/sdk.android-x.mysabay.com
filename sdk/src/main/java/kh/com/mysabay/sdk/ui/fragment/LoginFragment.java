@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 import android.view.WindowManager;
@@ -24,6 +26,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import kh.com.mysabay.sdk.BuildConfig;
+import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.adapter.CountryAdapter;
@@ -48,6 +51,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
     private ArrayList<CountryItem> mCountryList;
     private CountryAdapter mAdapter;
     String dialCode;
+    private FragmentManager mManager;
 
     @NotNull
     @Contract(" -> new")
@@ -68,6 +72,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
         this.viewModel = LoginActivity.loginActivity.viewModel;
         this.onTaskCompleted();
+
+        mManager = getFragmentManager();
     }
 
     @Override
@@ -75,7 +81,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         if (BuildConfig.DEBUG) {
             mViewBinding.edtPhone.setText("098637352");
         }
-        mViewBinding.edtPhone.requestFocus();
+     //   mViewBinding.edtPhone.requestFocus();
         new Handler().postDelayed(() -> showProgressState(new NetworkState(NetworkState.Status.SUCCESS)), 500);
     }
 
@@ -120,13 +126,21 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         });
 
         mViewBinding.btnLoginMysabay.setOnClickListener(v ->
-                viewModel.postToLoginWithMySabay(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret));
-
+    //   viewModel.postToLoginWithMySabay(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret));
+        initAddFragment(MySabayLoginFragment.newInstance(), MySabayLoginFragment.TAG));
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (getActivity() != null)
                 getActivity().onBackPressed();
         });
 
+    }
+
+    public void initAddFragment(Fragment f, String tag) {
+        initAddFragment(f, tag, false);
+    }
+
+    public void initAddFragment(Fragment f, String tag, boolean isBack) {
+        Globals.initAddFragment(mManager, f, tag, isBack);
     }
 
     @Override

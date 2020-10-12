@@ -24,6 +24,7 @@ import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.repository.UserRepo;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
+import kh.com.mysabay.sdk.ui.fragment.MySabayLoginConfirmFragment;
 import kh.com.mysabay.sdk.ui.fragment.MySabayLoginFm;
 import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
@@ -93,7 +94,8 @@ public class UserApiVM extends ViewModel {
 
                             MessageUtil.displayToast(context, item.data.message);
                             if (context instanceof LoginActivity)
-                                ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
+                             //   ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
+                                ((LoginActivity) context).initAddFragment(new MySabayLoginConfirmFragment(), MySabayLoginConfirmFragment.TAG, true);
                         }
                     }
 

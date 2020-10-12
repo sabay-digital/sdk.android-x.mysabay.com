@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -113,6 +114,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         viewModel.setShopItemSelected(mData);
         viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);
         onBillingSetupFinished();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
 
     public void onBillingSetupFinished() {

@@ -287,7 +287,7 @@ public class StoreApiVM extends ViewModel {
                             if (response.status == 200) {
 //                                MySabaySDK.getInstance().saveMethodSelected(gson.toJson(data.withIsPaidWith(false)));
                                 LogUtil.info("PaymentBody", response.toString());
-                                context.initAddFragment(BankVerifiedFm.newInstance(response.data, shopItem), PaymentFm.TAG, true);
+                                context.initAddFragment(BankVerifiedFm.newInstance(response.data, shopItem, data.pspCode), PaymentFm.TAG, true);
                             } else
                                 MessageUtil.displayDialog(context, gson.toJson(response));
                         }
