@@ -1,4 +1,12 @@
 Sabay currently publishes android SDK with version below:
+
+    - wingauthorization
+    - login flow
+
+-Latest: 1.0.17
+ 	- Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.17-o'
+    - Changes 
+        - Rename filed in payment with other provider
 -Latest: 1.0.16
  	- Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.16-o'
 

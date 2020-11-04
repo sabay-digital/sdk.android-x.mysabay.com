@@ -23,13 +23,26 @@
     <string name="payment">Payment</string>
     <string name="payment_options">Payment Options</string>
     <string name="upgrade_google_play">In-app billing service is unavailable, please upgrade Google Play</string>
-    <string name="select_a_partner_bank">Others (bank, wallet)</string>
+    <string name="select_a_partner_bank">Other Payment Options</string>
     <string name="mysabay">MySabay</string>
     <string name="balance">Balance: %s</string>
     <string name="please_choose_payment_option">Please choose payment options</string>
     <string name="cancel">Cancel</string>
     <string name="payment_confirmation">Payment Confirmation</string>
-    <string name="are_you_pay_with_my_sabay_provider">Are you sure you want to pay %s through Mysabay Payment Provider?</string>
+    <string name="are_you_pay_with_my_sabay_provider">Are you sure you want to pay %s through MySabay Payment Provider?</string>
     <string name="partnered_payment_providers">partnered payment providers</string>
     <string name="please_select_your_preferred_partnered_payment_provider">Please select your preferred payment provider</string>
+    <string name="logging_with_phone_number_desc">Logging in with phone number automatically creates a MySabay account if you do not already own one.</string>
+    <string name="mysabay_account">MySabay Account</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="confirm_mysabay">Confirm MySabay</string>
+    <string name="create_new_account">I want a new account</string>
+    <string name="existing_mysabay_account_desc">We’ve found an existing MySabay account associated with the phone number you provided.</string>
+    <string name="enter_your_password">Enter your password to confirm your MySabay Account or click ‘I want a new account’ to get a new account.</string>
+    <string name="facebook_app_id">670084857261907</string>
+    <string name="fb_login_protocol_scheme">fb670084857261907</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="application_do_not_support_in_app_purchase">Apps installed manually via APK do not support In-App Purchase. Please install the app from Google Play Store to use this feature.</string>
 </resources>

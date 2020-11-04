@@ -65,7 +65,7 @@ public abstract class BaseActivity extends AppCompatActivity implements OnLocale
         initializeObjects(savedInstanceState);
     }
 
-    @Override
+    @Override 
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         if (savedInstanceState == null) {

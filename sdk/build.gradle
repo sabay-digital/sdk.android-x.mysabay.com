@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
 apply plugin: 'com.github.dcendents.android-maven'
-group='kh.com.mysabay'
-version='1.0.1-o'
+group = 'kh.com.mysabay'
+version = '1.0.1-o'
 
 android {
     compileSdkVersion 29
@@ -79,11 +79,12 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
     implementation 'com.anjlab.android.iab.v3:library:1.1.0'
     implementation 'com.android.billingclient:billing:2.2.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.31.0'
 
     //phone validation
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.10.3'
 
-    implementation ('com.alimuzaffar.lib:pinentryedittext:1.3.10') {
+    implementation('com.alimuzaffar.lib:pinentryedittext:1.3.10') {
         // Exclude is only needed if you already have
         // any of the following as a dependency in your project.
         exclude group: 'com.android.support', module: 'support-v4'
@@ -92,7 +93,7 @@ dependencies {
 
     }
 
-    implementation ("com.github.bumptech.glide:glide:4.6.1") {
+    implementation("com.github.bumptech.glide:glide:4.6.1") {
         exclude group: "com.android.support"
     }
 

@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
                     public void purchaseSuccess(SubscribePayment data) {
                         if(data.getType().equals(Globals.APP_IN_PURCHASE)) {
                             GoogleVerifyBody receipt = (GoogleVerifyBody) data.data;
+                            LogUtil.info("Data from", new Gson().toJson(data.data));
                             LogUtil.info("data", receipt.receipt.data.toString());
                             LogUtil.info("signature", receipt.receipt.signature.toString());
                             LogUtil.info("Profile balance gold", new Gson().toJson(receipt));
@@ -79,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                             LogUtil.info("packageId",  dataPayment.packageId);
                             LogUtil.info("assetCode", dataPayment.assetCode);
                             MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
+
                         }
                     }
 

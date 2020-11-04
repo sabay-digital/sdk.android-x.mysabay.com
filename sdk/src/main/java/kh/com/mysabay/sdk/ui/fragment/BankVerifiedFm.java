@@ -2,15 +2,19 @@ package kh.com.mysabay.sdk.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import com.google.gson.Gson;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -35,16 +39,19 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
     public static final String TAG = BankVerifiedFm.class.getSimpleName();
     private static final String EXT_KEY_PaymentResponseItem = "PaymentResponseItem";
     public static final String EXT_KEY_DATA = "EXT_KEY_DATA";
+    public static final String PSP_CODE = "EXT_PSP_CODE";
 
     private kh.com.mysabay.sdk.pojo.shop.Data mData;
     private Data mPaymentResponseItem;
+    private String pspCode;
     private boolean isFinished = false;
 
     @NotNull
-    public static BankVerifiedFm newInstance(Data item, kh.com.mysabay.sdk.pojo.shop.Data shopItem) {
+    public static BankVerifiedFm newInstance(Data item, kh.com.mysabay.sdk.pojo.shop.Data shopItem, String pspCode) {
         Bundle args = new Bundle();
         args.putParcelable(EXT_KEY_PaymentResponseItem, item);
         args.putParcelable(EXT_KEY_DATA, shopItem);
+        args.putString(PSP_CODE, pspCode);
         BankVerifiedFm f = new BankVerifiedFm();
         f.setArguments(args);
         return f;
@@ -55,9 +62,16 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
         if (getArguments() != null) {
             mPaymentResponseItem = getArguments().getParcelable(EXT_KEY_PaymentResponseItem);
             mData = getArguments().getParcelable(EXT_KEY_DATA);
+            pspCode= getArguments().getString(PSP_CODE);
         }
         setRetainInstance(true);
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
     }
 
     @Override
@@ -116,7 +130,14 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                     }
                 }
             });
-            String html = scriptFormValidate(mPaymentResponseItem);
+
+            String html;
+            if (pspCode.equals("wing")) {
+                html = wingFormValidate(mPaymentResponseItem);
+            } else {
+                html = scriptFormValidate(mPaymentResponseItem);
+            }
+
             mViewBinding.wv.loadDataWithBaseURL(MySabaySDK.getInstance().storeApiUrl(), html, "text/html", "utf-8", MySabaySDK.getInstance().storeApiUrl());
         }
     }
@@ -180,7 +201,8 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
     @NotNull
     @Contract(pure = true)
     private String scriptFormValidate(@NotNull Data item) {
-        LogUtil.info("Data", item.toString());
+        LogUtil.info("Data",  "'" + new Gson().toJson(item) + "'");
+
         return "<!DOCTYPE html>\n" +
                 "<html>\n" +
                 "<head>\n" +
@@ -196,6 +218,41 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
                 "        <input type=\"hidden\" name=\"signature\" value=\"" + item.signature + "\">\n" +
                 "        <input type=\"hidden\" name=\"public_key\" value=\"" + item.publicKey + "\">\n" +
                 "        <input type=\"hidden\" name=\"redirect\" value=\"" + item.redirect + "\">\n" +
+                "    </form>\n" +
+                "    <script>\n" +
+                "        $( document ).ready(function() {\n" +
+                "            $(\"#frm\").submit()\n" +
+                "        });\n" +
+                "    </script>\n" +
+                "\u200B\n" +
+                "</body>\n" +
+                "</html>";
+    }
+
+    @NotNull
+    @Contract(pure = true)
+    private String wingFormValidate(@NotNull Data item) {
+        LogUtil.info("Data",  "'" + new Gson().toJson(item) + "'");
+
+        return "<!DOCTYPE html>\n" +
+                "<html>\n" +
+                "<head>\n" +
+                "    <meta charset=\"utf-8\">\n" +
+                "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
+                "    <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css\">\n" +
+                "</head>\n" +
+                "<body>\n" +
+                "    <script src=\"https://code.jquery.com/jquery-3.4.1.js\"></script>\n" +
+                "    <h1>Please Wait</h1>\n" +
+                "    <form id=\"frm\" action=\"" + item.requestUrl + "\" method=\"post\">\n" +
+                "        <input type=\"hidden\" name=\"hash\" value=\"" + item.hash + "\">\n" +
+                "        <input type=\"hidden\" name=\"signature\" value=\"" + item.signature + "\">\n" +
+                "        <input type=\"hidden\" name=\"public_key\" value=\"" + item.publicKey + "\">\n" +
+                "        <input type=\"hidden\" name=\"redirect\" value=\"" + item.redirect + "\">\n" +
+                "        <input type=\"hidden\" name=\"wing_authorization\" value=\"" + "{&quot;username&quot;: &quot;" + item.wingAuthorization.userName + "&quot;," +
+                "        &quot;rest_api_key&quot;: &quot;" + item.wingAuthorization.restApiKey + "&quot;, &quot;biller_code&quot;: &quot;" + item.wingAuthorization.billerCode + "&quot;," +
+                "        &quot;password&quot;: &quot;" + item.wingAuthorization.password + "&quot;, &quot;currency&quot;: &quot;" + item.wingAuthorization.currency + "&quot;, " +
+                "        &quot;sandbox&quot;: &quot;" + item.wingAuthorization.sandbox + "&quot; }" + "\">\n" +
                 "    </form>\n" +
                 "    <script>\n" +
                 "        $( document ).ready(function() {\n" +

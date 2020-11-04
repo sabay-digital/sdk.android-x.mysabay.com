@@ -92,9 +92,9 @@
                 app:layout_constraintTop_toBottomOf="@id/cd_sabayId">
                 <android.support.v7.widget.AppCompatImageView
                     android:id="@+id/img_wallet"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/wallet"/>
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:src="@mipmap/sabay_coin"/>
                 <TextView
                     android:id="@+id/tv_sabay_gold_balance"
                     android:layout_width="wrap_content"
@@ -262,13 +262,20 @@
                     android:background="@drawable/payment_button"
                     style="?android:attr/borderlessButtonStyle"
                     android:gravity="left|center_vertical">
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/img_mysabay_logo"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:paddingLeft="@dimen/padding_10"
+                        android:layout_gravity="left|center_vertical"
+                        />
                     <TextView
                         android:id="@+id/tv_my_sabay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left|center_vertical"
-                        android:paddingLeft="@dimen/padding_20"
-                        android:text="Mysabay"
+                        android:paddingLeft="@dimen/padding_10"
+                        android:text="@string/mysabay"
                         android:textColor="@color/colorYellow" />
 
                     <TextView
@@ -291,12 +298,19 @@
                     android:background="@drawable/payment_button"
                     style="?android:attr/borderlessButtonStyle"
                     android:gravity="left|center_vertical">
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/img_in_app_billing_logo"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:paddingLeft="@dimen/padding_10"
+                        android:layout_gravity="left|center_vertical"
+                        />
                     <TextView
                         android:id="@+id/tv_in_app_purchase"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left|center_vertical"
-                        android:paddingLeft="@dimen/padding_20"
+                        android:paddingLeft="@dimen/padding_10"
                         android:text="Android In App Billing"
                         android:textColor="@color/colorYellow" />
 
@@ -326,19 +340,44 @@
                     android:textColor="@color/colorYellow"
                     android:visibility="gone" />
 
-                <android.support.v7.widget.AppCompatButton
+<!--                <android.support.v7.widget.AppCompatButton-->
+<!--                    android:id="@+id/btn_third_bank_provider"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="40dp"-->
+<!--                    android:layout_marginTop="@dimen/padding_10"-->
+<!--                    style="?android:attr/borderlessButtonStyle"-->
+<!--                    android:background="@drawable/payment_button"-->
+<!--                    android:text="@string/select_a_partner_bank"-->
+<!--                    android:textAppearance="@style/MyAppearanceBody1"-->
+<!--                    android:textAllCaps="false"-->
+<!--                    android:gravity="left|center_vertical"-->
+<!--                    android:paddingLeft="@dimen/padding_20"-->
+<!--                    android:textColor="@color/colorYellow" />-->
+                <LinearLayout
                     android:id="@+id/btn_third_bank_provider"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginTop="@dimen/padding_10"
-                    style="?android:attr/borderlessButtonStyle"
                     android:background="@drawable/payment_button"
-                    android:text="@string/select_a_partner_bank"
-                    android:textAppearance="@style/MyAppearanceBody1"
-                    android:textAllCaps="false"
-                    android:gravity="left|center_vertical"
-                    android:paddingLeft="@dimen/padding_20"
-                    android:textColor="@color/colorYellow" />
+                    style="?android:attr/borderlessButtonStyle"
+                    android:gravity="left|center_vertical">
+                    <android.support.v7.widget.AppCompatImageView
+                        android:id="@+id/img_other_payment_logo"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:paddingLeft="@dimen/padding_10"
+                        android:src="@mipmap/other_payment_option"
+                        android:layout_gravity="left|center_vertical"
+                        />
+                    <TextView
+                        android:id="@+id/tv_third_bank_provider"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="left|center_vertical"
+                        android:paddingLeft="@dimen/padding_10"
+                        android:text="@string/select_a_partner_bank"
+                        android:textColor="@color/colorYellow" />
+                </LinearLayout>
             </LinearLayout>
 
             <android.support.v7.widget.AppCompatButton
