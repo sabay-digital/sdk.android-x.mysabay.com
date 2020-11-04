@@ -51,4 +51,8 @@ public interface UserApi {
     @GET("api/"+ Constant.userAPIVersion +"/user/verify/token")
     Observable<TokenVerify> getVerifyToken(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
+    @FormUrlEncoded
+    @POST("api/"+ Constant.userAPIVersion +"/user/login/facebook")
+    Observable<RefreshTokenItem> loginWithFacebook(@Header("app_secret") String appSecret, @Field("token") String token);
+
 }

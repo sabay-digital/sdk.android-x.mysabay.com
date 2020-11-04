@@ -31,6 +31,10 @@ public class Data implements Parcelable {
     @SerializedName("redirect")
     @Expose
     public String redirect;
+    @SerializedName("wing_authorization")
+    @Expose
+    public WingAuthorization wingAuthorization;
+
     public final static Creator<Data> CREATOR = new Creator<Data>() {
 
         @SuppressWarnings({
@@ -52,6 +56,7 @@ public class Data implements Parcelable {
         this.signature = ((String) in.readValue((String.class.getClassLoader())));
         this.hash = ((String) in.readValue((String.class.getClassLoader())));
         this.redirect = ((String) in.readValue((String.class.getClassLoader())));
+        this.wingAuthorization= ((WingAuthorization) in.readValue((WingAuthorization.class.getClassLoader())));
     }
 
     /**
@@ -68,7 +73,7 @@ public class Data implements Parcelable {
      * @param hash
      * @param redirect
      */
-    public Data(String requestUrl, String publicKey, String signature, String hash, String redirect) {
+    public Data(String requestUrl, String publicKey, String signature, String hash, String redirect, WingAuthorization wingAuthorization) {
         super();
         this.requestUrl = requestUrl;
         this.publicKey = publicKey;
@@ -102,14 +107,21 @@ public class Data implements Parcelable {
         return this;
     }
 
+    public Data withWingAuthorization (WingAuthorization wingAuthorization) {
+        this.wingAuthorization = wingAuthorization;
+        return this;
+
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("requestUrl", requestUrl).append("publicKey", publicKey).append("signature", signature).append("hash", hash).append("redirect", redirect).toString();
+        return new ToStringBuilder(this).append("requestUrl", requestUrl).append("publicKey", publicKey).append("signature", signature)
+                .append("hash", hash).append("redirect", redirect).append("wingAuthorization", wingAuthorization).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(publicKey).append(signature).append(requestUrl).append(hash).append(redirect).toHashCode();
+        return new HashCodeBuilder().append(publicKey).append(signature).append(requestUrl).append(hash).append(redirect).append(wingAuthorization).toHashCode();
     }
 
     @Override
@@ -130,6 +142,7 @@ public class Data implements Parcelable {
         dest.writeValue(signature);
         dest.writeValue(hash);
         dest.writeValue(redirect);
+        dest.writeValue(wingAuthorization);
     }
 
     public int describeContents() {

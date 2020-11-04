@@ -7,9 +7,12 @@ import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import javax.inject.Inject;
 
@@ -22,8 +25,11 @@ import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
+import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
+import kh.com.mysabay.sdk.pojo.verified.VerifiedItem;
 import kh.com.mysabay.sdk.repository.UserRepo;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
+import kh.com.mysabay.sdk.ui.fragment.MySabayLoginConfirmFragment;
 import kh.com.mysabay.sdk.ui.fragment.MySabayLoginFm;
 import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
@@ -94,6 +100,7 @@ public class UserApiVM extends ViewModel {
                             MessageUtil.displayToast(context, item.data.message);
                             if (context instanceof LoginActivity)
                                 ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
+//                                ((LoginActivity) context).initAddFragment(new MySabayLoginConfirmFragment(), MySabayLoginConfirmFragment.TAG, true);
                         }
                     }
 
@@ -138,7 +145,6 @@ public class UserApiVM extends ViewModel {
             _networkState.setValue(new NetworkState(NetworkState.Status.ERROR, "Something went wrong, please login again"));
             return;
         }
-        LogUtil.info("Phone Number", item.data.phone);
         mCompositeDisposable.add(this.userRepo.postVerifyCode(item.data.appSecret, item.data.phone, code).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(response -> {
                     if (response.status == 200) {
@@ -155,15 +161,21 @@ public class UserApiVM extends ViewModel {
                         } else {
                             EventBus.getDefault().post(new SubscribeLogin("", response.data));
                             LogUtil.error(TAG, "verified data is null");
+                            MessageUtil.displayDialog(context, "verified data is null");
                         }
                     } else {
                         EventBus.getDefault().post(new SubscribeLogin("", response.data));
-                        LogUtil.error(TAG, "verify code response with status :" + response.status);
+                        JsonParser parser = new JsonParser();
+                        JsonObject obj = parser.parse(response.toString()).getAsJsonObject();
+                        String errMsg = obj.get("message").getAsString();
+                        MessageUtil.displayDialog(context, errMsg);
                     }
 
                 }, throwable -> {
+                    _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                     EventBus.getDefault().post(new SubscribeLogin("", throwable));
                     LogUtil.error("verify code response with status", throwable.getLocalizedMessage());
+                    MessageUtil.displayDialog(context, "Verify Code is not match");
                 }));
     }
 
@@ -209,6 +221,25 @@ public class UserApiVM extends ViewModel {
                         EventBus.getDefault().post(new SubscribeLogin("", error));
                     }
                 });
+    }
+
+    public void postToLoginWithFacebook(@NotNull Activity context, String token) {
+        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        userRepo.loginWithFacebook(appItem.appSecret,token)
+                .subscribeOn(appRxSchedulers.io())
+                .observeOn(appRxSchedulers.mainThread()).subscribe(
+                new AbstractDisposableObs<RefreshTokenItem>(context, _networkState, null) {
+                    @Override
+                    protected void onSuccess(RefreshTokenItem refreshTokenItem) {
+                        LogUtil.info("onSuccess", refreshTokenItem.toString());
+                    }
+
+                    @Override
+                    protected void onErrors(@NotNull Throwable error) {
+                        LogUtil.info("onErrors", error.toString());
+                    }
+                });
+
     }
 
     @Override

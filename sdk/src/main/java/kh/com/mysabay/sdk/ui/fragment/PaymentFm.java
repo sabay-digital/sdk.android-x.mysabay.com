@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -25,6 +26,7 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import kh.com.mysabay.sdk.BuildConfig;
@@ -113,6 +116,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         viewModel.setShopItemSelected(mData);
         viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);
         onBillingSetupFinished();
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
     }
 
     public void onBillingSetupFinished() {
@@ -138,6 +142,17 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                 MessageUtil.displayDialog(getContext(), "Service Disconnect");
             }
         });
+    }
+
+    boolean verifyInstallerId(Context context) {
+        // A list with valid installers package name
+        List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
+
+        // The package name of the app that has installed your app
+        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
+
+        // true if your app has been downloaded from Play Store
+        return installer != null && validInstallers.contains(installer);
     }
 
     @Override
@@ -188,9 +203,19 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                     for (kh.com.mysabay.sdk.pojo.mysabay.Data item : mySabayItem.data) {
                         if (item.paymentType.equals("pre-authorized")) {
                             mViewBinding.btnLabel.setText(item.label);
+                            Glide.with(getContext())
+                                    .load(item.logo)
+                                    .into(mViewBinding.imgMysabayLogo);
                         } else if (item.paymentType.equals("iap")) {
-                            mViewBinding.btnInAppPurchase.setVisibility(View.VISIBLE);
+                            if (verifyInstallerId(getActivity())) {
+                                mViewBinding.btnInAppPurchase.setVisibility(View.VISIBLE);
+                            } else {
+                                mViewBinding.btnInAppPurchase.setVisibility(View.GONE);
+                            }
                             mViewBinding.lblInAppPurchase.setText(item.label);
+                            Glide.with(getContext())
+                                    .load(item.logo)
+                                    .into(mViewBinding.imgInAppBillingLogo);
                         }
                     }
                     mViewBinding.btnMysabay.setVisibility(View.VISIBLE);
@@ -244,27 +269,29 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.lblInAppPurchase.setTextColor(textColorCode());
             mViewBinding.tvMySabay.setTextColor(0xFFE3B852);
             mViewBinding.btnMysabay.setBackgroundResource(R.drawable.payment_button);
-            mViewBinding.btnThirdBankProvider.setTextColor(0xFFE3B852);
+            mViewBinding.tvThirdBankProvider.setTextColor(0xFFE3B852);
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnLabel.setTextColor(0xFF828181);
+            mViewBinding.imgOtherPaymentLogo.setImageResource(R.mipmap.other_payment_option);
         });
 
         mViewBinding.btnMysabay.setOnClickListener(v -> {
             checkedId[0] = v.getId();
             Data data = viewModel.getItemSelected().getValue();
-            mViewBinding.tvTotal.setText(data.toRoundSabayCoin());
+            mViewBinding.tvTotal.setText(String.format(data.priceInSG <= balanceGold ? data.toRoundSabayGold() : data.toRoundSabayCoin()));
             mViewBinding.tvMySabay.setTextColor(textColorCode());
             mViewBinding.btnMysabay.setBackgroundResource(R.drawable.shape_button_primary);
             mViewBinding.tvInAppPurchase.setTextColor(0xFFE3B852);
             mViewBinding.btnInAppPurchase.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.lblInAppPurchase.setTextColor(0xFFE3B852);
-            mViewBinding.btnThirdBankProvider.setTextColor(0xFFE3B852);
+            mViewBinding.tvThirdBankProvider.setTextColor(0xFFE3B852);
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.btnPreAuthPay.setTextColor(0xFFE3B852);
             mViewBinding.btnLabel.setTextColor(textColorCode());
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
+            mViewBinding.imgOtherPaymentLogo.setImageResource(R.mipmap.other_payment_option);
             if (data.priceInSc <= balanceCoin || data.priceInSG <= balanceGold) {
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.priceInSG <= balanceGold ? data.toRoundSabayGold() : data.toRoundSabayCoin()));
                 mViewBinding.btnPay.setEnabled(true);
@@ -291,8 +318,9 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.tvInAppPurchase.setTextColor(0xFFE3B852);
             mViewBinding.btnInAppPurchase.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.lblInAppPurchase.setTextColor(0xFF828181);
-            mViewBinding.btnThirdBankProvider.setTextColor(0xFFE3B852);
+            mViewBinding.tvThirdBankProvider.setTextColor(0xFFE3B852);
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.payment_button);
+            mViewBinding.imgOtherPaymentLogo.setImageResource(R.mipmap.other_payment_option);
             mViewBinding.btnLabel.setTextColor(0xFF828181);
         });
 
@@ -303,7 +331,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
             mViewBinding.btnPay.setBackgroundResource(R.color.colorYellow);
-            mViewBinding.btnThirdBankProvider.setTextColor(textColorCode());
+            mViewBinding.imgOtherPaymentLogo.setImageResource(R.mipmap.payment_options_selected);
+            mViewBinding.tvThirdBankProvider.setTextColor(textColorCode());
             mViewBinding.btnThirdBankProvider.setBackgroundResource(R.drawable.shape_button_primary);
             mViewBinding.tvMySabay.setTextColor(0xFFE3B852);
             mViewBinding.btnMysabay.setBackgroundResource(R.drawable.payment_button);
