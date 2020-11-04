@@ -3,13 +3,12 @@
 This is the official MySabay SDK for native Android application. To use this SDK, you can follow the guides below or download the test with the example project we have in this repository.
 
 ## Version
--Latest: 1.0.18
-    - Wing payment
-    - Check application install manually via APK or Google Play store.
-    - Display message if user input wrong verify code.
-    - Display loading if In-App Purchase Payment is not yet completed.
-    - Change login logo and update checkout screen.
-
+- Latest: 1.0.18  
+    - Wing payment  
+    - Check application install manually via APK or Google Play store.  
+    - Display message if user input wrong verify code.  
+    - Display loading if In-App Purchase Payment is not yet completed.  
+    - Change login logo and update checkout screen.  
 
 ## Create your application
 
