@@ -30,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import kh.com.mysabay.sdk.BuildConfig;
 import kh.com.mysabay.sdk.MySabaySDK;
@@ -93,8 +94,12 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
 
         mAdapter = new ShopAdapter(v.getContext(), item -> {
             //    if (!BuildConfig.DEBUG)
-            PURCHASE_ID = item.packageId;
-            purchase(v, item.packageId);
+            if (verifyInstallerId(getActivity())) {
+                PURCHASE_ID = item.packageId;
+                purchase(v, item.packageId);
+            } else {
+                MessageUtil.displayDialog(getActivity(), getString(R.string.application_do_not_support_in_app_purchase));
+            }
         });
 
         mLayoutManager = new GridLayoutManager(v.getContext(), getResources().getInteger(R.integer.layout_size));
@@ -200,6 +205,17 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         ((StoreActivity) context).userComponent.inject(this);
         // Now you can access loginViewModel here and onCreateView too
         // (shared instance with the Activity and the other Fragment)
+    }
+
+    boolean verifyInstallerId(Context context) {
+        // A list with valid installers package name
+        List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
+
+        // The package name of the app that has installed your app
+        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
+
+        // true if your app has been downloaded from Play Store
+        return installer != null && validInstallers.contains(installer);
     }
 
     public void onBillingSetupFinished() {
@@ -339,6 +355,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
                 break;
             }
         }
+
     }
 
     // handle consume purchase

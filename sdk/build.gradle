@@ -79,6 +79,7 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
     implementation 'com.anjlab.android.iab.v3:library:1.1.0'
     implementation 'com.android.billingclient:billing:2.2.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.31.0'
 
     //phone validation
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.10.3'

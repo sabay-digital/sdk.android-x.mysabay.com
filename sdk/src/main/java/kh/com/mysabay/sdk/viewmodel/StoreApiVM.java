@@ -206,17 +206,20 @@ public class StoreApiVM extends ViewModel {
     }
 
     public void postToVerifyAppInPurchase(@NotNull Context context, @NotNull GoogleVerifyBody body) {
+        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         mCompos.add(storeRepo.postToVerifyGoogle(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new Consumer<GoogleVerifyResponse>() {
                     @Override
                     public void accept(GoogleVerifyResponse googleVerifyResponse) throws Exception {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                         EventBus.getDefault().post(new SubscribePayment(Globals.APP_IN_PURCHASE, body));
                         ((Activity) context).finish();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         MessageUtil.displayDialog(context, "Error" + throwable.getMessage());
                     }
                 }));

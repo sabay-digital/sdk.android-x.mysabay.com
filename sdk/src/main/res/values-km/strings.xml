@@ -41,5 +41,5 @@
     <string name="create_new_account">បង្កើតគណនីថ្មី​</string>
     <string name="existing_mysabay_account_desc">We’ve found an existing MySabay account associated with the phone number you provided.</string>
     <string name="enter_your_password">Enter your password to confirm your MySabay Account or click ‘I want a new account’ to get a new account.</string>
-
+    <string name="application_do_not_support_in_app_purchase">Apps installed manually via APK do not support In-App Purchase. Please install the app from Google Play Store to use this feature.</string>
 </resources>

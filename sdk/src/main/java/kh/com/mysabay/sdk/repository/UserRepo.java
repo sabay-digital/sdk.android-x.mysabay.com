@@ -61,4 +61,9 @@ public class UserRepo implements UserApi {
         return this.userApi.getVerifyToken(appSecret, "Bearer " + token);
     }
 
+    @Override
+    public Observable<RefreshTokenItem> loginWithFacebook(String appSecret, String token) {
+        return this.userApi.loginWithFacebook(appSecret, "Bearer " + token);
+    }
+
 }
