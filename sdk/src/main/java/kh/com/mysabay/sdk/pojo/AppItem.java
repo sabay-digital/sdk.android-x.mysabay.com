@@ -49,6 +49,12 @@ public class AppItem implements Parcelable {
         this.expire = expire;
     }
 
+    public AppItem(String token, String refreshToken, long expire) {
+        this.token = token;
+        this.refreshToken = refreshToken;
+        this.expire = expire;
+    }
+
     public AppItem(String appSecret, String token, String refreshToken) {
         this(appSecret, token, refreshToken, null, 0);
     }

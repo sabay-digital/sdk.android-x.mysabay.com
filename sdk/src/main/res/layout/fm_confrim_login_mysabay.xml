@@ -38,11 +38,10 @@
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
                             android:layout_marginBottom="@dimen/padding_35"
-                            android:textAllCaps="true"
                             android:text="@string/mysabay_account"
+                            android:textAllCaps="true"
                             android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
-                            android:textStyle="bold"
-                            app:textAllCaps="true" />
+                            android:textStyle="bold" />
                         <android.support.v7.widget.LinearLayoutCompat
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

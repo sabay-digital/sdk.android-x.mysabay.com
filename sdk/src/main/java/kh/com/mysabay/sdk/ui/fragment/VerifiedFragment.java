@@ -46,14 +46,14 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light)
             mViewBinding.tvResendOtp.setTextColor(getResources().getColor(R.color.colorWhite700));
             mViewBinding.btnVerify.setTextColor(textColorCode());
-        this.viewModel = LoginActivity.loginActivity.viewModel;
+           this.viewModel = LoginActivity.loginActivity.viewModel;
     }
 
     @Override
     public void assignValues() {
         viewModel.getResponseLogin().observe(this, item -> {
-            if (item != null && item.data.verifyCode > 0)
-                MessageUtil.displayDialog(getContext(), String.valueOf(item.data.verifyCode), colorCodeBackground());
+            if (item != null && item.verifyCode > 0)
+                MessageUtil.displayDialog(getContext(), String.valueOf(item.verifyCode), colorCodeBackground());
 //                mViewBinding.edtVerifyCode.setText(String.valueOf(item.data.verifyCode));
         });
     }
@@ -63,13 +63,14 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         mViewBinding.edtVerifyCode.setAnimateText(true);
         mViewBinding.edtVerifyCode.setOnPinEnteredListener(str -> {
             LoginItem item = viewModel.getResponseLogin().getValue();
+
             if (item == null) return;
 
             if (Integer.parseInt(str.toString()) != 0) {
                 if (MySabaySDK.getInstance().getSdkConfiguration().isSandBox) {
-                    if (Integer.parseInt(str.toString()) == item.data.verifyCode) {
+                    if (Integer.parseInt(str.toString()) != 0) {
                         KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
-                        viewModel.postToVerified(getContext(), Integer.parseInt(str.toString()));
+                        viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
                     } else {
                         KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
                         mViewBinding.edtVerifyCode.setError(true);
@@ -77,7 +78,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                                 mViewBinding.edtVerifyCode.setText(null), 1000);
                     }
                 } else {
-                    viewModel.postToVerified(getContext(), Integer.parseInt(str.toString()));
+                    viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
                 }
             }
         });
@@ -86,14 +87,14 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
 
         mViewBinding.tvResendOtp.setOnClickListener(v -> {
             mViewBinding.edtVerifyCode.setText("");
-            viewModel.resendOTP(v.getContext());
+            viewModel.resendOTPWithGraphQL(v.getContext());
         });
 
         mViewBinding.btnVerify.setOnClickListener(v -> {
             String code = mViewBinding.edtVerifyCode.getText() != null ? mViewBinding.edtVerifyCode.getText().toString() : "";
             if (!StringUtils.isEmpty(code)) {
                 KeyboardUtils.hideKeyboard(v.getContext(), v);
-                viewModel.postToVerified(v.getContext(), Integer.parseInt(code));
+                viewModel.verifyOTPWithGraphql(v.getContext(), Integer.parseInt(code));
             } else
                 MessageUtil.displayToast(v.getContext(), getString(R.string.verify_code_required));
         });

@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 
 apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: "com.apollographql.apollo"
 group = 'kh.com.mysabay'
 version = '1.0.1-o'
 
@@ -53,7 +54,7 @@ dependencies {
 
     implementation 'com.android.support.test.espresso:espresso-idling-resource:3.0.2'
     implementation 'com.akexorcist:localizationactivity:1.2.2'
-    implementation 'org.jetbrains:annotations-java5:15.0'
+//    implementation 'org.jetbrains:annotations-java5:15.0'
 
     implementation compatibility("gson")
     implementation compatibility("retrofit")
@@ -79,7 +80,8 @@ dependencies {
     implementation 'com.daimajia.androidanimations:library:2.3@aar'
     implementation 'com.anjlab.android.iab.v3:library:1.1.0'
     implementation 'com.android.billingclient:billing:2.2.0'
-    implementation 'com.facebook.android:facebook-android-sdk:4.31.0'
+    implementation 'com.facebook.android:facebook-android-sdk:4.40.0'
+    implementation("com.apollographql.apollo:apollo-runtime:2.4.5")
 
     //phone validation
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.10.3'

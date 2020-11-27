@@ -69,18 +69,6 @@ public class LoginActivity extends BaseActivity {
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
-        LogUtil.debug("AAAA", verifyInstallerId(getApplicationContext()) + "");
-    }
-
-    boolean verifyInstallerId(Context context) {
-        // A list with valid installers package name
-        List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
-
-        // The package name of the app that has installed your app
-        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-
-        // true if your app has been downloaded from Play Store
-        return installer != null && validInstallers.contains(installer);
     }
 
     @Override

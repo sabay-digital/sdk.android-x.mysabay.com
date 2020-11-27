@@ -2,6 +2,7 @@ package kh.com.mysabay.sdk.webservice.api;
 
 import io.reactivex.Observable;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
+import kh.com.mysabay.sdk.pojo.login.LoginResponseItem;
 import kh.com.mysabay.sdk.pojo.logout.LogoutResponseItem;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
@@ -52,7 +53,7 @@ public interface UserApi {
     Observable<TokenVerify> getVerifyToken(@Header("app_secret") String appSecret, @Header("Authorization") String token);
 
     @FormUrlEncoded
-    @POST("api/"+ Constant.userAPIVersion +"/user/login/facebook")
-    Observable<RefreshTokenItem> loginWithFacebook(@Header("app_secret") String appSecret, @Field("token") String token);
+    @POST("api/v1.6"+"/user/login/facebook")
+    Observable<LoginResponseItem> loginWithFacebook(@Header("service-code") String serviceCode, @Field("token") String token);
 
 }

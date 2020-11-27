@@ -15,6 +15,8 @@
     <string name="msg_no_data">មិនមានទិន្នន័យ</string>
     <string name="title_retry">ម្តងទៀត</string>
     <string name="msg_phone_incorrect">ទម្រង់លេខទូរស័ព្ទរបស់លោកអ្នកមិនត្រឹមត្រូវទេ</string>
+    <string name="msg_input_username">បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់</string>
+    <string name="msg_input_password">បញ្ចូលពាក្យសម្ងាត់</string>
     <string name="msg_input_phone">បញ្ចូលលេខទូរស័ព្ទ</string>
     <string name="verify_code_required">លេខកូដចាំបាច់ត្រូវបញ្ចូល</string>
     <string name="pay">បង់ %s</string>
@@ -35,6 +37,7 @@
     <string name="please_select_your_preferred_partnered_payment_provider">ជ្រើសរើសអ្នកផ្តល់ការទូទាត់ជាដៃគូសម្រាប់ការអនុញ្ញាតក្នុងការទូទាត់លើកក្រោយ។</string>
     <string name="logging_with_phone_number_desc">Logging in with phone number automatically creates a MySabay account if you do not already own one.</string>
     <string name="mysabay_account">គណនី MySabay</string>
+    <string name="login_with_my_sabay">ចូល​ជា​មួយ​នឹង MySabay</string>
     <string name="username">ឈ្មោះអ្នកប្រើប្រាស់</string>
     <string name="password">ពាក្យសម្ងាត់</string>
     <string name="confirm_mysabay">Confirm MySabay</string>

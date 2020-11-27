@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 
 import io.reactivex.Observable;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
+import kh.com.mysabay.sdk.pojo.login.LoginResponseItem;
 import kh.com.mysabay.sdk.pojo.logout.LogoutResponseItem;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
@@ -62,8 +63,8 @@ public class UserRepo implements UserApi {
     }
 
     @Override
-    public Observable<RefreshTokenItem> loginWithFacebook(String appSecret, String token) {
-        return this.userApi.loginWithFacebook(appSecret, "Bearer " + token);
+    public Observable<LoginResponseItem> loginWithFacebook(String serviceCode, String token) {
+        return this.userApi.loginWithFacebook(serviceCode,  token);
     }
 
 }

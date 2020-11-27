@@ -92,7 +92,7 @@ public class StoreApiVM extends ViewModel {
      */
     public void getShopFromServer(@NotNull Context context) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-        storeRepo.getShopItem(sdkConfiguration.appSecret, appItem.token).subscribeOn(appRxSchedulers.io())
+        storeRepo.getShopItem(MySabaySDK.getInstance().appSecret(), appItem.token).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<ShopItem>(context, _networkState) {
             @Override
             protected void onSuccess(ShopItem item) {
@@ -141,7 +141,7 @@ public class StoreApiVM extends ViewModel {
      */
     public void getMySabayCheckout(@NotNull Context context, String packageCode) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-        storeRepo.getMySabayCheckout(sdkConfiguration.appSecret, appItem.token, packageCode).subscribeOn(appRxSchedulers.io())
+        storeRepo.getMySabayCheckout(MySabaySDK.getInstance().appSecret(), appItem.token, packageCode).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new Observer<MySabayItem>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -208,7 +208,7 @@ public class StoreApiVM extends ViewModel {
     public void postToVerifyAppInPurchase(@NotNull Context context, @NotNull GoogleVerifyBody body) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-        mCompos.add(storeRepo.postToVerifyGoogle(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
+        mCompos.add(storeRepo.postToVerifyGoogle(MySabaySDK.getInstance().appSecret(), appItem.token, body).subscribeOn(appRxSchedulers.io())
                 .observeOn(appRxSchedulers.mainThread()).subscribe(new Consumer<GoogleVerifyResponse>() {
                     @Override
                     public void accept(GoogleVerifyResponse googleVerifyResponse) throws Exception {
@@ -254,7 +254,7 @@ public class StoreApiVM extends ViewModel {
             } else {
                 body = new PaymentBody(appItem.uuid, shopItem.priceInSc.toString(), listMySabayProvider.get(0).pspCode.toLowerCase(), listMySabayProvider.get(0).pspAssetCode.toLowerCase(), shopItem.packageCode);
             }
-            storeRepo.postToPaid(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
+            storeRepo.postToPaid(MySabaySDK.getInstance().appSecret(), appItem.token, body).subscribeOn(appRxSchedulers.io())
                     .observeOn(appRxSchedulers.mainThread())
                     .subscribe(new AbstractDisposableObs<PaymentResponseItem>(context, _networkState) {
                         @Override
@@ -282,7 +282,7 @@ public class StoreApiVM extends ViewModel {
             Gson gson = new Gson();
             String json = gson.toJson(body);
             LogUtil.info("PaymentBody", json);
-            storeRepo.postToChargeOneTime(sdkConfiguration.appSecret, appItem.token, body).subscribeOn(appRxSchedulers.io())
+            storeRepo.postToChargeOneTime(MySabaySDK.getInstance().appSecret(), appItem.token, body).subscribeOn(appRxSchedulers.io())
                     .observeOn(appRxSchedulers.mainThread())
                     .subscribe(new AbstractDisposableObs<ResponseItem>(context, _networkState) {
                         @Override

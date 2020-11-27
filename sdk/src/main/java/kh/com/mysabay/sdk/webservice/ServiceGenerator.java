@@ -1,9 +1,11 @@
 package kh.com.mysabay.sdk.webservice;
 
+import com.apollographql.apollo.ApolloClient;
 import com.google.gson.GsonBuilder;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
@@ -12,9 +14,13 @@ import dagger.Module;
 import dagger.Provides;
 import kh.com.mysabay.sdk.BuildConfig;
 import kh.com.mysabay.sdk.MySabaySDK;
+import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 import kh.com.mysabay.sdk.webservice.api.StoreApi;
 import kh.com.mysabay.sdk.webservice.api.UserApi;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
@@ -45,7 +51,16 @@ public class ServiceGenerator {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(getClientConfig())
+                .client(getClientConfig(MySabaySDK.getInstance().serviceCode()))
+                .build();
+    }
+
+    @Singleton
+    @Provides
+    public ApolloClient instanceUserWithPolloClient() {
+        return ApolloClient.builder()
+                .serverUrl(MySabaySDK.getInstance().userApiUrl())
+                .okHttpClient(getClientConfig(MySabaySDK.getInstance().serviceCode()))
                 .build();
     }
 
@@ -57,14 +72,14 @@ public class ServiceGenerator {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(getClientConfig())
+                .client(getClientConfig(MySabaySDK.getInstance().serviceCode()))
                 .build();
     }
 
     @Singleton
     @Provides
     @NotNull
-    public OkHttpClient getClientConfig() {
+    public OkHttpClient getClientConfig(String serviceCode) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
                 HttpLoggingInterceptor.Level.NONE);
@@ -73,8 +88,32 @@ public class ServiceGenerator {
                 .connectTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request newRequest = chain.request().newBuilder()
+                                .addHeader("service-code", serviceCode)
+                                .build();
+                        return chain.proceed(newRequest);
+                    }
+                })
                 .build();
+    }
+
+    /**
+     * create a interface to call api endpoint
+     */
+//    @Singleton
+//    @Provides
+//    public UserApi createNewsApi() {
+//        return instanceUser().create(UserApi.class);
+//    }
+
+
+    @Singleton
+    @Provides
+    public StoreApi createStoreApi() {
+        return instanceStore().create(StoreApi.class);
     }
 
    /* Interceptor timeoutInterceptor = chain -> {
@@ -110,20 +149,6 @@ public class ServiceGenerator {
                 .proceed(builder.build());
     };*/
 
-    /**
-     * create a interface to call api endpoint
-     */
-    @Singleton
-    @Provides
-    public UserApi createNewsApi() {
-        return instanceUser().create(UserApi.class);
-    }
-
-    @Singleton
-    @Provides
-    public StoreApi createStoreApi() {
-        return instanceStore().create(StoreApi.class);
-    }
 
    /* private static Cache provideCache() {
         Cache cache = null;

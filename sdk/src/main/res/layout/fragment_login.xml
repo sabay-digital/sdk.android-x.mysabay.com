@@ -154,7 +154,7 @@
                         android:id="@+id/btn_Login_fb"
                         android:layout_width="200dp"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
+                        android:visibility="visible"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="@dimen/padding_15"
                         android:layout_marginBottom="@dimen/padding_30" />
