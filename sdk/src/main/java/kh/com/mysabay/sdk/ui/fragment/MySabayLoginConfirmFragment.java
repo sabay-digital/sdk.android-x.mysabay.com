@@ -42,7 +42,7 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
 
     @Override
     public void initializeObjects(View v, Bundle args) {
-//        this.viewModel = LoginActivity.loginActivity.viewModel;
+        this.viewModel = LoginActivity.loginActivity.viewModel;
         mManager = getFragmentManager();
     }
 
@@ -59,6 +59,11 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (v.getContext() instanceof LoginActivity)
                 ((LoginActivity) v.getContext()).finish();
+        });
+
+        mViewBinding.btnBack.setOnClickListener(v -> {
+            if (getActivity() != null)
+                getActivity().onBackPressed();
         });
 
         mViewBinding.btnConfirmMysabay.setOnClickListener(v -> {

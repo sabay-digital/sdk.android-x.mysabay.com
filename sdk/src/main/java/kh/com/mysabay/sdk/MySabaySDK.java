@@ -37,18 +37,11 @@ import kh.com.mysabay.sdk.di.DaggerBaseAppComponent;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
-import kh.com.mysabay.sdk.pojo.logout.LogoutResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
-import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
-import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
-import kh.com.mysabay.sdk.pojo.refreshToken.TokenVerify;
-import kh.com.mysabay.sdk.repository.UserRepo;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
-import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
-import kh.com.mysabay.sdk.webservice.AbstractDisposableObs;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -61,8 +54,6 @@ public class MySabaySDK {
 
     private static final String TAG = MySabaySDK.class.getSimpleName();
 
-//    @Inject
-//    UserRepo userRepo;
     @Inject
     ApolloClient apolloClient;
     @Inject
@@ -317,7 +308,13 @@ public class MySabaySDK {
                         onFailure(new ApolloException("UserInfoListener required!!!"));
                     }
                 } else {
-                    EventBus.getDefault().post(new SubscribeLogin("", response.getData()));
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                           LogUtil.info("Get User Profile", "Failed");
+//                           listener.userInfo("Get User Profile failed");
+                        }
+                    });
                 }
             }
 
@@ -327,7 +324,6 @@ public class MySabaySDK {
                     @Override
                     public void run() {
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
-                        EventBus.getDefault().post(new SubscribeLogin("", e));
                     }
                 });
             }

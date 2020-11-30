@@ -13,9 +13,6 @@ import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.mysabay.sdk.DeleteTokenMutation;
 import com.mysabay.sdk.LoginWithFacebookMutation;
 import com.mysabay.sdk.LoginWithMySabayMutation;
 import com.mysabay.sdk.LoginWithPhoneMutation;
@@ -29,24 +26,18 @@ import org.jetbrains.annotations.NotNull;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Consumer;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.SdkConfiguration;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
-import kh.com.mysabay.sdk.pojo.login.LoginResponseItem;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
-import kh.com.mysabay.sdk.pojo.logout.LogoutResponseItem;
-import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
-import kh.com.mysabay.sdk.repository.UserRepo;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
-import kh.com.mysabay.sdk.ui.fragment.MySabayLoginFm;
+import kh.com.mysabay.sdk.ui.fragment.MySabayLoginConfirmFragment;
 import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
-import kh.com.mysabay.sdk.webservice.AbstractDisposableObs;
 
 /**
  * Created by Tan Phirum on 3/8/20
@@ -55,8 +46,6 @@ import kh.com.mysabay.sdk.webservice.AbstractDisposableObs;
 public class UserApiVM extends ViewModel {
 
     private static final String TAG = UserApiVM.class.getSimpleName();
-
-//    private final UserRepo userRepo;
 
     ApolloClient apolloClient;
 
@@ -78,7 +67,6 @@ public class UserApiVM extends ViewModel {
 
     @Inject
     public UserApiVM(ApolloClient apolloClient, AppRxSchedulers appRxSchedulers) {
-//        this.userRepo = userRepo;
         this.apolloClient = apolloClient;
         this.appRxSchedulers = appRxSchedulers;
         this._networkState = new MediatorLiveData<>();
@@ -100,7 +88,7 @@ public class UserApiVM extends ViewModel {
         return _responseLogin;
     }
 
-    public void postToLoginWithGraphql(Context context, String appSecret, String phone, String dialCode) {
+    public void postToLoginWithGraphql(Context context, String phone, String dialCode) {
         _login.setValue(phone);
 
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
@@ -111,6 +99,7 @@ public class UserApiVM extends ViewModel {
                 if (response.getData() != null) {
                     LoginItem item = new LoginItem();
                     item.withPhone(dialCode + phone);
+                    item.withExpire(response.getData().sso_loginPhone().otpExpiry());
 
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
@@ -120,8 +109,13 @@ public class UserApiVM extends ViewModel {
                             setLoginItemData(item);
                         }
                     });
-                    if (context instanceof LoginActivity)
-                        ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
+                    if (response.getData().sso_loginPhone().verifyMySabay()) {
+                        if (context instanceof LoginActivity)
+                            ((LoginActivity) context).initAddFragment(new MySabayLoginConfirmFragment(), VerifiedFragment.TAG, true);
+                    } else {
+                        if (context instanceof LoginActivity)
+                            ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
+                    }
                 } else {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
@@ -203,7 +197,7 @@ public class UserApiVM extends ViewModel {
         apolloClient.mutate(new LoginWithFacebookMutation(token)).enqueue(new ApolloCall.Callback<LoginWithFacebookMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<LoginWithFacebookMutation.Data> response) {
-                LogUtil.info("Success", response.getData().toString());
+                if (response.getData() != null) {
                 AppItem appItem = new AppItem(response.getData().sso_loginFacebook().accessToken(), response.getData().sso_loginFacebook().refreshToken(), response.getData().sso_loginFacebook().expire());
                 String encrypted = gson.toJson(appItem);
                 MySabaySDK.getInstance().saveAppItem(encrypted);
@@ -216,6 +210,10 @@ public class UserApiVM extends ViewModel {
                         LoginActivity.loginActivity.finish();
                     }
                 });
+
+                } else {
+                    MessageUtil.displayDialog(context, "Login with facebook failed");
+                }
             }
 
             @Override
@@ -227,7 +225,7 @@ public class UserApiVM extends ViewModel {
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         EventBus.getDefault().post(new SubscribeLogin("", e));
                         LogUtil.error("Login with facebook", e.getLocalizedMessage());
-                        MessageUtil.displayDialog(context, "Login with facebook is error");
+                        MessageUtil.displayDialog(context, "Login with facebook failed");
                     }
                 });
             }
@@ -277,12 +275,12 @@ public class UserApiVM extends ViewModel {
             }
         });
     }
+
     public void postToVerifyMySabayWithGraphql(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         apolloClient.mutate(new VerifyMySabayMutation(username, password)).enqueue(new ApolloCall.Callback<VerifyMySabayMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<VerifyMySabayMutation.Data> response) {
-                LogUtil.info("Verify with MySabay Success", response.getData().toString());
                 if (response.getData() != null) {
                     AppItem appItem = new AppItem(response.getData().sso_verifyMySabay().accessToken(), response.getData().sso_verifyMySabay().refreshToken(), response.getData().sso_verifyMySabay().expire());
                     String encrypted = gson.toJson(appItem);
@@ -293,7 +291,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_verifyMySabay().accessToken(), null));
-                            ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
+                            LoginActivity.loginActivity.finish();
                         }
                     });
                 } else {
@@ -301,7 +299,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                            MessageUtil.displayDialog(context, "Verify Mysabay account failed");
+                            MessageUtil.displayDialog(context, "Verify MySabay account failed");
                         }
                     });
                 }

@@ -145,7 +145,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
                     if (isValid) {
                         String phNumber = String.valueOf(phoneNumber.getNationalNumber());
                         String dialCode = String.valueOf(phoneNumber.getCountryCode());
-                        viewModel.postToLoginWithGraphql(v.getContext(), MySabaySDK.getInstance().appSecret(), phNumber, dialCode);
+                        viewModel.postToLoginWithGraphql(v.getContext(), phNumber, dialCode);
                     } else {
                         showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
                     }
