@@ -96,6 +96,7 @@
                                 android:textColor="@color/secondary"
                                 android:background="@drawable/spinner_bg"
                                 android:textCursorDrawable="@null"
+                                android:enabled="false"
                                 app:hintTextAppearance="@style/MyAppearanceBody1.Primary" />
 
                             <android.support.v7.widget.AppCompatTextView

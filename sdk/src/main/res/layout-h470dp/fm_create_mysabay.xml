@@ -48,8 +48,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="@dimen/padding_20"
-                    android:text="@string/mysabay_account"
+                    android:layout_marginBottom="@dimen/padding_30"
+                    android:text="@string/create_my_sabay"
                     android:textAllCaps="true"
                     android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
                     android:textStyle="bold" />
@@ -57,29 +57,9 @@
                 <android.support.v7.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/existing_mysabay_account_desc"
-                    android:textColor="@color/secondary"
-                    android:paddingBottom="@dimen/padding_5"
-                    android:textSize="@dimen/font_size_title"
-                    />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/enter_your_password"
-                    android:layout_marginTop="@dimen/padding_10"
-                    android:textColor="@color/secondary"
-                    android:paddingBottom="@dimen/padding_5"
-                    android:textSize="@dimen/font_size_title"
-                    />
-
-                <android.support.v7.widget.AppCompatTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/username"
                     android:textColor="@color/colorYellow"
                     android:paddingBottom="@dimen/padding_5"
-                    android:layout_marginTop="@dimen/padding_15"
                     android:textSize="@dimen/font_size_title"
                     />
                     <android.support.design.widget.TextInputEditText
@@ -94,7 +74,6 @@
                         android:textColor="@color/secondary"
                         android:background="@drawable/spinner_bg"
                         android:textCursorDrawable="@null"
-                        android:enabled="false"
                         app:hintTextAppearance="@style/MyAppearanceBody1.Primary" />
 
                 <android.support.v7.widget.AppCompatTextView
@@ -119,6 +98,28 @@
                     android:textCursorDrawable="@null"
                     app:hintTextAppearance="@style/MyAppearanceBody1.Primary" />
 
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/confirm_password"
+                    android:textColor="@color/colorYellow"
+                    android:paddingBottom="@dimen/padding_5"
+                    android:layout_marginTop="@dimen/padding_20"
+                    android:textSize="@dimen/font_size_title"
+                    />
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/edt_confirm_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font_battambang_regular"
+                    android:padding="@dimen/padding_8"
+                    android:inputType="textPassword"
+                    android:singleLine="true"
+                    android:textColor="@color/secondary"
+                    android:background="@drawable/spinner_bg"
+                    android:textCursorDrawable="@null"
+                    app:hintTextAppearance="@style/MyAppearanceBody1.Primary" />
+
                 <android.support.v7.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -130,7 +131,7 @@
                     android:orientation="vertical">
 
                     <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btn_confirm_mysabay"
+                        android:id="@+id/btn_create_mysabay"
                         style="@style/ButtonPrimary"
                         android:layout_width="200dp"
                         android:layout_marginBottom="@dimen/padding_10"
@@ -139,26 +140,7 @@
                         android:paddingStart="20dp"
                         android:paddingEnd="20dp"
                         android:stateListAnimator="@null"
-                        android:text="@string/confirm_mysabay"
-                        android:textAppearance="@style/MyAppearanceBody1" />
-                    <View
-                        android:id="@+id/divider2"
-                        android:layout_width="200dp"
-                        android:layout_height="1dp"
-                        android:layout_marginBottom="@dimen/padding_10"
-                        android:layout_gravity="center_horizontal"
-                        android:background="?android:attr/listDivider"
-                        android:backgroundTint="@color/colorYellow" />
-
-                    <android.support.v7.widget.AppCompatButton
-                        android:id="@+id/btn_create_mysabay"
-                        style="@style/ButtonPrimary"
-                        android:layout_width="200dp"
-                        android:fontFamily="@font/font_battambang_regular"
-                        android:gravity="center"
-                        android:layout_marginBottom="@dimen/padding_20"
-                        android:stateListAnimator="@null"
-                        android:text="@string/create_new_account"
+                        android:text="@string/login"
                         android:textAppearance="@style/MyAppearanceBody1" />
                 </android.support.v7.widget.LinearLayoutCompat>
             </android.support.v7.widget.LinearLayoutCompat>
@@ -170,4 +152,5 @@
 
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
+
 </layout>

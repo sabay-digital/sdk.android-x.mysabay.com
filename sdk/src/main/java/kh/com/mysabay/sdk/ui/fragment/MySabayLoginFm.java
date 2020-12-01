@@ -95,7 +95,7 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
 
                 if (!StringUtils.isBlank(token) && getActivity() != null) {
                     if (!StringUtils.isBlank(token) && !StringUtils.isBlank(refreshToken)) {
-                        AppItem appItem = new AppItem(MySabaySDK.getInstance().appSecret(), token, refreshToken, "", Long.parseLong(expire));
+                        AppItem appItem = new AppItem(null, null, token, refreshToken, "", Long.parseLong(expire));
                         String encrypted = gson.toJson(appItem);
                         MySabaySDK.getInstance().saveAppItem(encrypted);
                     }

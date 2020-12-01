@@ -34,10 +34,13 @@ public class LoginItem implements Parcelable {
     @Expose
     public String phone;
 
-    @SerializedName("app_secret")
+    @SerializedName("verifyMySabay")
     @Expose
-    public String appSecret;
+    public Boolean verifyMySabay;
 
+    @SerializedName("mySabayUsername")
+    @Expose
+    public String mySabayUsername;
 
     public final static Creator<Data> CREATOR = new Creator<Data>() {
 
@@ -60,6 +63,7 @@ public class LoginItem implements Parcelable {
         this.verifyCode = ((int) in.readValue((int.class.getClassLoader())));
         this.expire = ((String) in.readValue((String.class.getClassLoader())));
         this.message = ((String) in.readValue((String.class.getClassLoader())));
+        this.mySabayUsername = ((String) in.readValue((String.class.getClassLoader())));
     }
 
     /**
@@ -107,19 +111,24 @@ public class LoginItem implements Parcelable {
         return this;
     }
 
-    public LoginItem withAppSecret(String appSecret) {
-        this.appSecret = appSecret;
+    public LoginItem withMySabayUserName(String mySabayUserName) {
+        this.mySabayUsername = mySabayUserName;
+        return this;
+    }
+
+    public LoginItem withVerifyMySabay(Boolean verifyMySabay) {
+        this.verifyMySabay = verifyMySabay;
         return this;
     }
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("accessToken", accessToken).append("verifyCode", verifyCode).append("expire", expire).append("message", message).toString();
+        return new ToStringBuilder(this).append("accessToken", accessToken).append("mySabayUsername", mySabayUsername).append("verifyCode", verifyCode).append("expire", expire).append("message", message).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(verifyCode).append(accessToken).append(message).append(expire).toHashCode();
+        return new HashCodeBuilder().append(verifyCode).append(accessToken).append(message).append(expire).append(verifyMySabay).append(mySabayUsername).toHashCode();
     }
 
     @Override
@@ -127,11 +136,12 @@ public class LoginItem implements Parcelable {
         if (other == this) {
             return true;
         }
-        if (!(other instanceof Data)) {
+        if (!(other instanceof LoginItem)) {
             return false;
         }
-        Data rhs = ((Data) other);
-        return new EqualsBuilder().append(verifyCode, rhs.verifyCode).append(accessToken, rhs.accessToken).append(message, rhs.message).append(expire, rhs.expire).isEquals();
+        LoginItem rhs = ((LoginItem) other);
+        return new EqualsBuilder().append(verifyCode, rhs.verifyCode).append(accessToken, rhs.accessToken).append(message, rhs.message)
+                .append(expire, rhs.expire).append(expire, rhs.expire).append(verifyMySabay, rhs.verifyMySabay).append(mySabayUsername, rhs.mySabayUsername).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
@@ -139,6 +149,8 @@ public class LoginItem implements Parcelable {
         dest.writeValue(verifyCode);
         dest.writeValue(expire);
         dest.writeValue(message);
+        dest.writeValue(verifyMySabay);
+        dest.writeValue(mySabayUsername);
     }
 
     public int describeContents() {

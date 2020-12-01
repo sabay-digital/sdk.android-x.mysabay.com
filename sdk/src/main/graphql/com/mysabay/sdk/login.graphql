@@ -72,3 +72,12 @@ query userProfile {
     updatedAt
   }
 }
+
+mutation createMySabayFromPhone($phoneNumber: String!) {
+  sso_createMySabayFromPhone(phoneNumber: $phoneNumber) {
+    verifyMySabay
+    mySabayUsername
+    otpExpiry
+  }
+}
+

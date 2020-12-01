@@ -2,8 +2,6 @@ package kh.com.mysabay.sdk.ui.fragment;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
@@ -14,78 +12,70 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
-import kh.com.mysabay.sdk.databinding.FmConfrimLoginMysabayBinding;
+import kh.com.mysabay.sdk.databinding.FmCreateMysabayBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
-import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
-import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 
-public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysabayBinding, UserApiVM> {
+public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, UserApiVM> {
 
-    public static final String TAG = MySabayLoginConfirmFragment.class.getSimpleName();
-
-    private FragmentManager mManager;
+    public static final String TAG = MySabayCreateFragment.class.getSimpleName();
 
     @NotNull
     @Contract(" -> new")
-    public static MySabayLoginConfirmFragment newInstance() {
-        return new MySabayLoginConfirmFragment();
+    public static MySabayCreateFragment newInstance() {
+        return new MySabayCreateFragment();
     }
 
     @Override
     public int getLayoutId() {
-        return R.layout.fm_confrim_login_mysabay;
+        return R.layout.fm_create_mysabay;
     }
 
     @Override
     public void initializeObjects(View v, Bundle args) {
         this.viewModel = LoginActivity.loginActivity.viewModel;
-        mManager = getFragmentManager();
     }
 
     @Override
     public void assignValues() {
         new Handler().postDelayed(() -> showProgressState(new NetworkState(NetworkState.Status.SUCCESS)), 500);
-        viewModel.getResponseLogin().observe(this, item -> {
-            if (item != null)
-                mViewBinding.edtUsername.setText(item.mySabayUsername);
-        });
     }
 
     @Override
     public void addListeners() {
-        mViewBinding.btnConfirmMysabay.setOnClickListener(v -> {
-            initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
-        });
+        viewModel.liveNetworkState.observe(this, this::showProgressState);
+
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (v.getContext() instanceof LoginActivity)
-                ((LoginActivity) v.getContext()).finish();
+                getActivity().finish();
         });
 
         mViewBinding.btnBack.setOnClickListener(v -> {
             if (getActivity() != null)
                 getActivity().onBackPressed();
         });
-
-        mViewBinding.btnConfirmMysabay.setOnClickListener(v -> {
+        mViewBinding.btnCreateMysabay.setOnClickListener(v -> {
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();
+            String confirmPassword = mViewBinding.edtConfirmPassword.getText().toString();
             if (StringUtils.isAnyBlank(username)) {
                 showCheckFields(mViewBinding.edtUsername, R.string.msg_input_username);
             } else if (StringUtils.isAnyBlank(password)) {
                 showCheckFields(mViewBinding.edtPassword, R.string.msg_input_password);
-            } else {
-                viewModel.postToVerifyMySabayWithGraphql(v.getContext(), username, password);
+            } else if (StringUtils.isAnyBlank(confirmPassword)) {
+                showCheckFields(mViewBinding.edtConfirmPassword, R.string.msg_input_confirm_password);
+            } else if (!StringUtils.isAnyBlank(confirmPassword)) {
+                if (!password.equals(confirmPassword)) {
+                    showCheckFields(mViewBinding.edtConfirmPassword, R.string.msg_confirm_password_not_match);
+                }
             }
-        });
-
-        mViewBinding.btnCreateMysabay.setOnClickListener(v-> {
-            initAddFragment(new MySabayCreateFragment(), MySabayLoginConfirmFragment.TAG, true);
+            else {
+                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
+            }
         });
     }
 
@@ -95,14 +85,6 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
             view.requestFocus();
         }
         MessageUtil.displayToast(getContext(), getString(msg));
-    }
-
-    public void initAddFragment(Fragment f, String tag) {
-        initAddFragment(f, tag, false);
-    }
-
-    public void initAddFragment(Fragment f, String tag, boolean isBack) {
-        Globals.initAddFragment(mManager, f, tag, isBack);
     }
 
     @Override
