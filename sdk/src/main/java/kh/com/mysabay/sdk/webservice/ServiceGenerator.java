@@ -3,6 +3,7 @@ package kh.com.mysabay.sdk.webservice;
 import com.apollographql.apollo.ApolloClient;
 import com.google.gson.GsonBuilder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -49,7 +50,7 @@ public class ServiceGenerator {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(getClientConfig(MySabaySDK.getInstance().serviceCode()))
+                .client(getClientConfig(MySabaySDK.getInstance().serviceCode(), MySabaySDK.getInstance().getToken()))
                 .build();
     }
 
@@ -58,7 +59,7 @@ public class ServiceGenerator {
     public ApolloClient instanceUserWithPolloClient() {
         return ApolloClient.builder()
                 .serverUrl(MySabaySDK.getInstance().userApiUrl())
-                .okHttpClient(getClientConfig(MySabaySDK.getInstance().serviceCode()))
+                .okHttpClient(getClientConfig(MySabaySDK.getInstance().serviceCode(),  MySabaySDK.getInstance().getToken()))
                 .build();
     }
 
@@ -70,14 +71,14 @@ public class ServiceGenerator {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(getClientConfig(MySabaySDK.getInstance().serviceCode()))
+                .client(getClientConfig(MySabaySDK.getInstance().serviceCode(), MySabaySDK.getInstance().currentToken()))
                 .build();
     }
 
     @Singleton
     @Provides
     @NotNull
-    public OkHttpClient getClientConfig(String serviceCode) {
+    public OkHttpClient getClientConfig(String serviceCode, String token) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
                 HttpLoggingInterceptor.Level.NONE);
@@ -89,9 +90,17 @@ public class ServiceGenerator {
                 .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
-                        Request newRequest = chain.request().newBuilder()
-                                .addHeader("service-code", serviceCode)
-                                .build();
+                        Request newRequest = null;
+                        if (StringUtils.isAnyBlank(token)) {
+                            newRequest  = chain.request().newBuilder()
+                                    .addHeader("service-code", serviceCode)
+                                    .build();
+                        } else {
+                            newRequest  = chain.request().newBuilder()
+                                    .addHeader("service-code", serviceCode)
+                                    .addHeader("Authorization", "Bearer" + token)
+                                    .build();
+                        }
                         return chain.proceed(newRequest);
                     }
                 })

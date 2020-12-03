@@ -404,7 +404,6 @@ public class UserApiVM extends ViewModel {
 
     public void postTocreateMySabayFromPhone(Context context, String phoneNnumber) {
 //        _login.setValue(phoneNnumber);
-
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         apolloClient.mutate(new CreateMySabayFromPhoneMutation(phoneNnumber)).enqueue(new ApolloCall.Callback<CreateMySabayFromPhoneMutation.Data>() {
             @Override

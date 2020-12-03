@@ -539,4 +539,14 @@ public class MySabaySDK {
     public String serviceCode() {
         return mSdkConfiguration.serviceCode;
     }
+
+    public String getToken() {
+        String token = null;
+//        if (StringUtils.isAnyBlank(getAppItem())) {
+//            AppItem item = gson.fromJson(getAppItem(), AppItem.class);
+//            token = item.token;
+//        }
+
+       return token;
+    }
 }
