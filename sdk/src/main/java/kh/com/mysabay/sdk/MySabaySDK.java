@@ -12,6 +12,7 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.request.RequestHeaders;
 import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
 import com.mysabay.sdk.DeleteTokenMutation;
@@ -292,7 +293,11 @@ public class MySabaySDK {
     public void getUserProfile(UserInfoListener listener) {
         AppItem item = gson.fromJson(getAppItem(), AppItem.class);
 
-        apolloClient.query(new UserProfileQuery()).enqueue(new ApolloCall.Callback<UserProfileQuery.Data>() {
+        apolloClient.query(new UserProfileQuery()).toBuilder()
+                .requestHeaders(RequestHeaders.builder()
+                        .addHeader("Authorization", "Bearer " + item.token).build())
+                .build()
+                .enqueue(new ApolloCall.Callback<UserProfileQuery.Data>() {
             @Override
             public void onResponse(@NotNull Response<UserProfileQuery.Data> response) {
                 if (response.getData() != null) {
@@ -321,6 +326,7 @@ public class MySabaySDK {
 
             @Override
             public void onFailure(@NotNull ApolloException e) {
+                LogUtil.info("Error", e.getMessage());
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
@@ -538,15 +544,5 @@ public class MySabaySDK {
 
     public String serviceCode() {
         return mSdkConfiguration.serviceCode;
-    }
-
-    public String getToken() {
-        String token = null;
-//        if (StringUtils.isAnyBlank(getAppItem())) {
-//            AppItem item = gson.fromJson(getAppItem(), AppItem.class);
-//            token = item.token;
-//        }
-
-       return token;
     }
 }

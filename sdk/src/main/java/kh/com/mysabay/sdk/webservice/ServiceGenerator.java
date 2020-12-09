@@ -50,7 +50,7 @@ public class ServiceGenerator {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(getClientConfig(MySabaySDK.getInstance().serviceCode(), MySabaySDK.getInstance().getToken()))
+                .client(getClientConfig(MySabaySDK.getInstance().serviceCode()))
                 .build();
     }
 
@@ -59,7 +59,7 @@ public class ServiceGenerator {
     public ApolloClient instanceUserWithPolloClient() {
         return ApolloClient.builder()
                 .serverUrl(MySabaySDK.getInstance().userApiUrl())
-                .okHttpClient(getClientConfig(MySabaySDK.getInstance().serviceCode(),  MySabaySDK.getInstance().getToken()))
+                .okHttpClient(getClientConfig(MySabaySDK.getInstance().serviceCode()))
                 .build();
     }
 
@@ -71,14 +71,14 @@ public class ServiceGenerator {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(new GsonBuilder().setLenient().create()))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(getClientConfig(MySabaySDK.getInstance().serviceCode(), MySabaySDK.getInstance().currentToken()))
+                .client(getClientConfig(MySabaySDK.getInstance().serviceCode()))
                 .build();
     }
 
     @Singleton
     @Provides
     @NotNull
-    public OkHttpClient getClientConfig(String serviceCode, String token) {
+    public OkHttpClient getClientConfig(String serviceCode) {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(BuildConfig.DEBUG ? HttpLoggingInterceptor.Level.BODY :
                 HttpLoggingInterceptor.Level.NONE);
@@ -91,16 +91,9 @@ public class ServiceGenerator {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request newRequest = null;
-                        if (StringUtils.isAnyBlank(token)) {
-                            newRequest  = chain.request().newBuilder()
+                        newRequest  = chain.request().newBuilder()
                                     .addHeader("service-code", serviceCode)
                                     .build();
-                        } else {
-                            newRequest  = chain.request().newBuilder()
-                                    .addHeader("service-code", serviceCode)
-                                    .addHeader("Authorization", "Bearer" + token)
-                                    .build();
-                        }
                         return chain.proceed(newRequest);
                     }
                 })

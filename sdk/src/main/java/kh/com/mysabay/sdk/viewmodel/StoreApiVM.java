@@ -230,7 +230,7 @@ public class StoreApiVM extends ViewModel {
      *
      * @param context
      */
-    public void postToPaidWithMySabayProvider(Context context, Float balanceGold) {
+    public void postToPaidWithMySabayProvider(Context context, Double balanceGold) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         Data shopItem = getItemSelected().getValue();
         if (getMySabayProvider().getValue() == null) return;

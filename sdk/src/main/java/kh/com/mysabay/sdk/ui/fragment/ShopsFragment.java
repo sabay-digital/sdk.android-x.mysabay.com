@@ -111,8 +111,8 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
             UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            mySabayId = userProfile.data.mysabayUserId.toString();
-            mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), userProfile.data.mysabayUserId.toString()));
+            mySabayId = userProfile.userID.toString();
+            mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), userProfile.userID.toString()));
         });
 
         viewModel.getNetworkState().observe(this, this::showProgressState);
@@ -138,19 +138,19 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
             UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            if (userProfile.data.balance.coin > 0) {
-                String sabayCoin = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+            if (userProfile.coin > 0) {
+                String sabayCoin = "<b>" + userProfile.toSabayCoin() + "</b> ";
                 mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
             }
-            if (userProfile.data.balance.gold > 0) {
-                String sabayGold = "<b>" + userProfile.data.toSabayGold() + "</b> ";
+            if (userProfile.gold > 0) {
+                String sabayGold = "<b>" + userProfile.toSabayGold() + "</b> ";
                 mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
-                mViewBinding.deviderBalance.setVisibility(userProfile.data.balance.coin > 0 ? View.VISIBLE : View.GONE);
+                mViewBinding.deviderBalance.setVisibility(userProfile.coin > 0 ? View.VISIBLE : View.GONE);
             } else {
                 mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
                 mViewBinding.deviderBalance.setVisibility(View.GONE);
             }
-            if (userProfile.data.balance.gold > 0 || userProfile.data.balance.coin > 0) {
+            if (userProfile.gold > 0 || userProfile.coin > 0) {
                 mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
             } else {
                 mViewBinding.sabayBalance.setVisibility(View.GONE);

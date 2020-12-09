@@ -72,8 +72,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
     private Data mData;
     private static String PURCHASE_ID = "android.test.purchased";
     private MaterialDialog dialogBank;
-    private Float balanceCoin;
-    private Float balanceGold;
+    private Double balanceCoin;
+    private Double balanceGold;
     private ClipboardManager myClipboard;
     private ClipData myClip;
 
@@ -173,16 +173,16 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
             UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            balanceCoin = userProfile.data.balance.coin;
-            balanceGold = userProfile.data.balance.gold;
+            balanceCoin = userProfile.coin;
+            balanceGold = userProfile.gold;
 
             if (balanceCoin > 0) {
-                String sabayCoin = "<b>" + userProfile.data.toSabayCoin() + "</b>";
+                String sabayCoin = "<b>" + userProfile.toSabayCoin() + "</b>";
                 mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
                 mViewBinding.tvMySabay.setText(getString(R.string.mysabay));
             }
             if (balanceGold > 0) {
-                String sabayGold = "<b style=\"color:blue;\">" + userProfile.data.toSabayGold() + "</b>";
+                String sabayGold = "<b style=\"color:blue;\">" + userProfile.toSabayGold() + "</b>";
                 mViewBinding.dividerBalance.setVisibility(balanceCoin > 0 ? View.VISIBLE : View.GONE);
                 mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
             } else {
