@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/padding_30"
-                    android:text="@string/create_my_sabay"
+                    android:text="@string/register"
                     android:textAllCaps="true"
                     android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
                     android:textStyle="bold" />
@@ -140,7 +140,7 @@
                         android:paddingStart="20dp"
                         android:paddingEnd="20dp"
                         android:stateListAnimator="@null"
-                        android:text="@string/login"
+                        android:text="@string/register"
                         android:textAppearance="@style/MyAppearanceBody1" />
                 </android.support.v7.widget.LinearLayoutCompat>
             </android.support.v7.widget.LinearLayoutCompat>

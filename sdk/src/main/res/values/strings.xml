@@ -38,6 +38,7 @@
     <string name="please_select_your_preferred_partnered_payment_provider">Please select your preferred payment provider</string>
     <string name="logging_with_phone_number_desc">Logging in with phone number automatically creates a MySabay account if you do not already own one.</string>
     <string name="mysabay_account">MySabay Account</string>
+    <string name="verify_mysabay">Verify Mysabay</string>
     <string name="login_with_my_sabay">Login with MySabay</string>
     <string name="create_my_sabay">Create MySabay Account</string>
     <string name="username">Username</string>
@@ -48,6 +49,7 @@
     <string name="existing_mysabay_account_desc">We’ve found an existing MySabay account associated with the phone number you provided.</string>
     <string name="enter_your_password">Enter your password to confirm your MySabay Account or click ‘I want a new account’ to get a new account.</string>
     <string name="create">Create</string>
+    <string name="register">Register</string>
     <string name="facebook_app_id">587695748053859</string>
     <string name="fb_login_protocol_scheme">fb587695748053859</string>
     <!-- TODO: Remove or change this placeholder text -->

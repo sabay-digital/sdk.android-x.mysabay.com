@@ -49,7 +49,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/padding_20"
-                    android:text="@string/mysabay_account"
+                    android:text="@string/verify_mysabay"
                     android:textAllCaps="true"
                     android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
                     android:textStyle="bold" />

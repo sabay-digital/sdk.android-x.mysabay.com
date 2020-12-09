@@ -37,11 +37,6 @@ public class ServiceGenerator {
     public static final String READ_TIMEOUT = "READ_TIMEOUT";
     public static final String WRITE_TIMEOUT = "WRITE_TIMEOUT";
 
-
-    private static final String CACHE_CONTROL = "Cache-Control";
-    private static Retrofit sRetrofit;
-
-
     @Singleton
     @Provides
     public Retrofit instanceUser() {
@@ -99,16 +94,6 @@ public class ServiceGenerator {
                 })
                 .build();
     }
-
-    /**
-     * create a interface to call api endpoint
-     */
-//    @Singleton
-//    @Provides
-//    public UserApi createNewsApi() {
-//        return instanceUser().create(UserApi.class);
-//    }
-
 
     @Singleton
     @Provides

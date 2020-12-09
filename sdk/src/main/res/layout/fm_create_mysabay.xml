@@ -52,7 +52,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:layout_marginBottom="@dimen/padding_30"
-                        android:text="@string/create_my_sabay"
+                        android:text="@string/register"
                         android:textAllCaps="true"
                         android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
                         android:textStyle="bold" />
@@ -87,7 +87,7 @@
                         android:paddingBottom="@dimen/padding_5"
                         android:layout_marginTop="@dimen/padding_20"
                         android:layout_gravity="center_horizontal"
-                        android:text="@string/username"
+                        android:text="@string/password"
                         android:textColor="@color/colorYellow"
                         android:textSize="@dimen/font_size_title" />
 
@@ -99,7 +99,7 @@
                         android:layout_gravity="center_horizontal"
                         android:focusable="true"
                         android:fontFamily="@font/font_battambang_regular"
-                        android:inputType="text"
+                        android:inputType="textPassword"
                         android:padding="@dimen/padding_8"
                         android:singleLine="true"
                         android:textColor="@color/secondary"
@@ -151,7 +151,7 @@
                             android:paddingStart="20dp"
                             android:paddingEnd="20dp"
                             android:stateListAnimator="@null"
-                            android:text="@string/login"
+                            android:text="@string/register"
                             android:textAppearance="@style/MyAppearanceBody1" />
                     </android.support.v7.widget.LinearLayoutCompat>
                 </android.support.v7.widget.LinearLayoutCompat>

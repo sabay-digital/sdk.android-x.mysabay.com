@@ -175,63 +175,6 @@ public class MySabaySDK {
                     });
                 }
             });
-
-//            userRepo.getVerifyToken(item.appSecret, item.token).subscribeOn(appRxSchedulers.io())
-//                    .observeOn(appRxSchedulers.mainThread())
-//                    .subscribe(new AbstractDisposableObs<TokenVerify>(mAppContext, _networkState) {
-//                        @Override
-//                        protected void onSuccess(TokenVerify tokenVerify) {
-//                            LogUtil.info(TAG, "Token is valid");
-//                            userRepo.postRefreshToken(item.appSecret,item.refreshToken)
-//                                    .subscribeOn(appRxSchedulers.io())
-//                                    .observeOn(appRxSchedulers.mainThread()).subscribe(
-//                                    new AbstractDisposableObs<RefreshTokenItem>(mAppContext, _networkState, null) {
-//                                        @Override
-//                                        protected void onSuccess(RefreshTokenItem refreshTokenItem) {
-//                                                if (refreshTokenItem.status == 200) {
-//                                                    item.withToken(refreshTokenItem.data.accessToken);
-//                                                    item.withExpired(refreshTokenItem.data.expire);
-//                                                    item.withRefreshToken(refreshTokenItem.data.refreshToken);
-//                                                    MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
-//                                                    EventBus.getDefault().post(new SubscribeLogin(item.token, null));
-//                                                } else
-//                                                    onErrors(new Error(gson.toJson(refreshTokenItem)));
-//                                        }
-//
-//                                        @Override
-//                                        protected void onErrors(@NotNull Throwable error) {
-//                                            LogUtil.info(TAG, error.getMessage());
-//                                        }
-//                                    });
-//                        }
-//
-//                        @Override
-//                        protected void onErrors(Throwable error) {
-//                            LogUtil.info(TAG, "Token is invalid");
-//                            userRepo.postRefreshToken(item.appSecret,item.refreshToken)
-//                                    .subscribeOn(appRxSchedulers.io())
-//                                    .observeOn(appRxSchedulers.mainThread()).subscribe(
-//                                    new AbstractDisposableObs<RefreshTokenItem>(mAppContext, _networkState, null) {
-//                                        @Override
-//                                        protected void onSuccess(RefreshTokenItem refreshTokenItem) {
-//                                            if (refreshTokenItem.status == 200) {
-//                                                item.withToken(refreshTokenItem.data.accessToken);
-//                                                item.withExpired(refreshTokenItem.data.expire);
-//                                                item.withRefreshToken(refreshTokenItem.data.refreshToken);
-//                                                MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
-//                                                EventBus.getDefault().post(new SubscribeLogin(item.token, null));
-//                                            } else
-//                                                onErrors(new Error(gson.toJson(refreshTokenItem)));
-//                                        }
-//
-//                                        @Override
-//                                        protected void onErrors(@NotNull Throwable error) {
-//                                            LogUtil.info(TAG, error.getMessage());
-//                                            mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-//                                        }
-//                                    });
-//                        }
-//                    });
         } else {
             mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }

@@ -384,23 +384,6 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                 getActivity().finish();
             }
         });
-
-        /*mViewBinding.radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.rdb_in_app_purchase) {
-
-                } else if (checkedId == R.id.rdb_my_sabay) {
-
-                } else if (checkedId == R.id.rdb_third_bank_provider) {
-
-                } else if (checkedId == R.id.rdb_pre_auth_pay) {
-
-                } else {
-                    LogUtil.info(TAG, "nothing selected");
-                }
-            }
-        });*/
     }
 
     @Override

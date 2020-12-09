@@ -123,15 +123,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
             String phoneNo = mViewBinding.edtPhone.getText().toString();
-
             PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
 
-            /*Editable phoneNo = mViewBinding.edtPhone.getText();
-            if (StringUtils.isAnyBlank(phoneNo)) {
-                showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
-            } else if (!MyPhoneUtils.isValidatePhone(phoneNo)) {
-                showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
-            }*/
             if (StringUtils.isAnyBlank(phoneNo)) {
                 showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
             } else if (StringUtils.isAnyBlank(dialCode)) {
