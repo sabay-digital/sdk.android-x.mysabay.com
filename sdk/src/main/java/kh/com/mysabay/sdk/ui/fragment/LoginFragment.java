@@ -147,7 +147,6 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         });
 
         mViewBinding.btnLoginMysabay.setOnClickListener(v ->
-//        viewModel.postToLoginWithMySabay(v.getContext(), MySabaySDK.getInstance().appSecret()));
             initAddFragment(MySabayLoginFragment.newInstance(), MySabayLoginFragment.TAG, true));
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (getActivity() != null)
