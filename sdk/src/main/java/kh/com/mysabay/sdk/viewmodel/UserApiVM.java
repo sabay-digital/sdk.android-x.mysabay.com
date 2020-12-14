@@ -20,6 +20,7 @@ import com.mysabay.sdk.LoginWithPhoneMutation;
 import com.mysabay.sdk.UserProfileQuery;
 import com.mysabay.sdk.VerifyMySabayMutation;
 import com.mysabay.sdk.VerifyOtpCodMutation;
+import com.mysabay.sdk.VerifyTokenQuery;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;

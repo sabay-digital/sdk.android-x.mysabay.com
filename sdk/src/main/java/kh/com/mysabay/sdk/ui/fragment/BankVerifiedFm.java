@@ -25,6 +25,7 @@ import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.PartialBankProviderVerifiedBinding;
 import kh.com.mysabay.sdk.pojo.onetime.OneTime;
+import kh.com.mysabay.sdk.pojo.shop.ShopItem;
 import kh.com.mysabay.sdk.pojo.thirdParty.payment.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.LogUtil;
@@ -41,13 +42,13 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
     public static final String EXT_KEY_DATA = "EXT_KEY_DATA";
     public static final String PSP_CODE = "EXT_PSP_CODE";
 
-    private kh.com.mysabay.sdk.pojo.shop.Data mData;
+    private ShopItem mData;
     private Data mPaymentResponseItem;
     private String pspCode;
     private boolean isFinished = false;
 
     @NotNull
-    public static BankVerifiedFm newInstance(Data item, kh.com.mysabay.sdk.pojo.shop.Data shopItem, String pspCode) {
+    public static BankVerifiedFm newInstance(Data item, ShopItem shopItem, String pspCode) {
         Bundle args = new Bundle();
         args.putParcelable(EXT_KEY_PaymentResponseItem, item);
         args.putParcelable(EXT_KEY_DATA, shopItem);

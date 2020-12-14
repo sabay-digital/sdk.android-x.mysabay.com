@@ -41,6 +41,7 @@ import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
+import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
@@ -246,6 +247,7 @@ public class MySabaySDK {
                 if (response.getData() != null) {
                     if (listener != null) {
                         item.withEnableLocaPay(response.getData().sso_userProfile().localPayEnabled());
+                        item.withMySabayUserId(response.getData().sso_userProfile().userID());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
@@ -294,6 +296,30 @@ public class MySabaySDK {
             MessageUtil.displayToast(mAppContext, "You need to login first");
             return;
         }
+
+        apolloClient.query(new VerifyTokenQuery(appItem.token)).enqueue(new ApolloCall.Callback<VerifyTokenQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<VerifyTokenQuery.Data> response) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                        mAppContext.startActivity(new Intent(mAppContext, StoreActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                    }
+                });
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                        MessageUtil.displayToast(mAppContext, "Token is invalid");
+                    }
+                });
+            }
+        });
 
 //        userRepo.getVerifyToken(appItem.appSecret, appItem.token).subscribeOn(appRxSchedulers.io())
 //                .observeOn(appRxSchedulers.mainThread())

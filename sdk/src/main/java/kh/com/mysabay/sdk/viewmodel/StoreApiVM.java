@@ -5,9 +5,25 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Input;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.request.RequestHeaders;
 import com.google.gson.Gson;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.mysabay.sdk.GetProductsByServiceCodeQuery;
+import com.mysabay.sdk.type.Store_PagerInput;
+
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
@@ -26,11 +42,9 @@ import kh.com.mysabay.sdk.pojo.mysabay.MySabayItem;
 import kh.com.mysabay.sdk.pojo.payment.PaymentBody;
 import kh.com.mysabay.sdk.pojo.payment.PaymentResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
-import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.pojo.shop.ShopItem;
 import kh.com.mysabay.sdk.pojo.thirdParty.payment.ResponseItem;
 import kh.com.mysabay.sdk.repository.StoreRepo;
-import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.ui.fragment.BankVerifiedFm;
 import kh.com.mysabay.sdk.ui.fragment.PaymentFm;
@@ -50,6 +64,8 @@ public class StoreApiVM extends ViewModel {
     private final StoreRepo storeRepo;
     private final SdkConfiguration sdkConfiguration;
 
+    ApolloClient apolloClient;
+
     @Inject
     AppRxSchedulers appRxSchedulers;
     @Inject
@@ -57,15 +73,16 @@ public class StoreApiVM extends ViewModel {
 
     private final MediatorLiveData<String> _msgError = new MediatorLiveData<>();
     private final MediatorLiveData<NetworkState> _networkState;
-    private final MediatorLiveData<ShopItem> _shopItem;
+    private final MediatorLiveData<List<ShopItem>> _shopItem;
     private final CompositeDisposable mCompos;
-    private final MediatorLiveData<Data> mDataSelected;
+    private final MediatorLiveData<ShopItem> mDataSelected;
     private final MediatorLiveData<MySabayItem> mySabayItemMediatorLiveData;
     public final MediatorLiveData<List<kh.com.mysabay.sdk.pojo.mysabay.Data>> _thirdPartyItemMediatorLiveData;
 
 
     @Inject
-    public StoreApiVM(StoreRepo storeRepo) {
+    public StoreApiVM(ApolloClient apolloClient, StoreRepo storeRepo) {
+        this.apolloClient = apolloClient;
         this.storeRepo = storeRepo;
         this._networkState = new MediatorLiveData<>();
         this._shopItem = new MediatorLiveData<>();
@@ -85,6 +102,49 @@ public class StoreApiVM extends ViewModel {
         }
     }
 
+    public void getShopFromServerGraphQL(@NotNull Context context) {
+        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        Store_PagerInput pager = Store_PagerInput.builder().page(1).limit(20).build();
+        List<ShopItem> shopItems = new ArrayList<ShopItem>();
+        apolloClient.query(new GetProductsByServiceCodeQuery("aog", new Input<>(pager, true) )).toBuilder()
+                .requestHeaders(RequestHeaders.builder()
+                        .addHeader("Authorization", "Bearer " + appItem.token).build())
+                .build()
+                .enqueue(new ApolloCall.Callback<GetProductsByServiceCodeQuery.Data>() {
+                    @Override
+                    public void onResponse(@NotNull Response<GetProductsByServiceCodeQuery.Data> response) {
+                        List<GetProductsByServiceCodeQuery.Product> products =  response.getData().store_listProduct().products();
+                        for (GetProductsByServiceCodeQuery.Product product: products) {
+                            try {
+                                JsonParser parser = new JsonParser();
+                                JsonObject obj = parser.parse(new Gson().toJson(product.properties())).getAsJsonObject();
+                                ShopItem item = new ShopItem();
+                                item.withPackageCode(obj.get("packageCode").getAsString());
+                                item.withName(obj.get("displayName").getAsString());
+                                item.withPriceInUsd(product.salePrice());
+                                item.withPriceInSc(obj.get("priceInSabayCoin").getAsDouble());
+                                item.withPriceInSG(obj.get("priceInSabayGold").getAsDouble());
+                                shopItems.add(item);
+                            } catch (JsonIOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                                _shopItem.setValue(shopItems);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        LogUtil.info("Error", e.toString());
+                    }
+                });
+    }
+
     /**
      * List all item from server
      *
@@ -97,9 +157,9 @@ public class StoreApiVM extends ViewModel {
             @Override
             protected void onSuccess(ShopItem item) {
                 LogUtil.info("ITEM", item.toString());
-                if (item.status == 200)
-                    _shopItem.setValue(item);
-                else MessageUtil.displayDialog(context, "something went wrong.");
+            //    if (item.status == 200)
+                //    _shopItem.setValue(item);
+           //     else MessageUtil.displayDialog(context, "something went wrong.");
             }
 
             @Override
@@ -109,7 +169,7 @@ public class StoreApiVM extends ViewModel {
         });
     }
 
-    public LiveData<ShopItem> getShopItem() {
+    public LiveData<List<ShopItem>> getShopItem() {
         return _shopItem;
     }
 
@@ -125,12 +185,12 @@ public class StoreApiVM extends ViewModel {
         return mySabayItemMediatorLiveData;
     }
 
-    public void setShopItemSelected(Data data) {
+    public void setShopItemSelected(ShopItem data) {
         _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
         this.mDataSelected.setValue(data);
     }
 
-    public LiveData<Data> getItemSelected() {
+    public LiveData<ShopItem> getItemSelected() {
         return this.mDataSelected;
     }
 
@@ -232,7 +292,8 @@ public class StoreApiVM extends ViewModel {
      */
     public void postToPaidWithMySabayProvider(Context context, Double balanceGold) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-        Data shopItem = getItemSelected().getValue();
+//        Data shopItem = getItemSelected().getValue();
+        ShopItem shopItem = getItemSelected().getValue();
         if (getMySabayProvider().getValue() == null) return;
 
         List<kh.com.mysabay.sdk.pojo.mysabay.Data> listMySabayProvider = new ArrayList<>();
@@ -252,7 +313,7 @@ public class StoreApiVM extends ViewModel {
             if (balanceGold >= shopItem.priceInSG && listMySabayProvider.size() == 2) {
                 body = new PaymentBody(appItem.uuid, shopItem.priceInSG.toString(), listMySabayProvider.get(1).pspCode.toLowerCase(), listMySabayProvider.get(1).pspAssetCode.toLowerCase(), shopItem.packageCode);
             } else {
-                body = new PaymentBody(appItem.uuid, shopItem.priceInSc.toString(), listMySabayProvider.get(0).pspCode.toLowerCase(), listMySabayProvider.get(0).pspAssetCode.toLowerCase(), shopItem.packageCode);
+                body = new PaymentBody(appItem.uuid, shopItem.priceInSC.toString(), listMySabayProvider.get(0).pspCode.toLowerCase(), listMySabayProvider.get(0).pspAssetCode.toLowerCase(), shopItem.packageCode);
             }
             storeRepo.postToPaid(MySabaySDK.getInstance().appSecret(), appItem.token, body).subscribeOn(appRxSchedulers.io())
                     .observeOn(appRxSchedulers.mainThread())
@@ -275,7 +336,8 @@ public class StoreApiVM extends ViewModel {
 
     public void postToPaidWithBank(StoreActivity context, kh.com.mysabay.sdk.pojo.mysabay.Data data) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-        Data shopItem = getItemSelected().getValue();
+        //Data shopItem = getItemSelected().getValue();
+        ShopItem shopItem = getItemSelected().getValue();
 
         if (data != null && shopItem != null) {
             PaymentBody body = new PaymentBody(appItem.uuid, shopItem.priceInUsd.toString(), data.pspCode.toLowerCase(), data.pspAssetCode.toLowerCase(), data.packageCode);

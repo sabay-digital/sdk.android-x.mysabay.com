@@ -52,6 +52,7 @@ import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.ReceiptBody;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.shop.Data;
+import kh.com.mysabay.sdk.pojo.shop.ShopItem;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.FontUtils;
 import kh.com.mysabay.sdk.utils.LogUtil;
@@ -69,7 +70,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
     public static final String TAG = PaymentFm.class.getSimpleName();
     public static final String EXT_KEY_DATA = "EXT_KEY_DATA";
 
-    private Data mData;
+    private ShopItem mData;
     private static String PURCHASE_ID = "android.test.purchased";
     private MaterialDialog dialogBank;
     private Double balanceCoin;
@@ -83,7 +84,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
     @NotNull
     @Contract("_ -> new")
-    public static PaymentFm newInstance(Data item) {
+    public static PaymentFm newInstance(ShopItem item) {
         Bundle args = new Bundle();
         args.putParcelable(EXT_KEY_DATA, item);
         PaymentFm f = new PaymentFm();
@@ -163,7 +164,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         mViewBinding.btnPay.setBackgroundResource(R.color.secondary);
         viewModel.getItemSelected().observe(this, data -> {
             if (data != null) {
-                mViewBinding.tvPoint.setText(data.name);
+                mViewBinding.tvPoint.setText(data.displayName);
                 mViewBinding.tvPrice.setText(data.toUSDPrice());
                 mViewBinding.tvTotal.setText(data.toUSDPrice());
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
@@ -259,7 +260,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         mViewBinding.btnInAppPurchase.setOnClickListener(v -> {
             checkedId[0] = v.getId();
-            Data data = viewModel.getItemSelected().getValue();
+            ShopItem data = viewModel.getItemSelected().getValue();
             mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
@@ -279,7 +280,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         mViewBinding.btnMysabay.setOnClickListener(v -> {
             checkedId[0] = v.getId();
-            Data data = viewModel.getItemSelected().getValue();
+            ShopItem data = viewModel.getItemSelected().getValue();
             mViewBinding.tvTotal.setText(String.format(data.priceInSG <= balanceGold ? data.toRoundSabayGold() : data.toRoundSabayCoin()));
             mViewBinding.tvMySabay.setTextColor(textColorCode());
             mViewBinding.btnMysabay.setBackgroundResource(R.drawable.shape_button_primary);
@@ -292,7 +293,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             mViewBinding.btnLabel.setTextColor(textColorCode());
             mViewBinding.btnPreAuthPay.setBackgroundResource(R.drawable.payment_button);
             mViewBinding.imgOtherPaymentLogo.setImageResource(R.mipmap.other_payment_option);
-            if (data.priceInSc <= balanceCoin || data.priceInSG <= balanceGold) {
+            if (data.priceInSC <= balanceCoin || data.priceInSG <= balanceGold) {
                 mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.priceInSG <= balanceGold ? data.toRoundSabayGold() : data.toRoundSabayCoin()));
                 mViewBinding.btnPay.setEnabled(true);
                 mViewBinding.btnPay.setBackgroundResource(R.color.colorYellow);
@@ -306,7 +307,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         mViewBinding.btnPreAuthPay.setOnClickListener(v -> {
             checkedId[0] = v.getId();
-            Data data = viewModel.getItemSelected().getValue();
+            ShopItem data = viewModel.getItemSelected().getValue();
             mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
@@ -326,7 +327,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         mViewBinding.btnThirdBankProvider.setOnClickListener(v -> {
             checkedId[0] = v.getId();
-            Data data = viewModel.getItemSelected().getValue();
+            ShopItem data = viewModel.getItemSelected().getValue();
             mViewBinding.tvTotal.setText(data.toUSDPrice());
             mViewBinding.btnPay.setText(String.format(getString(R.string.pay), data.toUSDPrice()));
             mViewBinding.btnPay.setEnabled(true);
@@ -356,7 +357,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                     MessageUtil.displayDialog(v.getContext(), "sorry your device not support in app purchase");
 
             } else if (checkedId[0] == R.id.btn_mysabay) {
-                Data data = viewModel.getItemSelected().getValue();
+                ShopItem data = viewModel.getItemSelected().getValue();
                 if (data == null) return;
 
                 MessageUtil.displayDialog(v.getContext(), getString(R.string.payment_confirmation),

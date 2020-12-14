@@ -95,10 +95,10 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         mAdapter = new ShopAdapter(v.getContext(), item -> {
             //    if (!BuildConfig.DEBUG)
             if (verifyInstallerId(getActivity())) {
-                PURCHASE_ID = item.packageId;
-                purchase(v, item.packageId);
-            } else {
-                MessageUtil.displayDialog(getActivity(), getString(R.string.application_do_not_support_in_app_purchase));
+//                PURCHASE_ID = item.packageId;
+//                purchase(v, item.packageId);
+//            } else {
+//                MessageUtil.displayDialog(getActivity(), getString(R.string.application_do_not_support_in_app_purchase));
             }
         });
 
@@ -120,10 +120,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
             mLayoutManager.setSpanCount(getResources().getInteger(R.integer.layout_size));
             mViewBinding.rcv.setLayoutManager(mLayoutManager);
             mAdapter.clear();
-            for (Data ob : item.data) {
-                mAdapter.insert(ob);
-            }
-
+            mAdapter.insert(item);
             mAdapter.notifyDataSetChanged();
         });
     }
@@ -133,7 +130,9 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         viewModel.getNetworkState().observe(this, this::showProgressState);
 
         if (getContext() != null)
-            viewModel.getShopFromServer(getContext());
+//            viewModel.getShopFromServer(getContext());
+
+             viewModel.getShopFromServerGraphQL(getContext());
 
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();

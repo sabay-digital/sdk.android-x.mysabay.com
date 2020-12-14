@@ -1,0 +1,38 @@
+query getProductsByServiceCode($serviceCode: String!, $pager: store_PagerInput) {
+    store_listProduct(serviceCode: $serviceCode, pager: $pager) {
+        products {
+            id
+            name
+            sku
+            barcode
+            description
+            shortDescription
+            categories {
+                id
+                parentId
+                rootId
+            }
+            brandId
+            tags
+            isVariant
+            attributes {
+                name
+                options
+            }
+            salePrice
+            comparePrice
+            cost
+            currencyCode
+            image
+            gallery
+            stockOnHand
+            isInventoryTracking
+            isReturnable
+            reorderQuantity
+            isActive
+            serviceCode
+            productTemplateId
+            properties
+        }
+    }
+}
