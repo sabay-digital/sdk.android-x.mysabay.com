@@ -106,7 +106,7 @@ public class StoreApiVM extends ViewModel {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         Store_PagerInput pager = Store_PagerInput.builder().page(1).limit(20).build();
         List<ShopItem> shopItems = new ArrayList<ShopItem>();
-        apolloClient.query(new GetProductsByServiceCodeQuery("aog", new Input<>(pager, true) )).toBuilder()
+        apolloClient.query(new GetProductsByServiceCodeQuery("aog", new Input<>(pager, true))).toBuilder()
                 .requestHeaders(RequestHeaders.builder()
                         .addHeader("Authorization", "Bearer " + appItem.token).build())
                 .build()
