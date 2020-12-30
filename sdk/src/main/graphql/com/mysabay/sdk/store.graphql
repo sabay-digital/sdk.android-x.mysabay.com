@@ -7,32 +7,32 @@ query getProductsByServiceCode($serviceCode: String!, $pager: store_PagerInput) 
             barcode
             description
             shortDescription
-            categories {
-                id
-                parentId
-                rootId
-            }
-            brandId
-            tags
-            isVariant
-            attributes {
-                name
-                options
-            }
             salePrice
             comparePrice
             cost
             currencyCode
-            image
-            gallery
-            stockOnHand
-            isInventoryTracking
-            isReturnable
-            reorderQuantity
             isActive
             serviceCode
             productTemplateId
             properties
+        }
+    }
+}
+
+query checkout_getPaymentServiceProviderForProduct($productId: ID!) {
+    checkout_getPaymentServiceProviderForProduct(productId: $productId) {
+        paymentServiceProviders {
+            type
+            providers {
+                id
+                name
+                code
+                ssnAccountPk
+                type
+                info
+                label
+                value
+            }
         }
     }
 }

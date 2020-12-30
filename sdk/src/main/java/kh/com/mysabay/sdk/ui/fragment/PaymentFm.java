@@ -50,6 +50,8 @@ import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.googleVerify.DataBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.ReceiptBody;
+import kh.com.mysabay.sdk.pojo.mysabay.MySabayItemResponse;
+import kh.com.mysabay.sdk.pojo.mysabay.ProviderResponse;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.pojo.shop.ShopItem;
@@ -115,9 +117,11 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id),item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
-        viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);
+     //   viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);
+        viewModel.getMySabayCheckoutWithGraphQL(v.getContext(), mData.id);
         onBillingSetupFinished();
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+
     }
 
     public void onBillingSetupFinished() {
@@ -199,34 +203,40 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         });
 
         viewModel.getMySabayProvider().observe(this, mySabayItem -> {
-            if (mySabayItem.status == 200) {
-                if (mySabayItem.data.size() > 0) {
-                    for (kh.com.mysabay.sdk.pojo.mysabay.Data item : mySabayItem.data) {
-                        if (item.paymentType.equals("pre-authorized")) {
-                            mViewBinding.btnLabel.setText(item.label);
-                            Glide.with(getContext())
-                                    .load(item.logo)
-                                    .into(mViewBinding.imgMysabayLogo);
-                        } else if (item.paymentType.equals("iap")) {
-                            if (verifyInstallerId(getActivity())) {
-                                mViewBinding.btnInAppPurchase.setVisibility(View.VISIBLE);
-                            } else {
-                                mViewBinding.btnInAppPurchase.setVisibility(View.GONE);
+                if (mySabayItem.size() > 0) {
+                    for (MySabayItemResponse item : mySabayItem) {
+                        mViewBinding.btnMysabay.setVisibility(View.VISIBLE);
+                        if (checkMySabayProvider(mySabayItem)) {
+                            if (item.type.equals("pre-auth")) {
+                                for (ProviderResponse providerResponse : item.providers) {
+                                    mViewBinding.btnLabel.setText(providerResponse.label);
+                                    Glide.with(getContext())
+                                            .load(providerResponse.info.logo)
+                                            .into(mViewBinding.imgMysabayLogo);
+                                }
                             }
-                            mViewBinding.lblInAppPurchase.setText(item.label);
-                            Glide.with(getContext())
-                                    .load(item.logo)
-                                    .into(mViewBinding.imgInAppBillingLogo);
+                        } else {
+                            mViewBinding.btnMysabay.setVisibility(View.GONE);
+                        }
+                        if (item.type.equals("iap")) {
+                            for (ProviderResponse providerResponse : item.providers) {
+                                if (providerResponse.code.equals("play_store")) {
+                                    LogUtil.info("Iap", providerResponse.label);
+                                    mViewBinding.btnInAppPurchase.setVisibility(View.VISIBLE);
+                                    //  if (verifyInstallerId(getActivity())) {
+                                    mViewBinding.btnInAppPurchase.setVisibility(View.VISIBLE);
+                                    //  } else {
+                                    //    mViewBinding.btnInAppPurchase.setVisibility(View.GONE);
+                                    //  }
+                                    mViewBinding.lblInAppPurchase.setText(providerResponse.label);
+                                    Glide.with(getContext())
+                                            .load(providerResponse.info.logo)
+                                            .into(mViewBinding.imgInAppBillingLogo);
+                                }
+                            }
                         }
                     }
-                    mViewBinding.btnMysabay.setVisibility(View.VISIBLE);
                 }
-                else {
-                    mViewBinding.btnMysabay.setVisibility(View.GONE);
-                }
-            } else {
-                mViewBinding.btnMysabay.setVisibility(View.GONE);
-            }
         });
 
         viewModel.getThirdPartyProviders().observe(this, data -> {
@@ -368,7 +378,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
             } else if (checkedId[0] == R.id.btn_third_bank_provider) {
                 viewModel.get3PartyCheckout(v.getContext());
             } else if (checkedId[0] == R.id.btn_pre_auth_pay) {
-                kh.com.mysabay.sdk.pojo.mysabay.Data paidItem = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), kh.com.mysabay.sdk.pojo.mysabay.Data.class);
+                ProviderResponse paidItem = gson.fromJson(MySabaySDK.getInstance().getMethodSelected(), ProviderResponse.class);
                 if (paidItem != null)
                     viewModel.postToPaidWithBank((StoreActivity) getActivity(), paidItem);
             } else
@@ -415,7 +425,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         // (shared instance with the Activity and the other Fragment)
     }
 
-    private void showBankProviders(Context context, List<kh.com.mysabay.sdk.pojo.mysabay.Data> data) {
+    private void showBankProviders(Context context, List<ProviderResponse> data) {
         if (dialogBank != null) {
             dialogBank.dismiss();
         }
@@ -423,7 +433,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         view.viewPaymentProvider.setBackgroundResource(colorCodeBackground());
         RecyclerView rcv = view.bankRcv;
         BankProviderAdapter adapter = new BankProviderAdapter(context, data, item -> {
-            viewModel.postToPaidWithBank((StoreActivity) getActivity(), (kh.com.mysabay.sdk.pojo.mysabay.Data) item);
+            viewModel.postToPaidWithBank((StoreActivity) getActivity(), (ProviderResponse) item);
             if (dialogBank != null)
                 dialogBank.dismiss();
             viewModel._thirdPartyItemMediatorLiveData.setValue(new ArrayList<>());
@@ -586,6 +596,16 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public boolean checkMySabayProvider(List<MySabayItemResponse> mySabayItemResponses) {
+        boolean isFound = false;
+        for (MySabayItemResponse mySabayItemResponse: mySabayItemResponses) {
+            if (mySabayItemResponse.type.equals("pre-auth")) {
+                isFound = true;
+            }
+        }
+        return  isFound;
     }
 
     @Override

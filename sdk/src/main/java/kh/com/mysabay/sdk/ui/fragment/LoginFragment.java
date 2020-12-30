@@ -8,8 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatEditText;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.InputFilter;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -27,7 +28,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import com.mysabay.sdk.LoginWithPhoneMutation;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
@@ -87,6 +87,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.tvMySabayAppName.setText(MySabaySDK.getInstance().getSdkConfiguration().mySabayAppName);
         mViewBinding.btnLogin.setTextColor(textColorCode());
         mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
+        mViewBinding.edtPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
         this.viewModel = LoginActivity.loginActivity.viewModel;
         this.onTaskCompleted();
 
@@ -115,10 +117,12 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         viewModel.liveNetworkState.observe(this, this::showProgressState);
 
         viewModel.login.observe(this, phone -> mViewBinding.edtPhone.setText(phone));
+        mViewBinding.fb.setOnClickListener(v-> {
+            mViewBinding.btnLoginFb.performClick();
+        });
 
         mViewBinding.btnLogin.setOnClickListener(v -> {
             if (mViewBinding.edtPhone.getText() == null) return;
-
             InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
@@ -236,7 +240,6 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         List<CountryItem> country = gson.fromJson(jsonFileString, countryTypes);
 
         for (int i = 0; i < country.size(); i++) {
-            LogUtil.info("data", "> Item " + i + "\n" + country.get(i).getName());
             mCountryList.add(country.get(i));
         }
     }

@@ -15,7 +15,7 @@
         <activity
             android:name=".ui.activity.LoginActivity"
             android:theme="@style/SdkAppTheme.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustResize">
+            android:windowSoftInputMode="stateVisible|adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

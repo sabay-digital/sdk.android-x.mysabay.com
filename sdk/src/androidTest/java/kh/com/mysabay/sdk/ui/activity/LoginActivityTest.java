@@ -31,13 +31,13 @@ public class LoginActivityTest {
     @Rule
     public ActivityTestRule<LoginActivity> activityActivityTestRule = new ActivityTestRule<>(LoginActivity.class);
 
-//    @Before
-//    public void init() {
-//
-//        FragmentManager fm = activityActivityTestRule.getActivity().getSupportFragmentManager();
-//        fm.beginTransaction().add(new LoginFragment(), "1").add(new VerifiedFragment(), "2").commit();
-//        fm.executePendingTransactions();
-//    }
+    @Before
+    public void init() {
+
+        FragmentManager fm = activityActivityTestRule.getActivity().getSupportFragmentManager();
+        fm.beginTransaction().add(new LoginFragment(), "1").add(new VerifiedFragment(), "2").commit();
+        fm.executePendingTransactions();
+    }
 
     @Test
     public void testLoginFrament() {

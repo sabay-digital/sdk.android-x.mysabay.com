@@ -18,6 +18,9 @@ import java.util.List;
  */
 public class ShopItem implements Parcelable {
 
+    @SerializedName("id")
+    @Expose
+    public String id;
     @SerializedName("packageCode")
     @Expose
     public String packageCode;
@@ -33,6 +36,9 @@ public class ShopItem implements Parcelable {
     @SerializedName("priceInSabayGold")
     @Expose
     public Double priceInSG;
+    @SerializedName("paymentServiceProvider")
+    @Expose
+    public List<PaymentServiceProvider> paymentServiceProvider;
 
     public final static Creator<ShopItem> CREATOR = new Creator<ShopItem>() {
 
@@ -51,11 +57,13 @@ public class ShopItem implements Parcelable {
     };
 
     protected ShopItem(Parcel in) {
+        this.id = ((String) in.readValue((String.class.getClassLoader())));
         this.packageCode = ((String) in.readValue((String.class.getClassLoader())));
         this.displayName = ((String) in.readValue((String.class.getClassLoader())));
         this.priceInUsd = ((Double) in.readValue((Double.class.getClassLoader())));
         this.priceInSC = ((Double) in.readValue((Double.class.getClassLoader())));
         this.priceInSG = ((Double) in.readValue((Double.class.getClassLoader())));
+        in.readList(this.paymentServiceProvider, (PaymentServiceProvider.class.getClassLoader()));
     }
 
     /**
@@ -65,19 +73,26 @@ public class ShopItem implements Parcelable {
     }
 
     /**
+     * @param id
      * @param packageCode
      * @param displayName
      * @param priceInUsd
      * @param priceInSC
      * @param priceInSG
      */
-    public ShopItem(String packageCode, String displayName, Double priceInUsd, Double priceInSC, Double priceInSG) {
+    public ShopItem(String id, String packageCode, String displayName, Double priceInUsd, Double priceInSC, Double priceInSG) {
         super();
+        this.id = id;
         this.packageCode = packageCode;
         this.displayName = displayName;
         this.priceInUsd = priceInUsd;
         this.priceInSC = priceInSC;
         this.priceInSG = priceInSG;
+    }
+
+    public ShopItem withId(String id) {
+        this.id = id;
+        return this;
     }
 
     public ShopItem withPackageCode(String packageCode) {
@@ -106,15 +121,21 @@ public class ShopItem implements Parcelable {
         return this;
     }
 
+    public  ShopItem withPaymentServiceProvider(List<PaymentServiceProvider> paymentServiceProvider) {
+        this.paymentServiceProvider = paymentServiceProvider;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("packageCode", packageCode).append("displayName", displayName)
-                .append("priceInUsd", priceInUsd).append("priceInSC", priceInSC).append("priceInSG", priceInSG).toString();
+        return new ToStringBuilder(this).append("id", id).append("packageCode", packageCode)
+                .append("displayName", displayName).append("priceInUsd", priceInUsd).append("priceInSC", priceInSC)
+                .append("priceInSG", priceInSG).append("paymentServiceProvider", paymentServiceProvider).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(packageCode).append(priceInUsd).append(priceInSC).append(priceInSG).append(displayName).toHashCode();
+        return new HashCodeBuilder().append(id).append(packageCode).append(priceInUsd).append(priceInSC).append(priceInSG).append(displayName).append(paymentServiceProvider).toHashCode();
     }
 
     @Override
@@ -126,15 +147,18 @@ public class ShopItem implements Parcelable {
             return false;
         }
         ShopItem rhs = ((ShopItem) other);
-        return new EqualsBuilder().append(packageCode, rhs.packageCode).append(priceInUsd, rhs.priceInUsd).append(priceInSC, rhs.priceInSC).append(priceInSG, rhs.priceInSG).append(displayName, rhs.displayName).isEquals();
+        return new EqualsBuilder().append(id, rhs.id).append(packageCode, rhs.packageCode).append(priceInUsd, rhs.priceInUsd).append(priceInSC, rhs.priceInSC)
+                .append(priceInSG, rhs.priceInSG).append(displayName, rhs.displayName).append(paymentServiceProvider, rhs.paymentServiceProvider).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(id);
         dest.writeValue(packageCode);
         dest.writeValue(displayName);
         dest.writeValue(priceInUsd);
         dest.writeValue(priceInSC);
         dest.writeValue(priceInSG);
+        dest.writeValue(paymentServiceProvider);
     }
 
     public int describeContents() {
@@ -156,7 +180,5 @@ public class ShopItem implements Parcelable {
     public String toRoundSabayGold() {
         return  Math.round(this.priceInSG) + " SG";
     }
-
-    public static final String PLAY_STORE = "play_store";
 
 }

@@ -121,17 +121,27 @@ public class MySabaySDK {
                     apolloClient.mutate(new RefreshTokenMutation(item.refreshToken)).enqueue(new ApolloCall.Callback<RefreshTokenMutation.Data>() {
                         @Override
                         public void onResponse(@NotNull Response<RefreshTokenMutation.Data> response) {
-                            item.withToken(response.getData().sso_refreshToken().accessToken());
-                            item.withExpired(response.getData().sso_refreshToken().expire());
-                            item.withRefreshToken(response.getData().sso_refreshToken().refreshToken());
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                                    MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
-                                    EventBus.getDefault().post(new SubscribeLogin(item.token, null));
-                                }
-                            });
+                            if (response.getData() != null) {
+                                item.withToken(response.getData().sso_refreshToken().accessToken());
+                                item.withExpired(response.getData().sso_refreshToken().expire());
+                                item.withRefreshToken(response.getData().sso_refreshToken().refreshToken());
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                                        MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
+                                        EventBus.getDefault().post(new SubscribeLogin(item.token, null));
+                                    }
+                                });
+                            } else {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                                        LogUtil.info("Data is null", "Error");
+                                    }
+                                });
+                            }
                         }
 
                         @Override
