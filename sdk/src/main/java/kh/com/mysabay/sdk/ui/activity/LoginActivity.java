@@ -16,6 +16,9 @@ import android.view.View;
 import com.facebook.FacebookSdk;
 
 import org.apache.commons.lang3.StringUtils;
+import org.matomo.sdk.Tracker;
+import org.matomo.sdk.extra.MatomoApplication;
+import org.matomo.sdk.extra.TrackHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,20 +70,11 @@ public class LoginActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserApiVM.class);
         super.onCreate(savedInstanceState);
 
+//        Tracker tracker = ((MatomoApplication) getApplication()).getTracker();
+//        TrackHelper.track().screen("/activity_login").title("Login").with(tracker);
+
         FacebookSdk.sdkInitialize(getApplicationContext());
 
-        LogUtil.debug("AAAA", verifyInstallerId(getApplicationContext()) + "");
-    }
-
-    boolean verifyInstallerId(Context context) {
-        // A list with valid installers package name
-        List<String> validInstallers = new ArrayList<>(Arrays.asList("com.android.vending", "com.google.android.feedback"));
-
-        // The package name of the app that has installed your app
-        final String installer = context.getPackageManager().getInstallerPackageName(context.getPackageName());
-
-        // true if your app has been downloaded from Play Store
-        return installer != null && validInstallers.contains(installer);
     }
 
     @Override

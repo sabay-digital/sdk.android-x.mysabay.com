@@ -1,9 +1,15 @@
 package kh.com.mysabay.sdk.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -12,6 +18,7 @@ import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmLoginMysabayBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
+import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 
 public class MySabayLoginFragment extends BaseFragment<FmLoginMysabayBinding, UserApiVM> {
@@ -41,10 +48,36 @@ public class MySabayLoginFragment extends BaseFragment<FmLoginMysabayBinding, Us
 
     @Override
     public void addListeners() {
+        viewModel.liveNetworkState.observe(this, this::showProgressState);
+
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (v.getContext() instanceof LoginActivity)
-                ((LoginActivity) v.getContext()).onBackPressed();
+                getActivity().finish();
         });
+
+        mViewBinding.btnBack.setOnClickListener(v -> {
+            if (getActivity() != null)
+                getActivity().onBackPressed();
+        });
+        mViewBinding.btnLogin.setOnClickListener(v -> {
+            String username = mViewBinding.edtUsername.getText().toString();
+            String password = mViewBinding.edtPassword.getText().toString();
+            if (StringUtils.isAnyBlank(username)) {
+                showCheckFields(mViewBinding.edtUsername, R.string.msg_input_username);
+            } else if (StringUtils.isAnyBlank(password)) {
+                showCheckFields(mViewBinding.edtPassword, R.string.msg_input_password);
+            } else {
+                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
+            }
+        });
+    }
+
+    private void showCheckFields(AppCompatEditText view, int msg) {
+        if (view != null) {
+            YoYo.with(Techniques.Shake).duration(600).playOn(view);
+            view.requestFocus();
+        }
+        MessageUtil.displayToast(getContext(), getString(msg));
     }
 
     @Override

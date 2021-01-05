@@ -95,10 +95,10 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         mAdapter = new ShopAdapter(v.getContext(), item -> {
             //    if (!BuildConfig.DEBUG)
             if (verifyInstallerId(getActivity())) {
-                PURCHASE_ID = item.packageId;
-                purchase(v, item.packageId);
-            } else {
-                MessageUtil.displayDialog(getActivity(), getString(R.string.application_do_not_support_in_app_purchase));
+//                PURCHASE_ID = item.packageId;
+//                purchase(v, item.packageId);
+//            } else {
+//                MessageUtil.displayDialog(getActivity(), getString(R.string.application_do_not_support_in_app_purchase));
             }
         });
 
@@ -111,8 +111,8 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
             UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            mySabayId = userProfile.data.mysabayUserId.toString();
-            mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), userProfile.data.mysabayUserId.toString()));
+            mySabayId = userProfile.userID.toString();
+            mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), userProfile.userID.toString()));
         });
 
         viewModel.getNetworkState().observe(this, this::showProgressState);
@@ -120,10 +120,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
             mLayoutManager.setSpanCount(getResources().getInteger(R.integer.layout_size));
             mViewBinding.rcv.setLayoutManager(mLayoutManager);
             mAdapter.clear();
-            for (Data ob : item.data) {
-                mAdapter.insert(ob);
-            }
-
+            mAdapter.insert(item);
             mAdapter.notifyDataSetChanged();
         });
     }
@@ -133,24 +130,26 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         viewModel.getNetworkState().observe(this, this::showProgressState);
 
         if (getContext() != null)
-            viewModel.getShopFromServer(getContext());
+//            viewModel.getShopFromServer(getContext());
+
+             viewModel.getShopFromServerGraphQL(getContext());
 
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
             UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            if (userProfile.data.balance.coin > 0) {
-                String sabayCoin = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
+            if (userProfile.coin > 0) {
+                String sabayCoin = "<b>" + userProfile.toSabayCoin() + "</b> ";
                 mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
             }
-            if (userProfile.data.balance.gold > 0) {
-                String sabayGold = "<b>" + userProfile.data.toSabayGold() + "</b> ";
+            if (userProfile.gold > 0) {
+                String sabayGold = "<b>" + userProfile.toSabayGold() + "</b> ";
                 mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
-                mViewBinding.deviderBalance.setVisibility(userProfile.data.balance.coin > 0 ? View.VISIBLE : View.GONE);
+                mViewBinding.deviderBalance.setVisibility(userProfile.coin > 0 ? View.VISIBLE : View.GONE);
             } else {
                 mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
                 mViewBinding.deviderBalance.setVisibility(View.GONE);
             }
-            if (userProfile.data.balance.gold > 0 || userProfile.data.balance.coin > 0) {
+            if (userProfile.gold > 0 || userProfile.coin > 0) {
                 mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
             } else {
                 mViewBinding.sabayBalance.setVisibility(View.GONE);

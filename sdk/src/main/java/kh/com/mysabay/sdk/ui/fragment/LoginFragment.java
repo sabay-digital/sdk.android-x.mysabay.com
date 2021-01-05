@@ -8,12 +8,14 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatEditText;
+import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.InputFilter;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
+import com.apollographql.apollo.ApolloClient;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
 import com.facebook.AccessToken;
@@ -33,6 +35,9 @@ import org.jetbrains.annotations.NotNull;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
+
 import kh.com.mysabay.sdk.BuildConfig;
 import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
@@ -62,6 +67,9 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
     private FragmentManager mManager;
     private CallbackManager callbackManager;
 
+    @Inject
+    ApolloClient apolloClient;
+
     @NotNull
     @Contract(" -> new")
     public static LoginFragment newInstance() {
@@ -79,6 +87,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.tvMySabayAppName.setText(MySabaySDK.getInstance().getSdkConfiguration().mySabayAppName);
         mViewBinding.btnLogin.setTextColor(textColorCode());
         mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
+        mViewBinding.edtPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
         this.viewModel = LoginActivity.loginActivity.viewModel;
         this.onTaskCompleted();
 
@@ -107,23 +117,18 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         viewModel.liveNetworkState.observe(this, this::showProgressState);
 
         viewModel.login.observe(this, phone -> mViewBinding.edtPhone.setText(phone));
+        mViewBinding.fb.setOnClickListener(v-> {
+            mViewBinding.btnLoginFb.performClick();
+        });
 
         mViewBinding.btnLogin.setOnClickListener(v -> {
             if (mViewBinding.edtPhone.getText() == null) return;
-
             InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
             String phoneNo = mViewBinding.edtPhone.getText().toString();
-
             PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
 
-            /*Editable phoneNo = mViewBinding.edtPhone.getText();
-            if (StringUtils.isAnyBlank(phoneNo)) {
-                showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
-            } else if (!MyPhoneUtils.isValidatePhone(phoneNo)) {
-                showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
-            }*/
             if (StringUtils.isAnyBlank(phoneNo)) {
                 showCheckFields(mViewBinding.edtPhone, R.string.msg_input_phone);
             } else if (StringUtils.isAnyBlank(dialCode)) {
@@ -137,7 +142,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
                     if (isValid) {
                         String phNumber = String.valueOf(phoneNumber.getNationalNumber());
                         String dialCode = String.valueOf(phoneNumber.getCountryCode());
-                        viewModel.postToLogin(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret, phNumber, dialCode);
+                        viewModel.postToLoginWithGraphql(v.getContext(), phNumber, dialCode);
                     } else {
                         showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
                     }
@@ -146,8 +151,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         });
 
         mViewBinding.btnLoginMysabay.setOnClickListener(v ->
-        viewModel.postToLoginWithMySabay(v.getContext(), MySabaySDK.getInstance().getSdkConfiguration().appSecret));
-    //        initAddFragment(MySabayLoginFragment.newInstance(), MySabayLoginFragment.TAG));
+            initAddFragment(MySabayLoginFragment.newInstance(), MySabayLoginFragment.TAG, true));
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (getActivity() != null)
                 getActivity().onBackPressed();
@@ -159,6 +163,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             @Override
             public void onSuccess(LoginResult loginResult) {
                 LogUtil.info("OnSuccess", loginResult.getAccessToken().getToken());
+                viewModel.postToLoginFacebookWithGraphql(getActivity(), loginResult.getAccessToken().getToken());
             }
 
             @Override
@@ -235,7 +240,6 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         List<CountryItem> country = gson.fromJson(jsonFileString, countryTypes);
 
         for (int i = 0; i < country.size(); i++) {
-            LogUtil.info("data", "> Item " + i + "\n" + country.get(i).getName());
             mCountryList.add(country.get(i));
         }
     }

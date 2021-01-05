@@ -108,7 +108,8 @@
             <android.support.v7.widget.AppCompatButton
                 android:id="@+id/btn_verify"
                 style="@style/ButtonPrimary"
-                android:layout_width="wrap_content"
+                android:layout_width="250dp"
+                android:layout_height="40dp"
                 android:gravity="center"
                 android:paddingStart="@dimen/padding_35"
                 android:paddingEnd="@dimen/padding_35"

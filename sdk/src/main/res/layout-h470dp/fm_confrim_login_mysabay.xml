@@ -14,6 +14,15 @@
             android:background="@color/colorBackground"
             >
             <android.support.v7.widget.AppCompatImageView
+                android:id="@+id/btn_back"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/padding_20"
+                android:layout_marginTop="@dimen/padding_20"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_back" />
+            <android.support.v7.widget.AppCompatImageView
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,7 +49,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/padding_20"
-                    android:text="@string/mysabay_account"
+                    android:text="@string/verify_mysabay"
+                    android:textAllCaps="true"
                     android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
                     android:textStyle="bold" />
 
@@ -84,6 +94,7 @@
                         android:textColor="@color/secondary"
                         android:background="@drawable/spinner_bg"
                         android:textCursorDrawable="@null"
+                        android:enabled="false"
                         app:hintTextAppearance="@style/MyAppearanceBody1.Primary" />
 
                 <android.support.v7.widget.AppCompatTextView
