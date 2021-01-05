@@ -97,10 +97,6 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
         MessageUtil.displayToast(getContext(), getString(msg));
     }
 
-    public void initAddFragment(Fragment f, String tag) {
-        initAddFragment(f, tag, false);
-    }
-
     public void initAddFragment(Fragment f, String tag, boolean isBack) {
         Globals.initAddFragment(mManager, f, tag, isBack);
     }
