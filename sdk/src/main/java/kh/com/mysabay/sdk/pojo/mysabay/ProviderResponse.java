@@ -12,6 +12,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
+/**
+ * Created by Tan Phirum on 01/05/21
+ * Gmail chhoeunsongheng@gmail.com
+ */
 public class ProviderResponse implements Parcelable {
 
     @SerializedName("id")
@@ -38,6 +44,9 @@ public class ProviderResponse implements Parcelable {
     @SerializedName("value")
     @Expose
     public Double value;
+    @SerializedName("issueCurrencies")
+    @Expose
+    public List<String> issueCurrencies;
 
     public final static Creator<ProviderResponse> CREATOR = new Creator<ProviderResponse>() {
 
@@ -65,6 +74,7 @@ public class ProviderResponse implements Parcelable {
         this.info = ((Info) in.readValue((Info.class.getClassLoader())));
         this.label = ((String) in.readValue((String.class.getClassLoader())));
         this.value = ((Double) in.readValue((Double.class.getClassLoader())));
+        in.readList(this.issueCurrencies, (String.class.getClassLoader()));
     }
 
     /**
@@ -81,9 +91,10 @@ public class ProviderResponse implements Parcelable {
      * @param type
      * @param label
      * @param value
+     * @param issueCurrencies
      * @param info
      */
-    public ProviderResponse(String id, String name, String code, String ssnAccountPk, String type, String label, Double value, Info info) {
+    public ProviderResponse(String id, String name, String code, String ssnAccountPk, String type, String label, Double value, List<String> issueCurrencies, Info info) {
         super();
         this.id = id;
         this.name = name;
@@ -92,6 +103,7 @@ public class ProviderResponse implements Parcelable {
         this.type = type;
         this.label = label;
         this.value = value;
+        this.issueCurrencies = issueCurrencies;
         this.info = info;
     }
 
@@ -130,6 +142,11 @@ public class ProviderResponse implements Parcelable {
         return this;
     }
 
+    public ProviderResponse withInfo(List<String> issueCurrencies) {
+        this.issueCurrencies = issueCurrencies;
+        return this;
+    }
+
     public ProviderResponse withInfo(Info info) {
         this.info = info;
         return this;
@@ -139,12 +156,13 @@ public class ProviderResponse implements Parcelable {
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("name", name).append("code", code)
                 .append("ssnAccountPk", ssnAccountPk).append("type", type).append("info", info)
-                .append("label", label).append("value", value).toString();
+                .append("label", label).append("value", value).append("issueCurrencies", issueCurrencies).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(name).append(code).append(ssnAccountPk).append(type).append(info).append(label).append(value).toHashCode();
+        return new HashCodeBuilder().append(id).append(name).append(code).append(ssnAccountPk).append(type).append(info)
+                .append(label).append(value).append(issueCurrencies).toHashCode();
     }
 
     @Contract(value = "null -> false", pure = true)
@@ -159,7 +177,7 @@ public class ProviderResponse implements Parcelable {
         ProviderResponse rhs = ((ProviderResponse) other);
         return new EqualsBuilder().append(id, rhs.id).append(name, rhs.name).append(code, rhs.code)
                 .append(ssnAccountPk, rhs.ssnAccountPk).append(type, rhs.type).append(info, rhs.info)
-                .append(label, rhs.label).append(value, rhs.value).isEquals();
+                .append(label, rhs.label).append(value, rhs.value).append(issueCurrencies, rhs.issueCurrencies).isEquals();
     }
 
     public void writeToParcel(@NotNull Parcel dest, int flags) {
@@ -171,6 +189,7 @@ public class ProviderResponse implements Parcelable {
         dest.writeValue(info);
         dest.writeValue(label);
         dest.writeValue(value);
+        dest.writeValue(issueCurrencies);
     }
 
     public int describeContents() {

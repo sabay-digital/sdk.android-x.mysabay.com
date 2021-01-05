@@ -12,6 +12,10 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Created by Tan Phirum on 01/05/21
+ * Gmail chhoeunsongheng@gmail.com
+ */
 public class Info implements Parcelable {
 
     @SerializedName("logo")

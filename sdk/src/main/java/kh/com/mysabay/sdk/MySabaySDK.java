@@ -40,7 +40,6 @@ import kh.com.mysabay.sdk.di.BaseAppComponent;
 import kh.com.mysabay.sdk.di.DaggerBaseAppComponent;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.NetworkState;
-import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
@@ -158,7 +157,6 @@ public class MySabaySDK {
 
                 @Override
                 public void onFailure(@NotNull ApolloException e) {
-                    LogUtil.info(TAG, "Token is invalid");
                     apolloClient.mutate(new RefreshTokenMutation(item.refreshToken)).enqueue(new ApolloCall.Callback<RefreshTokenMutation.Data>() {
                         @Override
                         public void onResponse(@NotNull Response<RefreshTokenMutation.Data> response) {
@@ -215,18 +213,21 @@ public class MySabaySDK {
             apolloClient.mutate(new DeleteTokenMutation(refreshToken)).enqueue(new ApolloCall.Callback<DeleteTokenMutation.Data>() {
                 @Override
                 public void onResponse(@NotNull Response<DeleteTokenMutation.Data> response) {
-                    LogUtil.info("Success", response.getData().toString());
-                    clearAppItem();
-                    if (LoginManager.getInstance() != null) {
-                        LogUtil.info("Facebook", "Logout");
-                        LoginManager.getInstance().logOut();
-                    }
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                    if (response.getData() != null) {
+                        clearAppItem();
+                        if (LoginManager.getInstance() != null) {
+                            LogUtil.info("Facebook", "Logout");
+                            LoginManager.getInstance().logOut();
                         }
-                    });
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            }
+                        });
+                    } else {
+                        LogUtil.info("Logout", "null");
+                    }
                 }
 
                 @Override
@@ -391,32 +392,6 @@ public class MySabaySDK {
                 });
             }
         });
-
-//        userRepo.postRefreshToken(item.appSecret,item.refreshToken)
-//                .subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread()).subscribe(
-//                        new AbstractDisposableObs<RefreshTokenItem>(mAppContext, _networkState, null) {
-//            @Override
-//            protected void onSuccess(RefreshTokenItem refreshTokenItem) {
-//                if (listener != null) {
-//                    if (refreshTokenItem.status == 200) {
-//                        item.withToken(refreshTokenItem.data.accessToken);
-//                        item.withExpired(refreshTokenItem.data.expire);
-//                        item.withRefreshToken(refreshTokenItem.data.refreshToken);
-//                        MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
-//                        listener.refreshSuccess(refreshTokenItem.data.refreshToken);
-//                    } else
-//                        onErrors(new Error(gson.toJson(refreshTokenItem)));
-//                } else {
-//                    onErrors(new NullPointerException("RefreshTokenListener required!!!"));
-//                }
-//            }
-//
-//            @Override
-//            protected void onErrors(@NotNull Throwable error) {
-//                if (listener != null) listener.refreshFailed(error);
-//            }
-//        });
     }
 
     /**

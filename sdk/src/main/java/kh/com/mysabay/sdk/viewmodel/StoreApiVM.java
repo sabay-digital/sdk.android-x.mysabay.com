@@ -115,6 +115,7 @@ public class StoreApiVM extends ViewModel {
 
     public void getShopFromServerGraphQL(@NotNull Context context) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         Store_PagerInput pager = Store_PagerInput.builder().page(1).limit(20).build();
         List<ShopItem> shopItems = new ArrayList<ShopItem>();
         apolloClient.query(new GetProductsByServiceCodeQuery("aog", new Input<>(pager, true))).toBuilder()
@@ -178,6 +179,8 @@ public class StoreApiVM extends ViewModel {
                     @Override
                     public void onFailure(@NotNull ApolloException e) {
                         LogUtil.info("Error", e.toString());
+                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                        MessageUtil.displayToast(context, "Something went wrong! Please try again");
                     }
                 });
     }
@@ -233,7 +236,7 @@ public class StoreApiVM extends ViewModel {
 
     public void  getMySabayCheckoutWithGraphQL(@NotNull Context context, String itemId) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-
+        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         apolloClient.query(new Checkout_getPaymentServiceProviderForProductQuery(itemId)).enqueue(new ApolloCall.Callback<Checkout_getPaymentServiceProviderForProductQuery.Data>() {
             @Override
             public void onResponse(@NotNull Response<Checkout_getPaymentServiceProviderForProductQuery.Data> response) {
@@ -254,17 +257,17 @@ public class StoreApiVM extends ViewModel {
                             if (obj.get("logo") != null) {
                                 info.withLogo(obj.get("logo").getAsString());
                             }
-
-                            ProviderResponse providerResponseObj = new ProviderResponse(provider.id(), provider.name().toString(), provider.code(), provider.ssnAccountPk(), provider.type(), provider.label(), provider.value().doubleValue(), info);
+                            ProviderResponse providerResponseObj = new ProviderResponse(provider.id(), provider.name().toString(), provider.code(), provider.ssnAccountPk(), provider.type(), provider.label(), provider.value().doubleValue(), provider.issueCurrencies(), info);
                             providerResponses.add(providerResponseObj);
                             itemResponse.withProvider(providerResponses);
                         }
                         mySabayItemResponses.add(itemResponse);
+
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                                 mySabayItemMediatorLiveData.setValue(mySabayItemResponses);
+                                _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             }
                         });
                     }
