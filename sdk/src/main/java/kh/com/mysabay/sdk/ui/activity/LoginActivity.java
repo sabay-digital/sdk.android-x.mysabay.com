@@ -16,6 +16,9 @@ import android.view.View;
 import com.facebook.FacebookSdk;
 
 import org.apache.commons.lang3.StringUtils;
+import org.matomo.sdk.Tracker;
+import org.matomo.sdk.extra.MatomoApplication;
+import org.matomo.sdk.extra.TrackHelper;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,6 +69,9 @@ public class LoginActivity extends BaseActivity {
         loginActivity = this;
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserApiVM.class);
         super.onCreate(savedInstanceState);
+
+//        Tracker tracker = ((MatomoApplication) getApplication()).getTracker();
+//        TrackHelper.track().screen("/activity_login").title("Login").with(tracker);
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 

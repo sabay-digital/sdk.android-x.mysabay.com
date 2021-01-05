@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="kh.com.mysabay.sdk">
 
     <uses-permission android:name="com.android.vending.BILLING" />
 
-    <application>
+    <application
+        android:name=".SdkApplication">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />

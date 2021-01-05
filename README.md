@@ -3,6 +3,14 @@
 This is the official MySabay SDK for native Android application. To use this SDK, you can follow the guides below or download the test with the example project we have in this repository.
 
 ## Version
+-Latest: 
+    - Change from rest api to graphQL gateway
+    - Implement user process with graphQL gateway
+    - Implement store process with graphQL gateway
+    - Implement tracking with Piwik
+    - Implement register with Mysabay from login
+    - Implement Login with Mysabay UI
+
 - Latest: 1.0.18  
     - Wing payment  
     - Check application install manually via APK or Google Play store.  

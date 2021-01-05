@@ -90,7 +90,7 @@ dependencies {
     implementation("com.google.guava:guava:30.1-jre")
     implementation 'com.apollographql.apollo:apollo-rx2-support:2.4.5'
     implementation 'com.github.santalu:mask-edittext:1.0.1'
-    implementation 'net.rimoto:intlphoneinput:1.0.1'
+    implementation 'org.matomo.sdk:tracker:4.1.0'
 
     //phone validation
     implementation 'com.googlecode.libphonenumber:libphonenumber:8.10.3'
