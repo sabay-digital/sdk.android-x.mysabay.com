@@ -14,6 +14,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+/**
+ * Created by Tan Phirum on 01/05/21
+ * Gmail chhoeunsongheng@gmail.com
+ */
 public class MySabayItemResponse implements Parcelable {
 
     @SerializedName("type")

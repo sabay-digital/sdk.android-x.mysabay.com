@@ -222,7 +222,6 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                             for (ProviderResponse providerResponse : item.providers) {
                                 if (providerResponse.code.equals("play_store")) {
                                     LogUtil.info("Iap", providerResponse.label);
-                                    mViewBinding.btnInAppPurchase.setVisibility(View.VISIBLE);
                                     //  if (verifyInstallerId(getActivity())) {
                                     mViewBinding.btnInAppPurchase.setVisibility(View.VISIBLE);
                                     //  } else {
@@ -232,6 +231,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                                     Glide.with(getContext())
                                             .load(providerResponse.info.logo)
                                             .into(mViewBinding.imgInAppBillingLogo);
+                                } else {
+                                    mViewBinding.btnInAppPurchase.setVisibility(View.GONE);
                                 }
                             }
                         }
