@@ -45,7 +45,6 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         mViewBinding.btnBack.setBackgroundResource(colorCodeBackground());
         if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light)
             mViewBinding.tvResendOtp.setTextColor(getResources().getColor(R.color.colorWhite700));
-            mViewBinding.btnVerify.setTextColor(textColorCode());
            this.viewModel = LoginActivity.loginActivity.viewModel;
     }
 
@@ -88,15 +87,6 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         mViewBinding.tvResendOtp.setOnClickListener(v -> {
             mViewBinding.edtVerifyCode.setText("");
             viewModel.resendOTPWithGraphQL(v.getContext());
-        });
-
-        mViewBinding.btnVerify.setOnClickListener(v -> {
-            String code = mViewBinding.edtVerifyCode.getText() != null ? mViewBinding.edtVerifyCode.getText().toString() : "";
-            if (!StringUtils.isEmpty(code)) {
-                KeyboardUtils.hideKeyboard(v.getContext(), v);
-                viewModel.verifyOTPWithGraphql(v.getContext(), Integer.parseInt(code));
-            } else
-                MessageUtil.displayToast(v.getContext(), getString(R.string.verify_code_required));
         });
 
         mViewBinding.btnBack.setOnClickListener(v -> {

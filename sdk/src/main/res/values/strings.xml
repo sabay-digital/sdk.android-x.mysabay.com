@@ -50,6 +50,7 @@
     <string name="enter_your_password">Enter your password to confirm your MySabay Account or click ‘I want a new account’ to get a new account.</string>
     <string name="create">Create</string>
     <string name="register">Register</string>
+    <string name="i_want_to_regiser_for_a_mysabay_account">I want to register for a MySabay account</string>
     <string name="facebook_app_id">587695748053859</string>
     <string name="fb_login_protocol_scheme">fb587695748053859</string>
     <!-- TODO: Remove or change this placeholder text -->
