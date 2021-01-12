@@ -17,18 +17,18 @@
         android:layout_gravity="center_horizontal"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatImageView
+        <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="@dimen/padding_20"
             android:layout_marginTop="@dimen/padding_20"
-            android:background="@color/colorBackground"
+            android:background="@null"
             android:padding="@dimen/padding_5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_back" />
+            android:src="@drawable/ic_back" />
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="wrap_content"
@@ -98,6 +98,18 @@
                 tools:ignore="SpUsage" />
 
             <android.support.v7.widget.AppCompatTextView
+                android:id="@+id/tv_timer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="timer"
+                android:textSize="12sp"
+                android:textColor="@color/secondary"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edt_verify_code" />
+
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/tv_resend_otp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -107,7 +119,7 @@
                 android:textColor="@color/secondary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edt_verify_code" />
+                app:layout_constraintTop_toBottomOf="@+id/tv_timer" />
         </android.support.constraint.ConstraintLayout>
         <include
             android:id="@+id/view_empty"

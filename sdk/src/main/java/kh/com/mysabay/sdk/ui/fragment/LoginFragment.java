@@ -11,6 +11,7 @@ import android.support.v7.widget.AppCompatEditText;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.InputFilter;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Spinner;
@@ -32,6 +33,10 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.matomo.sdk.Tracker;
+import org.matomo.sdk.extra.MatomoApplication;
+import org.matomo.sdk.extra.TrackHelper;
+
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -86,6 +91,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.viewMainLogin.setBackgroundResource(colorCodeBackground());
         mViewBinding.tvMySabayAppName.setText(MySabaySDK.getInstance().getSdkConfiguration().mySabayAppName);
         mViewBinding.btnLogin.setTextColor(textColorCode());
+        mViewBinding.fb.setTextColor(textColorCode());
         mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
         mViewBinding.edtPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
@@ -123,6 +129,10 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
 
         mViewBinding.btnLogin.setOnClickListener(v -> {
             if (mViewBinding.edtPhone.getText() == null) return;
+
+            Tracker tracker = ((MatomoApplication) getActivity().getApplicationContext()).getTracker();
+            TrackHelper.track().event("category", "action").name("label").value(1000f).with(tracker);
+
             InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 

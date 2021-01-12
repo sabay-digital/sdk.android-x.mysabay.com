@@ -354,16 +354,16 @@ public class StoreApiVM extends ViewModel {
      *
      * @param context
      */
-    public kh.com.mysabay.sdk.pojo.mysabay.Data getInAppPurchaseProvider(@NotNull Context context) {
-        if (getMySabayProvider().getValue() == null) return new kh.com.mysabay.sdk.pojo.mysabay.Data();
+    public ProviderResponse getInAppPurchaseProvider(@NotNull Context context) {
+        if (getMySabayProvider().getValue() == null) return new ProviderResponse();
 
         List<MySabayItemResponse> mySabayItem = getMySabayProvider().getValue();
-        kh.com.mysabay.sdk.pojo.mysabay.Data provider  = new kh.com.mysabay.sdk.pojo.mysabay.Data();
+        ProviderResponse provider  = new ProviderResponse();
 
-        for (MySabayItemResponse item : mySabayItem) {
-//            if (item.paymentType.equals("iap")) {
-//                provider = item;
-//            }
+        for (ProviderResponse item : mySabayItem.get(0).providers) {
+            if (item.type.equals("iap")) {
+                provider = item;
+            }
         }
         return provider;
     }

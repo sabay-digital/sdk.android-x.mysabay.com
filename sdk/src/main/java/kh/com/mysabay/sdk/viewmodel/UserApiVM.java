@@ -12,6 +12,7 @@ import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.exception.ApolloNetworkException;
 import com.google.gson.Gson;
 import com.mysabay.sdk.CreateMySabayFromPhoneMutation;
 import com.mysabay.sdk.LoginWithFacebookMutation;
@@ -29,6 +30,7 @@ import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
 import kh.com.mysabay.sdk.MySabaySDK;
+import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.SdkConfiguration;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.NetworkState;
@@ -135,7 +137,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                            MessageUtil.displayToast(context, "Login with phonnumber failed");
+                            MessageUtil.displayToast(context, "Login with phone number failed");
                         }
                     });
                 }
@@ -143,11 +145,16 @@ public class UserApiVM extends ViewModel {
 
             @Override
             public void onFailure(@NotNull ApolloException e) {
+                LogUtil.info("err", e.getMessage());
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
-                        MessageUtil.displayDialog(context, "Login Error! Please try again");
+                        if (e instanceof ApolloNetworkException) {
+                            _networkState.setValue(new NetworkState(NetworkState.Status.ERROR, context.getString(R.string.msg_can_not_connect_internet)));
+                        } else {
+                            _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            MessageUtil.displayDialog(context, "Login Error! Please try again");
+                        }
                     }
                 });
             }

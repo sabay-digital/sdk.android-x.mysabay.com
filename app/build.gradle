@@ -5,7 +5,7 @@ android {
     buildToolsVersion "29.0.3"
 
     defaultConfig {
-        applicationId "kh.com.sabay.sdk"
+        applicationId "kh.com.sabay.aog"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 2
@@ -45,4 +45,5 @@ dependencies {
     implementation 'com.android.support:design:28.0.0'
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'org.matomo.sdk:tracker:4.0.2'
 }

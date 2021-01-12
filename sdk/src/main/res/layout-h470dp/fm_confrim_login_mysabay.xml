@@ -7,29 +7,32 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
+        android:background="@color/colorBackground"
         tools:context=".ui.activity.LoginActivity">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorBackground"
             >
-            <android.support.v7.widget.AppCompatImageView
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/padding_20"
                 android:layout_marginTop="@dimen/padding_20"
+                android:background="@null"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_back" />
-            <android.support.v7.widget.AppCompatImageView
+                android:src="@drawable/ic_back" />
+            <android.support.v7.widget.AppCompatImageButton
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/padding_20"
                 android:layout_marginEnd="@dimen/padding_20"
+                android:background="@null"
                 android:layout_alignParentEnd="true"
-                app:srcCompat="@drawable/ic_close" />
+                android:src="@drawable/ic_close" />
 
             <android.support.v7.widget.LinearLayoutCompat
                 android:id="@+id/view_login"

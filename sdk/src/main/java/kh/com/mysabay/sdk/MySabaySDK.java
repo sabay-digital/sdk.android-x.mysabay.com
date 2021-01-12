@@ -25,9 +25,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.matomo.sdk.Tracker;
-import org.matomo.sdk.extra.MatomoApplication;
-import org.matomo.sdk.extra.TrackHelper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -485,11 +482,6 @@ public class MySabaySDK {
 
     public void setSdkConfiguration(SdkConfiguration mSdkConfiguration) {
         mSdkConfiguration = mSdkConfiguration;
-    }
-
-    public void trackScreen(Activity activity, String path) {
-        Tracker tracker = ((MatomoApplication) activity.getApplication()).getTracker();
-        TrackHelper.track().screen(path).title("Login").with(tracker);
     }
 
     public String appSecret() {

@@ -37,6 +37,7 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
 
     @Override
     public void initializeObjects(View v, Bundle args) {
+        mViewBinding.viewMainRegister.setBackgroundResource(colorCodeBackground());
         this.viewModel = LoginActivity.loginActivity.viewModel;
     }
 

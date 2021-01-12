@@ -4,7 +4,9 @@ import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import org.apache.commons.lang3.StringUtils;
@@ -27,8 +29,12 @@ import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, UserApiVM> {
 
     public static final String TAG = VerifiedFragment.class.getSimpleName();
-    String otpCode;
+    private static final long START_TIME_IN_MILLIS = 60000;
+    private CountDownTimer mCountDownTimer;
+    private boolean mTimerRunning;
 
+    private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
+    private long mEndTime;
 
     public VerifiedFragment() {
         super();
@@ -55,6 +61,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                 MessageUtil.displayDialog(getContext(), String.valueOf(item.verifyCode), colorCodeBackground());
 //                mViewBinding.edtVerifyCode.setText(String.valueOf(item.data.verifyCode));
         });
+        startTimer();
     }
 
     @Override
@@ -87,12 +94,71 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         mViewBinding.tvResendOtp.setOnClickListener(v -> {
             mViewBinding.edtVerifyCode.setText("");
             viewModel.resendOTPWithGraphQL(v.getContext());
+            mTimeLeftInMillis = START_TIME_IN_MILLIS;
+            startTimer();
+
         });
 
         mViewBinding.btnBack.setOnClickListener(v -> {
             if (getActivity() != null)
                 getActivity().onBackPressed();
         });
+    }
+
+    private void startTimer() {
+        mEndTime = System.currentTimeMillis() + mTimeLeftInMillis;
+        mCountDownTimer = new CountDownTimer(mTimeLeftInMillis, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                mTimeLeftInMillis = millisUntilFinished;
+
+                updateCountDownText();
+            }
+
+            @Override
+            public void onFinish() {
+                mTimerRunning = false;
+                updateButtons();
+            }
+        }.start();
+        mTimerRunning = true;
+        updateButtons();
+    }
+
+    private void updateCountDownText() {
+        if (mTimerRunning) {
+            mViewBinding.tvTimer.setText("Didn’t get OTP code? request again in: " + mTimeLeftInMillis / 1000 + "s");
+        } else {
+            mViewBinding.tvTimer.setText("Didn’t get OTP code? request again in ");
+        }
+    }
+
+    private void updateButtons() {
+        if (mTimerRunning) {
+            mViewBinding.tvResendOtp.setEnabled(false);
+            mViewBinding.tvResendOtp.setTextColor(0xFF3a3a3c);
+        } else {
+            mViewBinding.tvResendOtp.setEnabled(true);
+            mViewBinding.tvResendOtp.setTextColor(0xFFE3B852);
+        }
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mTimeLeftInMillis = savedInstanceState.getLong("millisLeft");
+            mEndTime = savedInstanceState.getLong("endTime");
+            updateCountDownText();
+            updateButtons();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putLong("millisLeft", mTimeLeftInMillis);
+        outState.putLong("endTime", mEndTime);
     }
 
     @Override
@@ -127,4 +193,5 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         // Now you can access loginViewModel here and onCreateView too
         // (shared instance with the Activity and the other Fragment)
     }
+
 }
