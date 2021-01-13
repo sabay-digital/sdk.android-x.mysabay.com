@@ -3,6 +3,7 @@ package kh.com.mysabay.sdk;
 import android.app.Activity;
 import android.app.Application;
 import android.arch.lifecycle.MediatorLiveData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -25,6 +26,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.matomo.sdk.QueryParams;
+import org.matomo.sdk.TrackMe;
+import org.matomo.sdk.Tracker;
+import org.matomo.sdk.extra.MatomoApplication;
+import org.matomo.sdk.extra.TrackHelper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -274,7 +280,7 @@ public class MySabaySDK {
                         @Override
                         public void run() {
                            LogUtil.info("Get User Profile", "Failed");
-//                           listener.userInfo("Get User Profile failed");
+                    //     listener.userInfo("Get User Profile failed");
                         }
                     });
                 }
@@ -331,23 +337,6 @@ public class MySabaySDK {
                 });
             }
         });
-
-//        userRepo.getVerifyToken(appItem.appSecret, appItem.token).subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread())
-//                .subscribe(new AbstractDisposableObs<TokenVerify>(mAppContext, _networkState) {
-//
-//                    @Override
-//                    protected void onSuccess(TokenVerify tokenVerify) {
-//                        LogUtil.info(TAG, tokenVerify.message);
-//                        mAppContext.startActivity(new Intent(mAppContext, StoreActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-//                    }
-//
-//                    @Override
-//                    protected void onErrors(Throwable error) {
-//                        LogUtil.info(TAG, error.getMessage());
-//                        MessageUtil.displayToast(mAppContext, "Token is invalid");
-//                    }
-//                });
     }
 
     /**
@@ -482,6 +471,16 @@ public class MySabaySDK {
 
     public void setSdkConfiguration(SdkConfiguration mSdkConfiguration) {
         mSdkConfiguration = mSdkConfiguration;
+    }
+
+    public void getTrackingView(Activity activity, String path, String title) {
+        Tracker tracker = ((MatomoApplication) activity.getApplication()).getTracker();
+        TrackHelper.track(new TrackMe().set(QueryParams.SESSION_START, 1)).screen(path).title(title).with(tracker);
+    }
+
+    public void eventTracking(Activity activity, String category, String action, String name, Float value) {
+        Tracker tracker = ((MatomoApplication) activity.getApplication()).getTracker();
+        TrackHelper.track().event(category, action).name(name).value(value).with(tracker);
     }
 
     public String appSecret() {

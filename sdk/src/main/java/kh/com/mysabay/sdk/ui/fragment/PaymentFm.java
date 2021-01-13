@@ -117,7 +117,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         mViewBinding.materialCardView.setBackgroundResource(colorCodeBackground());
         mViewBinding.btnPay.setTextColor(textColorCode());
         mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
-        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id),item.mysabayUserId.toString()));
+        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
      //   viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);

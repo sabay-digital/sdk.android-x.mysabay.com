@@ -60,7 +60,6 @@ query verifyToken($accessToken: String!) {
 }
 query userProfile {
   sso_userProfile {
-    id
     userID
     displayName
     localPayEnabled
@@ -73,11 +72,16 @@ query userProfile {
   }
 }
 
-mutation createMySabayFromPhone($phoneNumber: String!) {
-  sso_createMySabayFromPhone(phoneNumber: $phoneNumber) {
-    verifyMySabay
-    mySabayUsername
-    otpExpiry
+query checkExistingLogin($login: String!, $provider: sso_LoginProviders!) {
+  sso_existingLogin(login: $login, provider: $provider)
+}
+
+mutation createMySabayLogin($username: String!, $password: String!) {
+  sso_createMySabayLogin(username: $username, password: $password) {
+    accessToken
+    refreshToken
+    expire
   }
 }
+
 

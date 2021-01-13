@@ -1,12 +1,19 @@
 package kh.com.mysabay.sdk.ui.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.exception.ApolloException;
 import com.daimajia.androidanimations.library.Techniques;
 import com.daimajia.androidanimations.library.YoYo;
+import com.mysabay.sdk.CheckExistingLoginQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
@@ -59,6 +66,16 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
             if (getActivity() != null)
                 getActivity().onBackPressed();
         });
+
+        mViewBinding.edtUsername.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    isExistingLogin(v.getContext(), mViewBinding.edtUsername.getText().toString());
+                }
+            }
+        });
+
         mViewBinding.btnCreateMysabay.setOnClickListener(v -> {
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();
@@ -69,13 +86,44 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
                 showCheckFields(mViewBinding.edtPassword, R.string.msg_input_password);
             } else if (StringUtils.isAnyBlank(confirmPassword)) {
                 showCheckFields(mViewBinding.edtConfirmPassword, R.string.msg_input_confirm_password);
-            } else if (!StringUtils.isAnyBlank(confirmPassword)) {
-                if (!password.equals(confirmPassword)) {
-                    showCheckFields(mViewBinding.edtConfirmPassword, R.string.msg_confirm_password_not_match);
-                }
+            } else if (!password.equals(confirmPassword)) {
+                showCheckFields(mViewBinding.edtConfirmPassword, R.string.msg_confirm_password_not_match);
             }
             else {
-                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
+                viewModel.checkExistingLogin(username).enqueue(new ApolloCall.Callback<CheckExistingLoginQuery.Data>() {
+                    @Override
+                    public void onResponse(@NotNull Response<CheckExistingLoginQuery.Data> response) {
+                        if (response.getData() != null) {
+                            if (response.getData().sso_existingLogin()) {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        showCheckFields(getContext(), mViewBinding.edtUsername, R.string.msg_username_already_exist);
+                                    }
+                                });
+                            } else {
+//                                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
+                            }
+                        } else {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MessageUtil.displayDialog(getContext(), "Can't communicate with sersver");
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                MessageUtil.displayDialog(getContext(), "Check Existing Login Failed");
+                            }
+                        });
+                    }
+                });
             }
         });
     }
@@ -88,6 +136,48 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
         MessageUtil.displayToast(getContext(), getString(msg));
     }
 
+    private void showCheckFields(Context context, AppCompatEditText view, int msg) {
+        if (view != null) {
+            YoYo.with(Techniques.Shake).duration(600).playOn(view);
+        }
+        MessageUtil.displayToast(context, getString(msg));
+    }
+
+    private void isExistingLogin(Context context, String login) {
+        viewModel.checkExistingLogin(login).enqueue(new ApolloCall.Callback<CheckExistingLoginQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<CheckExistingLoginQuery.Data> response) {
+                if (response.getData() != null) {
+                    if (response.getData().sso_existingLogin()) {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                showCheckFields(context, mViewBinding.edtUsername, R.string.msg_username_already_exist);
+                            }
+                        });
+                    }
+                } else {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            MessageUtil.displayDialog(context, "Can't communicate with sersver");
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        MessageUtil.displayDialog(getContext(), "Check Existing Login Failed");
+                    }
+                });
+            }
+        });
+    }
+
     @Override
     public View assignProgressView() {
         return mViewBinding.viewEmpty.progressBar;
@@ -96,6 +186,22 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
     @Override
     public View assignEmptyView() {
         return mViewBinding.viewEmpty.viewRetry;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        ((LoginActivity) context).userComponent.inject(this);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
     }
 
     @Override

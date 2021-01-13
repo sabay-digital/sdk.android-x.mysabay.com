@@ -2,7 +2,6 @@ package kh.com.mysabay.sdk.ui.activity;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,10 +15,6 @@ import android.view.View;
 import com.facebook.FacebookSdk;
 
 import org.apache.commons.lang3.StringUtils;
-import org.matomo.sdk.Tracker;
-import org.matomo.sdk.extra.MatomoApplication;
-import org.matomo.sdk.extra.TrackHelper;
-
 import javax.inject.Inject;
 
 import kh.com.mysabay.sdk.Globals;
@@ -68,8 +63,7 @@ public class LoginActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserApiVM.class);
         super.onCreate(savedInstanceState);
 
-        Tracker tracker = ((MatomoApplication) getApplication()).getTracker();
-        TrackHelper.track().screen("/activity_login").title("Login").with(tracker);
+        MySabaySDK.getInstance().getTrackingView(this, "/activity_login", "Login");
 
         if (savedInstanceState != null) {
             verifiedFragment = (VerifiedFragment) getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");

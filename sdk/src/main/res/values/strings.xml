@@ -16,9 +16,10 @@
     <string name="msg_phone_incorrect">your phone number format is incorrect</string>
     <string name="msg_input_phone">Input phone number</string>
     <string name="msg_input_username">Input username</string>
+    <string name="msg_username_already_exist">Username already exists</string>
     <string name="msg_input_password">Input password</string>
     <string name="msg_input_confirm_password">Input Confirm Password</string>
-    <string name="msg_confirm_password_not_match">Confirm Password is not match</string>
+    <string name="msg_confirm_password_not_match">Password do not match</string>
     <string name="verify_code_required">verify code is required</string>
     <string name="pay">pay %s</string>
     <string name="mysabay_id">MySabay ID: %s</string>

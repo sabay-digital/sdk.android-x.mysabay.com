@@ -130,8 +130,9 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.btnLogin.setOnClickListener(v -> {
             if (mViewBinding.edtPhone.getText() == null) return;
 
-            Tracker tracker = ((MatomoApplication) getActivity().getApplicationContext()).getTracker();
-            TrackHelper.track().event("category", "action").name("label").value(1000f).with(tracker);
+            MySabaySDK.getInstance().eventTracking(getActivity(),"category", "action", "label", 1000f);
+//            Tracker tracker = ((MatomoApplication) getActivity().getApplication()).getTracker();
+//            TrackHelper.track().event("category", "action").name("label").value(1000f).with(tracker);
 
             InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);

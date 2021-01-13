@@ -7,14 +7,18 @@ import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.ApolloQueryCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.exception.ApolloNetworkException;
+import com.apollographql.apollo.request.RequestHeaders;
 import com.google.gson.Gson;
-import com.mysabay.sdk.CreateMySabayFromPhoneMutation;
+import com.mysabay.sdk.CheckExistingLoginQuery;
+import com.mysabay.sdk.CreateMySabayLoginMutation;
 import com.mysabay.sdk.LoginWithFacebookMutation;
 import com.mysabay.sdk.LoginWithMySabayMutation;
 import com.mysabay.sdk.LoginWithPhoneMutation;
@@ -22,6 +26,7 @@ import com.mysabay.sdk.UserProfileQuery;
 import com.mysabay.sdk.VerifyMySabayMutation;
 import com.mysabay.sdk.VerifyOtpCodMutation;
 import com.mysabay.sdk.VerifyTokenQuery;
+import com.mysabay.sdk.type.Sso_LoginProviders;
 
 import org.greenrobot.eventbus.EventBus;
 import org.jetbrains.annotations.NotNull;
@@ -42,11 +47,15 @@ import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
+import kh.com.mysabay.sdk.utils.RSA;
 
 /**
  * Created by Tan Phirum on 3/8/20
  * Gmail phirumtan@gmail.com
  */
+
+
+
 public class UserApiVM extends ViewModel {
 
     private static final String TAG = UserApiVM.class.getSimpleName();
@@ -68,6 +77,7 @@ public class UserApiVM extends ViewModel {
     private final SdkConfiguration sdkConfiguration;
 
     public CompositeDisposable mCompositeDisposable;
+    public boolean existingLogin = false;
 
     @Inject
     public UserApiVM(ApolloClient apolloClient, AppRxSchedulers appRxSchedulers) {
@@ -255,7 +265,7 @@ public class UserApiVM extends ViewModel {
 
     public void postToLoginMySabayWithGraphql(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-        apolloClient.mutate(new LoginWithMySabayMutation(username, password)).enqueue(new ApolloCall.Callback<LoginWithMySabayMutation.Data>() {
+        apolloClient.mutate(new LoginWithMySabayMutation(username, RSA.sha256String(password))).enqueue(new ApolloCall.Callback<LoginWithMySabayMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<LoginWithMySabayMutation.Data> response) {
                 if (response.getData() != null) {
@@ -410,40 +420,27 @@ public class UserApiVM extends ViewModel {
         });
     }
 
-    public void postTocreateMySabayFromPhone(Context context, String phoneNnumber) {
-//        _login.setValue(phoneNnumber);
+    public void postTocreateMySabayAccount(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-        apolloClient.mutate(new CreateMySabayFromPhoneMutation(phoneNnumber)).enqueue(new ApolloCall.Callback<CreateMySabayFromPhoneMutation.Data>() {
+        apolloClient.mutate(new CreateMySabayLoginMutation(username, password)).enqueue(new ApolloCall.Callback<CreateMySabayLoginMutation.Data>() {
             @Override
-            public void onResponse(@NotNull Response<CreateMySabayFromPhoneMutation.Data> response) {
+            public void onResponse(@NotNull Response<CreateMySabayLoginMutation.Data> response) {
                 if (response.getData() != null) {
                     LoginItem item = new LoginItem();
-                    item.withPhone(phoneNnumber);
-                    item.withExpire(response.getData().sso_createMySabayFromPhone().otpExpiry());
-                    item.withMySabayUserName(response.getData().sso_createMySabayFromPhone().mySabayUsername());
-                    item.withVerifyMySabay(response.getData().sso_createMySabayFromPhone().verifyMySabay());
 
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                            MessageUtil.displayToast(context, "Otp code has sent to " + phoneNnumber);
-                            setLoginItemData(item);
+
                         }
                     });
-                    if (response.getData().sso_createMySabayFromPhone().verifyMySabay()) {
-                        if (context instanceof LoginActivity)
-                            ((LoginActivity) context).initAddFragment(new MySabayLoginConfirmFragment(), VerifiedFragment.TAG, true);
-                    } else {
-                        if (context instanceof LoginActivity)
-                            ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
-                    }
                 } else {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                            MessageUtil.displayToast(context, "Login with phonnumber failed");
+                            MessageUtil.displayToast(context, "Create mysabay account failed");
                         }
                     });
                 }
@@ -462,172 +459,9 @@ public class UserApiVM extends ViewModel {
         });
     }
 
-
-//    public void postToLogin(Context context, String appSecret, String phone, String dialCode) {
-//        _login.setValue(phone);
-//        this.userRepo.getUserLogin(appSecret, dialCode + phone ).subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread())
-//                .subscribe(new AbstractDisposableObs<LoginItem>(context, _networkState, null) {
-//                    @Override
-//                    protected void onSuccess(LoginItem item) {
-////                        if (item.status == 200) {
-////                            item.data.withPhone(dialCode + phone);
-////                            item.data.withAppSecret(appSecret);
-////                            _responseLogin.setValue(item);
-////
-////                            MessageUtil.displayToast(context, item.data.message);
-////                            if (context instanceof LoginActivity)
-////                                ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
-//////                                ((LoginActivity) context).initAddFragment(new MySabayLoginConfirmFragment(), MySabayLoginConfirmFragment.TAG, true);
-////                        }
-//                    }
-//
-//                    @Override
-//                    protected void onErrors(Throwable error) {
-//                        LogUtil.error(TAG, error.getLocalizedMessage());
-//                    }
-//                });
-//    }
-//
-//    public void resendOTP(Context context) {
-//        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-//        LoginItem item = getResponseLogin().getValue();
-//        if (item == null) {
-//            _networkState.setValue(new NetworkState(NetworkState.Status.ERROR, "Something went wrong, please login again"));
-//            return;
-//        }
-//        this.userRepo.getUserLogin(item.appSecret, item.phone).subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread())
-//                .subscribe(new AbstractDisposableObs<LoginItem>(context, _networkState) {
-//                    @Override
-//                    protected void onSuccess(LoginItem item1) {
-////                        if (item1.status == 200) {
-////                            item1.data.withPhone(item.data.phone);
-////                            item1.data.withAppSecret(item.data.appSecret);
-////                            _responseLogin.setValue(item1);
-////                            MessageUtil.displayToast(context, item1.data.message);
-////                        }
-//                    }
-//
-//                    @Override
-//                    protected void onErrors(Throwable error) {
-//                        LogUtil.error(TAG, error.getLocalizedMessage());
-//                    }
-//                });
-//    }
-//
-//    public void postToVerified(Context context, int code) {
-//        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-//        LoginItem item = getResponseLogin().getValue();
-//        if (item == null) {
-//            _networkState.setValue(new NetworkState(NetworkState.Status.ERROR, "Something went wrong, please login again"));
-//            return;
-//        }
-//        mCompositeDisposable.add(this.userRepo.postVerifyCode(item.appSecret, item.phone, code).subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread()).subscribe(response -> {
-//                    if (response.status == 200) {
-//                        LogUtil.info("refresh-Token", response.data.refreshToken);
-//                        if (response.data != null) {
-//                            AppItem appItem = new AppItem(item.appSecret, response.data.accessToken, response.data.refreshToken, response.data.uuid, response.data.expire);
-//                            String encrypted = gson.toJson(appItem);
-//                            MySabaySDK.getInstance().saveAppItem(encrypted);
-//                            MessageUtil.displayToast(context, "verified code success");
-//
-//                            EventBus.getDefault().post(new SubscribeLogin(response.data.accessToken, null));
-//
-//                            LoginActivity.loginActivity.finish();
-//                        } else {
-//                            EventBus.getDefault().post(new SubscribeLogin("", response.data));
-//                            LogUtil.error(TAG, "verified data is null");
-//                            MessageUtil.displayDialog(context, "verified data is null");
-//                        }
-//                    } else {
-//                        EventBus.getDefault().post(new SubscribeLogin("", response.data));
-//                        JsonParser parser = new JsonParser();
-//                        JsonObject obj = parser.parse(response.toString()).getAsJsonObject();
-//                        String errMsg = obj.get("message").getAsString();
-//                        MessageUtil.displayDialog(context, errMsg);
-//                    }
-//
-//                }, throwable -> {
-//                    _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
-//                    EventBus.getDefault().post(new SubscribeLogin("", throwable));
-//                    LogUtil.error("verify code response with status", throwable.getLocalizedMessage());
-//                    MessageUtil.displayDialog(context, "Verify Code is not match");
-//                }));
-//    }
-//
-//    public void postToLoginWithMySabay(Context context, String appSecret) {
-//        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-//        mCompositeDisposable.add(this.userRepo.postLoginWithMySabay(appSecret).subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread())
-//                .subscribe(new Consumer<String>() {
-//                    @Override
-//                    public void accept(String o) throws Exception {
-//                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-//                        _loginMySabay.setValue(o);
-//                        if (context instanceof LoginActivity)
-//                            ((LoginActivity) context).initAddFragment(new MySabayLoginFm(), MySabayLoginFm.TAG, true);
-//                    }
-//                }, new Consumer<Throwable>() {
-//                    @Override
-//                    public void accept(Throwable throwable) {
-//                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR, throwable.getLocalizedMessage()));
-//                    }
-//                }));
-//    }
-//
-//    public void postToGetUserProfile(@NotNull Activity context, String token) {
-//        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-//        this.userRepo.getUserProfile(MySabaySDK.getInstance().appSecret(), token)
-//                .subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread())
-//                .subscribe(new AbstractDisposableObs<UserProfileItem>(context, _networkState) {
-//                    @Override
-//                    protected void onSuccess(UserProfileItem userProfileItem) {
-//                        if (userProfileItem.data != null) {
-//                            EventBus.getDefault().post(new SubscribeLogin(token, null));
-//                            appItem.withUuid(userProfileItem.data.uuid);
-//                            MySabaySDK.getInstance().saveAppItem(gson.toJson(appItem));
-//                            context.runOnUiThread(context::finish);
-//                        } else
-//                            EventBus.getDefault().post(new SubscribeLogin("", userProfileItem.data));
-//                    }
-//
-//                    @Override
-//                    protected void onErrors(Throwable error) {
-//                        EventBus.getDefault().post(new SubscribeLogin("", error));
-//                    }
-//                });
-//    }
-//
-//    public void postToLoginWithFacebook(@NotNull Activity context, String token) {
-//        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-//        userRepo.loginWithFacebook("aog", token)
-//                .subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread()).subscribe(
-//                new AbstractDisposableObs<LoginResponseItem>(context, _networkState, null) {
-//                    @Override
-//                    protected void onSuccess(LoginResponseItem refreshTokenItem) {
-//                        LogUtil.info("onSuccess", refreshTokenItem.accessToken);
-//
-//                        AppItem appItem = new AppItem(null, refreshTokenItem.accessToken, refreshTokenItem.refreshToken, null, refreshTokenItem.expire);
-//                        String encrypted = gson.toJson(appItem);
-//                        MySabaySDK.getInstance().saveAppItem(encrypted);
-//
-//                        MessageUtil.displayToast(context, "verified code success");
-//                        EventBus.getDefault().post(new SubscribeLogin(refreshTokenItem.accessToken, null));
-//
-//                        LoginActivity.loginActivity.finish();
-//                    }
-//
-//                    @Override
-//                    protected void onErrors(@NotNull Throwable error) {
-//                        LogUtil.info("onErrors", error.toString());
-//                    }
-//                });
-//
-//    }
+    public ApolloQueryCall<CheckExistingLoginQuery.Data> checkExistingLogin( String login) {
+        return apolloClient.query(new CheckExistingLoginQuery(login, Sso_LoginProviders.SABAY));
+    }
 
     @Override
     protected void onCleared() {

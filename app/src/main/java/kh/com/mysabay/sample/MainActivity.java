@@ -146,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
                 if (MySabaySDK.getInstance().isLogIn()) {
                     MySabaySDK.getInstance().getUserProfile(info -> {
                         UserProfileItem userProfile = new Gson().fromJson(info, UserProfileItem.class);
-                        LogUtil.info("Profile id", userProfile.id.toString());
                         LogUtil.info("Profile userId", userProfile.userID.toString());
                         LogUtil.info("Profile name", userProfile.displayName);
                         LogUtil.info("Profile localPayEnabled", userProfile.localPayEnabled.toString());
