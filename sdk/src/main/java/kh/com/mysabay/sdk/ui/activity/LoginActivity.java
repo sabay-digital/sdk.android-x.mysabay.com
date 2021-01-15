@@ -2,28 +2,19 @@ package kh.com.mysabay.sdk.ui.activity;
 
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.View;
 
 import com.facebook.FacebookSdk;
 
 import org.apache.commons.lang3.StringUtils;
-import org.matomo.sdk.Tracker;
-import org.matomo.sdk.extra.MatomoApplication;
-import org.matomo.sdk.extra.TrackHelper;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import kh.com.mysabay.sdk.Globals;
@@ -33,6 +24,7 @@ import kh.com.mysabay.sdk.base.BaseActivity;
 import kh.com.mysabay.sdk.di.component.UserComponent;
 import kh.com.mysabay.sdk.ui.fragment.LoginFragment;
 import kh.com.mysabay.sdk.ui.fragment.MySabayLoginFm;
+import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 import kh.com.mysabay.sdk.webservice.Constant;
@@ -44,6 +36,7 @@ public class LoginActivity extends BaseActivity {
     private static final int DELAY = 1000;
 
     private FragmentManager mManager;
+    private VerifiedFragment verifiedFragment;
     private Handler mHandler;
 
     // Reference to the main graph
@@ -70,11 +63,29 @@ public class LoginActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserApiVM.class);
         super.onCreate(savedInstanceState);
 
-//        Tracker tracker = ((MatomoApplication) getApplication()).getTracker();
-//        TrackHelper.track().screen("/activity_login").title("Login").with(tracker);
+        if (savedInstanceState != null) {
+            verifiedFragment = (VerifiedFragment) getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");
+        } else {
+            verifiedFragment =  new VerifiedFragment();
+        }
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (verifiedFragment != null) {
+            if (verifiedFragment.isAdded()) {
+                getSupportFragmentManager().putFragment(outState, VerifiedFragment.TAG, verifiedFragment);
+            }
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override

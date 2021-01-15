@@ -1,18 +1,18 @@
 package kh.com.mysabay.sample;
 
-import android.app.Application;
 import android.content.res.Configuration;
 import android.support.annotation.NonNull;
-
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.SdkConfiguration;
+import kh.com.mysabay.sdk.SdkApplication;
 import kh.com.mysabay.sdk.utils.SdkTheme;
 
 /**
  * Created by Tan Phirum on 4/12/20
  * Gmail phirumtan@gmail.com
  */
-public class SampleApp extends Application {
+public class SampleApp extends SdkApplication {
+
 
     @Override
     public void onCreate() {

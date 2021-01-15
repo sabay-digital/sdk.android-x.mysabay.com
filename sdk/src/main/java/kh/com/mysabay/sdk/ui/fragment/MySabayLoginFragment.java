@@ -1,6 +1,5 @@
 package kh.com.mysabay.sdk.ui.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -16,13 +15,16 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import kh.com.mysabay.sdk.Globals;
+import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmLoginMysabayBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
+import kh.com.mysabay.sdk.utils.KeyboardUtils;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 public class MySabayLoginFragment extends BaseFragment<FmLoginMysabayBinding, UserApiVM> {
 
@@ -42,8 +44,11 @@ public class MySabayLoginFragment extends BaseFragment<FmLoginMysabayBinding, Us
 
     @Override
     public void initializeObjects(View v, Bundle args) {
+        mViewBinding.viewMainLogin.setBackgroundResource(colorCodeBackground());
         this.viewModel = LoginActivity.loginActivity.viewModel;
         mManager = getFragmentManager();
+
+        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/login-mysabay-screen", "/sdk/login-mysabay-screen");
     }
 
     @Override
@@ -68,6 +73,8 @@ public class MySabayLoginFragment extends BaseFragment<FmLoginMysabayBinding, Us
             initAddFragment(new MySabayCreateFragment(), MySabayCreateFragment.TAG, true);
         });
         mViewBinding.btnLogin.setOnClickListener(v -> {
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "login-with-mysabay");
+            KeyboardUtils.hideKeyboard(getContext(), v);
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();
             if (StringUtils.isAnyBlank(username)) {

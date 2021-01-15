@@ -16,6 +16,7 @@
     <string name="title_retry">ម្តងទៀត</string>
     <string name="msg_phone_incorrect">ទម្រង់លេខទូរស័ព្ទរបស់លោកអ្នកមិនត្រឹមត្រូវទេ</string>
     <string name="msg_input_username">បញ្ចូលឈ្មោះអ្នកប្រើប្រាស់</string>
+    <string name="msg_username_already_exist">ឈ្មោះនេះមានរួចហើយ</string>
     <string name="msg_input_password">បញ្ចូលពាក្យសម្ងាត់</string>
     <string name="msg_input_phone">បញ្ចូលលេខទូរស័ព្ទ</string>
     <string name="verify_code_required">លេខកូដចាំបាច់ត្រូវបញ្ចូល</string>

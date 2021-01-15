@@ -60,9 +60,8 @@ query verifyToken($accessToken: String!) {
 }
 query userProfile {
   sso_userProfile {
-    id
     userID
-    displayName
+    profileName
     localPayEnabled
     coin
     gold
@@ -70,14 +69,43 @@ query userProfile {
     status
     createdAt
     updatedAt
+#    persona {
+#        uuid
+#        serviceCode
+#        mysabayUserID
+#        serviceUserID
+#        serviceDisplayName
+#        status
+#        lastLogin
+#    }
   }
 }
 
-mutation createMySabayFromPhone($phoneNumber: String!) {
-  sso_createMySabayFromPhone(phoneNumber: $phoneNumber) {
-    verifyMySabay
-    mySabayUsername
-    otpExpiry
+query persona {
+  sso_userPersona {
+    uuid
+    serviceCode
+    mysabayUserID
+    serviceUserID
+    serviceDisplayName
+    status
+    lastLogin
+    createdAt
+    updatedAt
   }
 }
+
+
+query checkExistingLogin($login: String!, $provider: sso_LoginProviders!) {
+  sso_existingLogin(login: $login, provider: $provider)
+}
+
+mutation createMySabayLogin($username: String!, $password: String!) {
+  sso_createMySabayLogin(username: $username, password: $password) {
+    accessToken
+    refreshToken
+    expire
+  }
+}
+
 

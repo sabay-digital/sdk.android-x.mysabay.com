@@ -25,6 +25,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.matomo.sdk.QueryParams;
+import org.matomo.sdk.TrackMe;
 import org.matomo.sdk.Tracker;
 import org.matomo.sdk.extra.MatomoApplication;
 import org.matomo.sdk.extra.TrackHelper;
@@ -262,6 +264,7 @@ public class MySabaySDK {
                     if (listener != null) {
                         item.withEnableLocaPay(response.getData().sso_userProfile().localPayEnabled());
                         item.withMySabayUserId(response.getData().sso_userProfile().userID());
+                        item.withMySabayUsername(response.getData().sso_userProfile().profileName());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
@@ -276,8 +279,7 @@ public class MySabaySDK {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                           LogUtil.info("Get User Profile", "Failed");
-//                           listener.userInfo("Get User Profile failed");
+                           listener.userInfo(null);
                         }
                     });
                 }
@@ -334,23 +336,6 @@ public class MySabaySDK {
                 });
             }
         });
-
-//        userRepo.getVerifyToken(appItem.appSecret, appItem.token).subscribeOn(appRxSchedulers.io())
-//                .observeOn(appRxSchedulers.mainThread())
-//                .subscribe(new AbstractDisposableObs<TokenVerify>(mAppContext, _networkState) {
-//
-//                    @Override
-//                    protected void onSuccess(TokenVerify tokenVerify) {
-//                        LogUtil.info(TAG, tokenVerify.message);
-//                        mAppContext.startActivity(new Intent(mAppContext, StoreActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-//                    }
-//
-//                    @Override
-//                    protected void onErrors(Throwable error) {
-//                        LogUtil.info(TAG, error.getMessage());
-//                        MessageUtil.displayToast(mAppContext, "Token is invalid");
-//                    }
-//                });
     }
 
     /**
@@ -487,9 +472,29 @@ public class MySabaySDK {
         mSdkConfiguration = mSdkConfiguration;
     }
 
-    public void trackScreen(Activity activity, String path) {
-        Tracker tracker = ((MatomoApplication) activity.getApplication()).getTracker();
-        TrackHelper.track().screen(path).title("Login").with(tracker);
+    /**
+     *  Create Tracker instance
+     */
+    private Tracker getTracker(Activity activity) {
+        return ((MatomoApplication) activity.getApplication()).getTracker();
+    }
+
+    /**
+     * track screen views
+     */
+    public void trackPageView(Activity activity, String path, String title) {
+        TrackHelper.track().screen("android" + path).title("android" + title).with(getTracker(activity));
+    }
+
+    /**
+     * track events
+     */
+    public void trackEvents(Activity activity, String category, String action, String name) {
+        TrackHelper.track().event("android-" + category, action).name(name).with(getTracker(activity));
+    }
+
+    public void setCustomUserId(Activity activity, String userId) {
+        getTracker(activity).setUserId(userId);
     }
 
     public String appSecret() {

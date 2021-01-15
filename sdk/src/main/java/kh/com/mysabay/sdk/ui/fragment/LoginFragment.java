@@ -9,9 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatEditText;
 import android.telephony.PhoneNumberFormattingTextWatcher;
-import android.text.InputFilter;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
@@ -49,10 +47,12 @@ import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.holder.CountryItem;
 import kh.com.mysabay.sdk.utils.CountryUtils;
+import kh.com.mysabay.sdk.utils.KeyboardUtils;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.utils.PhoneNumberFormat;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 /**
  * Created by Tan Phirum on 3/7/20
@@ -86,6 +86,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.viewMainLogin.setBackgroundResource(colorCodeBackground());
         mViewBinding.tvMySabayAppName.setText(MySabaySDK.getInstance().getSdkConfiguration().mySabayAppName);
         mViewBinding.btnLogin.setTextColor(textColorCode());
+        mViewBinding.fb.setTextColor(textColorCode());
         mViewBinding.btnLoginMysabay.setTextColor(textColorCode());
         mViewBinding.edtPhone.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
@@ -101,6 +102,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         }
 
         callbackManager = CallbackManager.Factory.create();
+
+        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/login-screen", "/sdk/login-screen");
     }
 
     @Override
@@ -118,14 +121,15 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
 
         viewModel.login.observe(this, phone -> mViewBinding.edtPhone.setText(phone));
         mViewBinding.fb.setOnClickListener(v-> {
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "login-with-facebook");
             mViewBinding.btnLoginFb.performClick();
         });
 
         mViewBinding.btnLogin.setOnClickListener(v -> {
             if (mViewBinding.edtPhone.getText() == null) return;
-            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "login-with-phone-number");
+            KeyboardUtils.hideKeyboard(getContext(), v);
             String phoneNo = mViewBinding.edtPhone.getText().toString();
             PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
 

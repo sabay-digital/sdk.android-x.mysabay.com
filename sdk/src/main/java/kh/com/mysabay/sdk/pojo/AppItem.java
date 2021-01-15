@@ -43,7 +43,7 @@ public class AppItem implements Parcelable {
     public Integer mysabayUserId;
     @SerializedName("enable_local_pay")
     @Expose
-    public Boolean enableLocalPay;
+    public boolean enableLocalPay;
 
     public AppItem(String mySabayUsername, Boolean verifyMySabay, String token, String refreshToken, String uuid, long expire) {
         this.mySabayUsername = mySabayUsername;

@@ -27,6 +27,9 @@ import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetailsParams;
 import com.android.billingclient.api.SkuDetailsResponseListener;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
@@ -114,13 +117,14 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         mViewBinding.materialCardView.setBackgroundResource(colorCodeBackground());
         mViewBinding.btnPay.setTextColor(textColorCode());
         mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
-        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id),item.mysabayUserId.toString()));
+        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
-     //   viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);
         viewModel.getMySabayCheckoutWithGraphQL(v.getContext(), mData.id);
+
         onBillingSetupFinished();
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/checkout-screen", "/sdk/checkout-screen");
 
     }
 
@@ -210,8 +214,14 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                             if (item.type.equals("pre-auth")) {
                                 for (ProviderResponse providerResponse : item.providers) {
                                     mViewBinding.btnLabel.setText(providerResponse.label);
+                                    RequestOptions options = new RequestOptions()
+                                            .placeholder(R.mipmap.sabay_account)
+                                            .error(R.mipmap.sabay_account)
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .priority(Priority.HIGH);
                                     Glide.with(getContext())
                                             .load(providerResponse.info.logo)
+                                            .apply(options)
                                             .into(mViewBinding.imgMysabayLogo);
                                 }
                             }
@@ -228,8 +238,15 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
                                     //    mViewBinding.btnInAppPurchase.setVisibility(View.GONE);
                                     //  }
                                     mViewBinding.lblInAppPurchase.setText(providerResponse.label);
+                                    RequestOptions options = new RequestOptions()
+                                            .placeholder(R.mipmap.iap)
+                                            .error(R.mipmap.iap)
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                            .priority(Priority.HIGH);
+
                                     Glide.with(getContext())
                                             .load(providerResponse.info.logo)
+                                            .apply(options)
                                             .into(mViewBinding.imgInAppBillingLogo);
                                 } else {
                                     mViewBinding.btnInAppPurchase.setVisibility(View.GONE);
@@ -359,10 +376,10 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         mViewBinding.btnPay.setOnClickListener(v -> {
             if (checkedId[0] == R.id.btn_in_app_purchase) {
-                kh.com.mysabay.sdk.pojo.mysabay.Data data =  viewModel.getInAppPurchaseProvider(v.getContext());
+                ProviderResponse data =  viewModel.getInAppPurchaseProvider(v.getContext());
                 if (viewModel.getItemSelected().getValue() != null) {
 //                    if (!BuildConfig.DEBUG)
-                        PURCHASE_ID = data.packageId;
+                        PURCHASE_ID = data.id;
                         purchase(v, PURCHASE_ID);
                 } else
                     MessageUtil.displayDialog(v.getContext(), "sorry your device not support in app purchase");
