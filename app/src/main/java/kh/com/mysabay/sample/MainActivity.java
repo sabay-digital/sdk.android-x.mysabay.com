@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        MySabaySDK.getInstance().trackPageView(this, "/home-screen", "/home-screen");
         mViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mViewBinding.viewPb.setVisibility(View.GONE);
         findViewById(R.id.show_login_screen).setOnClickListener(v -> {
@@ -145,16 +146,20 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (MySabaySDK.getInstance().isLogIn()) {
                     MySabaySDK.getInstance().getUserProfile(info -> {
-                        UserProfileItem userProfile = new Gson().fromJson(info, UserProfileItem.class);
-                        LogUtil.info("Profile userId", userProfile.userID.toString());
-                        LogUtil.info("Profile name", userProfile.displayName);
-                        LogUtil.info("Profile localPayEnabled", userProfile.localPayEnabled.toString());
-                        LogUtil.info("Profile coin balance", userProfile.coin.toString());
-                        LogUtil.info("Profile gold balance", userProfile.gold.toString());
-                        LogUtil.info("Profile Vip Point", userProfile.vipPoints.toString());
-                        LogUtil.info("Profile createAt", userProfile.createdAt);
-
-                        MessageUtil.displayDialog(v.getContext(), info);
+                        if (info != null) {
+                            UserProfileItem userProfile = new Gson().fromJson(info, UserProfileItem.class);
+                            LogUtil.info("Profile userId", userProfile.userID.toString());
+                            LogUtil.info("Profile name", userProfile.displayName);
+                            LogUtil.info("Profile localPayEnabled", userProfile.localPayEnabled.toString());
+                            LogUtil.info("Profile coin balance", userProfile.coin.toString());
+                            LogUtil.info("Profile gold balance", userProfile.gold.toString());
+                            LogUtil.info("Profile Vip Point", userProfile.vipPoints.toString());
+                            LogUtil.info("Profile persona", userProfile.persona.toString());
+                            LogUtil.info("Profile createAt", userProfile.createdAt);
+                            MessageUtil.displayDialog(v.getContext(), info);
+                        } else {
+                            MessageUtil.displayDialog(v.getContext(), getString(R.string.msg_can_not_connect_server));
+                        }
                     });
                 } else {
                     MessageUtil.displayToast(v.getContext(), "Need user login");

@@ -61,7 +61,7 @@ query verifyToken($accessToken: String!) {
 query userProfile {
   sso_userProfile {
     userID
-    displayName
+    profileName
     localPayEnabled
     coin
     gold
@@ -69,8 +69,32 @@ query userProfile {
     status
     createdAt
     updatedAt
+#    persona {
+#        uuid
+#        serviceCode
+#        mysabayUserID
+#        serviceUserID
+#        serviceDisplayName
+#        status
+#        lastLogin
+#    }
   }
 }
+
+query persona {
+  sso_userPersona {
+    uuid
+    serviceCode
+    mysabayUserID
+    serviceUserID
+    serviceDisplayName
+    status
+    lastLogin
+    createdAt
+    updatedAt
+  }
+}
+
 
 query checkExistingLogin($login: String!, $provider: sso_LoginProviders!) {
   sso_existingLogin(login: $login, provider: $provider)

@@ -39,6 +39,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;
+import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.SdkConfiguration;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.NetworkState;
@@ -54,15 +55,13 @@ import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 import kh.com.mysabay.sdk.pojo.shop.PaymentServiceProvider;
 import kh.com.mysabay.sdk.pojo.shop.Provider;
 import kh.com.mysabay.sdk.pojo.shop.ShopItem;
-import kh.com.mysabay.sdk.pojo.thirdParty.payment.ResponseItem;
 import kh.com.mysabay.sdk.repository.StoreRepo;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
-import kh.com.mysabay.sdk.ui.fragment.BankVerifiedFm;
-import kh.com.mysabay.sdk.ui.fragment.PaymentFm;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.webservice.AbstractDisposableObs;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 /**
  * Created by Tan Phirum on 3/8/20
@@ -142,7 +141,7 @@ public class StoreApiVM extends ViewModel {
                                 JsonArray paymentServiceProvider = obj.getAsJsonArray("paymentServiceProvider");
                                 for(JsonElement value : paymentServiceProvider){
                                     PaymentServiceProvider payment = new PaymentServiceProvider();
-                                    payment.withGroupId(value.getAsJsonObject().get("groupId").getAsString());
+                                //    payment.withGroupId(value.getAsJsonObject().get("groupId").getAsString());
 
                                     JsonArray providers = value.getAsJsonObject().getAsJsonArray("providers");
                                     List<Provider> lstProvider = new ArrayList<>();
@@ -172,6 +171,7 @@ public class StoreApiVM extends ViewModel {
                             public void run() {
                                 _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                                 _shopItem.setValue(shopItems);
+                                MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.store, Constant.process, "get-store-success");
                             }
                         });
                     }
@@ -181,6 +181,7 @@ public class StoreApiVM extends ViewModel {
                         LogUtil.info("Error", e.toString());
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         MessageUtil.displayToast(context, "Something went wrong! Please try again");
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.store, Constant.process, "get-store-failed");
                     }
                 });
     }
@@ -235,18 +236,15 @@ public class StoreApiVM extends ViewModel {
     }
 
     public void  getMySabayCheckoutWithGraphQL(@NotNull Context context, String itemId) {
-        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         apolloClient.query(new Checkout_getPaymentServiceProviderForProductQuery(itemId)).enqueue(new ApolloCall.Callback<Checkout_getPaymentServiceProviderForProductQuery.Data>() {
             @Override
             public void onResponse(@NotNull Response<Checkout_getPaymentServiceProviderForProductQuery.Data> response) {
                 if (response.getData() != null) {
-                    LogUtil.info("Response", response.getData().checkout_getPaymentServiceProviderForProduct().toString());
-
                     List<MySabayItemResponse> mySabayItemResponses = new ArrayList<>();
                     for (Checkout_getPaymentServiceProviderForProductQuery.PaymentServiceProvider payment : response.getData().checkout_getPaymentServiceProviderForProduct().paymentServiceProviders()) {
                         MySabayItemResponse itemResponse = new MySabayItemResponse();
-                        itemResponse.withType(payment.type().toString());
+                        itemResponse.withType(payment.type());
 
                         List<ProviderResponse> providerResponses = new ArrayList<>();
                         for (Checkout_getPaymentServiceProviderForProductQuery.Provider provider: payment.providers()) {
@@ -257,7 +255,7 @@ public class StoreApiVM extends ViewModel {
                             if (obj.get("logo") != null) {
                                 info.withLogo(obj.get("logo").getAsString());
                             }
-                            ProviderResponse providerResponseObj = new ProviderResponse(provider.id(), provider.name().toString(), provider.code(), provider.ssnAccountPk(), provider.type(), provider.label(), provider.value().doubleValue(), provider.issueCurrencies(), info);
+                            ProviderResponse providerResponseObj = new ProviderResponse(provider.id(), provider.name(), provider.code(), provider.ssnAccountPk(), provider.type(), provider.label(), provider.value().doubleValue(), provider.issueCurrencies(), info);
                             providerResponses.add(providerResponseObj);
                             itemResponse.withProvider(providerResponses);
                         }
@@ -266,7 +264,11 @@ public class StoreApiVM extends ViewModel {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                mySabayItemMediatorLiveData.setValue(mySabayItemResponses);
+                                try {
+                                    mySabayItemMediatorLiveData.setValue(mySabayItemResponses);
+                                } catch (Exception e) {
+                                    MessageUtil.displayToast(context, context.getString(R.string.msg_can_not_connect_server));
+                                }
                                 _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             }
                         });

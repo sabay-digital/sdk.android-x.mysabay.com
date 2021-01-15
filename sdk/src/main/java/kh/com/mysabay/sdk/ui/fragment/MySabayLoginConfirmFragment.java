@@ -15,15 +15,16 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import kh.com.mysabay.sdk.Globals;
+import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmConfrimLoginMysabayBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
-import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
-import kh.com.mysabay.sdk.utils.LogUtil;
+import kh.com.mysabay.sdk.utils.KeyboardUtils;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysabayBinding, UserApiVM> {
 
@@ -47,6 +48,8 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
         mViewBinding.viewMainLogin.setBackgroundResource(colorCodeBackground());
         this.viewModel = LoginActivity.loginActivity.viewModel;
         mManager = getFragmentManager();
+
+        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/verify-mysabay-screen", "/sdk/verify-mysabay-screen");
     }
 
     @Override
@@ -74,6 +77,8 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
         });
 
         mViewBinding.btnConfirmMysabay.setOnClickListener(v -> {
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "verify-mysabay");
+            KeyboardUtils.hideKeyboard(getContext(), v);
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();
             if (StringUtils.isAnyBlank(username)) {

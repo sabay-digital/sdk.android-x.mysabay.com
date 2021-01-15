@@ -1,15 +1,11 @@
 package kh.com.mysabay.sdk.ui.fragment;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.view.View;
-import org.apache.commons.lang3.StringUtils;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
@@ -17,10 +13,10 @@ import kh.com.mysabay.sdk.databinding.FragmentVerifiedBinding;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.KeyboardUtils;
-import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.utils.SdkTheme;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 /**
  * Created by Tan Phirum on 3/7/20
@@ -52,6 +48,8 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light)
             mViewBinding.tvResendOtp.setTextColor(getResources().getColor(R.color.colorWhite700));
            this.viewModel = LoginActivity.loginActivity.viewModel;
+
+        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/otp-screen", "/sdk/otp-screen");
     }
 
     @Override
@@ -84,6 +82,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                                 mViewBinding.edtVerifyCode.setText(null), 1000);
                     }
                 } else {
+                    MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "verify-otp");
                     viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
                 }
             }
@@ -92,6 +91,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         viewModel.liveNetworkState.observe(this, this::showProgressState);
 
         mViewBinding.tvResendOtp.setOnClickListener(v -> {
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "resend-otp");
             mViewBinding.edtVerifyCode.setText("");
             viewModel.resendOTPWithGraphQL(v.getContext());
             mTimeLeftInMillis = START_TIME_IN_MILLIS;

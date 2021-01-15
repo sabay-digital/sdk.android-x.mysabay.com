@@ -9,10 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.AppCompatEditText;
 import android.telephony.PhoneNumberFormattingTextWatcher;
-import android.text.InputFilter;
 import android.view.View;
-import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Spinner;
 
@@ -33,10 +30,6 @@ import com.google.i18n.phonenumbers.Phonenumber;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.matomo.sdk.Tracker;
-import org.matomo.sdk.extra.MatomoApplication;
-import org.matomo.sdk.extra.TrackHelper;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,10 +47,12 @@ import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.holder.CountryItem;
 import kh.com.mysabay.sdk.utils.CountryUtils;
+import kh.com.mysabay.sdk.utils.KeyboardUtils;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.utils.PhoneNumberFormat;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 /**
  * Created by Tan Phirum on 3/7/20
@@ -107,6 +102,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         }
 
         callbackManager = CallbackManager.Factory.create();
+
+        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/login-screen", "/sdk/login-screen");
     }
 
     @Override
@@ -130,13 +127,8 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
         mViewBinding.btnLogin.setOnClickListener(v -> {
             if (mViewBinding.edtPhone.getText() == null) return;
 
-            MySabaySDK.getInstance().eventTracking(getActivity(),"category", "action", "label", 1000f);
-//            Tracker tracker = ((MatomoApplication) getActivity().getApplication()).getTracker();
-//            TrackHelper.track().event("category", "action").name("label").value(1000f).with(tracker);
-
-            InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "login-with-phone-number");
+            KeyboardUtils.hideKeyboard(getContext(), v);
             String phoneNo = mViewBinding.edtPhone.getText().toString();
             PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
 

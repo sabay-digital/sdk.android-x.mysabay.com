@@ -12,6 +12,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import kh.com.mysabay.sdk.pojo.Persona;
+
 /**
  * Created by Tan Phirum on 3/10/20
  * Gmail phirumtan@gmail.com
@@ -49,6 +51,9 @@ public class UserProfileItem implements Parcelable {
     @Expose
     public Boolean localPayEnabled;
 
+    @SerializedName("persona")
+    @Expose
+    public Persona persona;
 
     public final static Creator<UserProfileItem> CREATOR = new Creator<UserProfileItem>() {
 
@@ -164,6 +169,10 @@ public class UserProfileItem implements Parcelable {
         return this;
     }
 
+    public UserProfileItem withPersona(Persona persona  ) {
+        this.persona = persona;
+        return this;
+    }
 
     @Override
     public String toString() {
@@ -204,6 +213,7 @@ public class UserProfileItem implements Parcelable {
         dest.writeValue(localPayEnabled);
         dest.writeValue(createdAt);
         dest.writeValue(updatedAt);
+        dest.writeValue(persona);
     }
 
     public int describeContents() {

@@ -120,10 +120,11 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
-     //   viewModel.getMySabayCheckout(v.getContext(), mData.packageCode);
         viewModel.getMySabayCheckoutWithGraphQL(v.getContext(), mData.id);
+
         onBillingSetupFinished();
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
+        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/checkout-screen", "/sdk/checkout-screen");
 
     }
 

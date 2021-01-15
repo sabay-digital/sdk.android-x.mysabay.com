@@ -63,8 +63,6 @@ public class LoginActivity extends BaseActivity {
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserApiVM.class);
         super.onCreate(savedInstanceState);
 
-        MySabaySDK.getInstance().getTrackingView(this, "/activity_login", "Login");
-
         if (savedInstanceState != null) {
             verifiedFragment = (VerifiedFragment) getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");
         } else {

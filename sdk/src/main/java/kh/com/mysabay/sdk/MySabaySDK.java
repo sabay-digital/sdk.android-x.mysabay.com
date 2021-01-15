@@ -3,7 +3,6 @@ package kh.com.mysabay.sdk;
 import android.app.Activity;
 import android.app.Application;
 import android.arch.lifecycle.MediatorLiveData;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -265,6 +264,7 @@ public class MySabaySDK {
                     if (listener != null) {
                         item.withEnableLocaPay(response.getData().sso_userProfile().localPayEnabled());
                         item.withMySabayUserId(response.getData().sso_userProfile().userID());
+                        item.withMySabayUsername(response.getData().sso_userProfile().profileName());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
@@ -279,8 +279,7 @@ public class MySabaySDK {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                           LogUtil.info("Get User Profile", "Failed");
-                    //     listener.userInfo("Get User Profile failed");
+                           listener.userInfo(null);
                         }
                     });
                 }
@@ -473,14 +472,29 @@ public class MySabaySDK {
         mSdkConfiguration = mSdkConfiguration;
     }
 
-    public void getTrackingView(Activity activity, String path, String title) {
-        Tracker tracker = ((MatomoApplication) activity.getApplication()).getTracker();
-        TrackHelper.track(new TrackMe().set(QueryParams.SESSION_START, 1)).screen(path).title(title).with(tracker);
+    /**
+     *  Create Tracker instance
+     */
+    private Tracker getTracker(Activity activity) {
+        return ((MatomoApplication) activity.getApplication()).getTracker();
     }
 
-    public void eventTracking(Activity activity, String category, String action, String name, Float value) {
-        Tracker tracker = ((MatomoApplication) activity.getApplication()).getTracker();
-        TrackHelper.track().event(category, action).name(name).value(value).with(tracker);
+    /**
+     * track screen views
+     */
+    public void trackPageView(Activity activity, String path, String title) {
+        TrackHelper.track().screen("android" + path).title("android" + title).with(getTracker(activity));
+    }
+
+    /**
+     * track events
+     */
+    public void trackEvents(Activity activity, String category, String action, String name) {
+        TrackHelper.track().event("android-" + category, action).name(name).with(getTracker(activity));
+    }
+
+    public void setCustomUserId(Activity activity, String userId) {
+        getTracker(activity).setUserId(userId);
     }
 
     public String appSecret() {

@@ -7,7 +7,6 @@ import android.arch.lifecycle.ViewModel;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 
 import com.apollographql.apollo.ApolloCall;
 import com.apollographql.apollo.ApolloClient;
@@ -15,7 +14,6 @@ import com.apollographql.apollo.ApolloQueryCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.exception.ApolloNetworkException;
-import com.apollographql.apollo.request.RequestHeaders;
 import com.google.gson.Gson;
 import com.mysabay.sdk.CheckExistingLoginQuery;
 import com.mysabay.sdk.CreateMySabayLoginMutation;
@@ -25,7 +23,6 @@ import com.mysabay.sdk.LoginWithPhoneMutation;
 import com.mysabay.sdk.UserProfileQuery;
 import com.mysabay.sdk.VerifyMySabayMutation;
 import com.mysabay.sdk.VerifyOtpCodMutation;
-import com.mysabay.sdk.VerifyTokenQuery;
 import com.mysabay.sdk.type.Sso_LoginProviders;
 
 import org.greenrobot.eventbus.EventBus;
@@ -48,6 +45,7 @@ import kh.com.mysabay.sdk.utils.AppRxSchedulers;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.utils.RSA;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 /**
  * Created by Tan Phirum on 3/8/20
@@ -77,7 +75,6 @@ public class UserApiVM extends ViewModel {
     private final SdkConfiguration sdkConfiguration;
 
     public CompositeDisposable mCompositeDisposable;
-    public boolean existingLogin = false;
 
     @Inject
     public UserApiVM(ApolloClient apolloClient, AppRxSchedulers appRxSchedulers) {
@@ -117,7 +114,6 @@ public class UserApiVM extends ViewModel {
                     item.withVerifyMySabay(response.getData().sso_loginPhone().verifyMySabay());
                     item.withMySabayUserName(response.getData().sso_loginPhone().mySabayUsername());
                     if (response.getData().sso_loginPhone().verifyMySabay()) {
-
                         if (context instanceof LoginActivity) {
                             ((LoginActivity) context).initAddFragment(new MySabayLoginConfirmFragment(), VerifiedFragment.TAG, true);
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -125,6 +121,7 @@ public class UserApiVM extends ViewModel {
                                 public void run() {
                                     _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                                     setLoginItemData(item);
+                                    MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-phone-number-success");
                                 }
                             });
                         }
@@ -148,6 +145,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MessageUtil.displayToast(context, "Login with phone number failed");
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-phone-number-failed");
                         }
                     });
                 }
@@ -164,6 +162,7 @@ public class UserApiVM extends ViewModel {
                         } else {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MessageUtil.displayDialog(context, "Login Error! Please try again");
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-phone-number-failed");
                         }
                     }
                 });
@@ -192,6 +191,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "verify-otp-success");
                             EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_verifyOTP().accessToken(), null));
                             LoginActivity.loginActivity.finish();
                         }
@@ -202,6 +202,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                            MessageUtil.displayDialog(context, "OTP Verification failed");
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "verify-otp-failed");
                         }
                     });
                 }
@@ -217,6 +218,7 @@ public class UserApiVM extends ViewModel {
                         EventBus.getDefault().post(new SubscribeLogin("", e));
                         LogUtil.error("verify code response with status", e.getLocalizedMessage());
                         MessageUtil.displayDialog(context, e.getMessage());
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "verify-otp-failed");
                     }
                 });
             }
@@ -237,6 +239,7 @@ public class UserApiVM extends ViewModel {
                     @Override
                     public void run() {
                         _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-facebook-success");
                         EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_loginFacebook().accessToken(), null));
                         LoginActivity.loginActivity.finish();
                     }
@@ -244,6 +247,7 @@ public class UserApiVM extends ViewModel {
 
                 } else {
                     MessageUtil.displayDialog(context, "Login with facebook failed");
+                    MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-facebook-failed");
                 }
             }
 
@@ -257,6 +261,7 @@ public class UserApiVM extends ViewModel {
                         EventBus.getDefault().post(new SubscribeLogin("", e));
                         LogUtil.error("Login with facebook", e.getLocalizedMessage());
                         MessageUtil.displayDialog(context, "Login with facebook failed");
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-facebook-success-failed");
                     }
                 });
             }
@@ -277,6 +282,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-mysabay-success");
                             EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_loginMySabay().accessToken(), null));
                             LoginActivity.loginActivity.finish();
                         }
@@ -287,6 +293,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MessageUtil.displayDialog(context, "MySabay Login failed");
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-mysabay-failed");
                         }
                     });
                 }
@@ -300,7 +307,8 @@ public class UserApiVM extends ViewModel {
                     public void run() {
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         EventBus.getDefault().post(new SubscribeLogin("", e));
-                        MessageUtil.displayDialog(context, "Login with MySabay is error");
+                        MessageUtil.displayDialog(context, "Login with MySabay Failed");
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "login-with-mysabay-failed");
                     }
                 });
             }
@@ -322,6 +330,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "verify-mysabay-success");
                             EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_verifyMySabay().accessToken(), null));
                             LoginActivity.loginActivity.finish();
                         }
@@ -332,6 +341,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MessageUtil.displayDialog(context, "Verify MySabay account failed");
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "verify-mysabay-failed");
                         }
                     });
                 }
@@ -346,6 +356,7 @@ public class UserApiVM extends ViewModel {
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         EventBus.getDefault().post(new SubscribeLogin("", e));
                         MessageUtil.displayDialog(context, "Login with MySabay is error");
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "verify-mysabay-failed");
                     }
                 });
             }
@@ -367,7 +378,17 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _responseLogin.setValue(item);
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "resent-otp-success");
                             MessageUtil.displayToast(context, "Otp code has sent to " + item.phone);
+                        }
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                            MessageUtil.displayDialog(context, context.getString(R.string.msg_can_not_connect_server));
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "resent-otp-failed");
                         }
                     });
                 }
@@ -380,6 +401,7 @@ public class UserApiVM extends ViewModel {
                     public void run() {
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         MessageUtil.displayDialog(context, "Send otp code Error! Please try again");
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "resent-otp-failed");
                     }
                 });
             }
@@ -432,7 +454,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "register-mysabay-success");
                         }
                     });
                 } else {
@@ -441,6 +463,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MessageUtil.displayToast(context, "Create mysabay account failed");
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "register-mysabay-failed");
                         }
                     });
                 }
@@ -453,6 +476,7 @@ public class UserApiVM extends ViewModel {
                     public void run() {
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         MessageUtil.displayDialog(context, "Login Error! Please try again");
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "register-mysabay-failed");
                     }
                 });
             }

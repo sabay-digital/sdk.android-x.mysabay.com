@@ -19,13 +19,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FmCreateMysabayBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
+import kh.com.mysabay.sdk.utils.KeyboardUtils;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, UserApiVM> {
 
@@ -46,6 +49,8 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
     public void initializeObjects(View v, Bundle args) {
         mViewBinding.viewMainRegister.setBackgroundResource(colorCodeBackground());
         this.viewModel = LoginActivity.loginActivity.viewModel;
+
+        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/register-mysabay-screen", "/sdk/register-mysabay-scree");
     }
 
     @Override
@@ -77,6 +82,8 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
         });
 
         mViewBinding.btnCreateMysabay.setOnClickListener(v -> {
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "register-mysabay");
+            KeyboardUtils.hideKeyboard(getContext(), v);
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();
             String confirmPassword = mViewBinding.edtConfirmPassword.getText().toString();
@@ -140,7 +147,8 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
         if (view != null) {
             YoYo.with(Techniques.Shake).duration(600).playOn(view);
         }
-        MessageUtil.displayToast(context, getString(msg));
+        if (this.isAdded())
+            MessageUtil.displayToast(context, getString(msg));
     }
 
     private void isExistingLogin(Context context, String login) {
