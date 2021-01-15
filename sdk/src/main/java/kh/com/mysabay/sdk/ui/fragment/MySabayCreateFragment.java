@@ -82,7 +82,7 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
         });
 
         mViewBinding.btnCreateMysabay.setOnClickListener(v -> {
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "register-mysabay");
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "register-mysabay");
             KeyboardUtils.hideKeyboard(getContext(), v);
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();

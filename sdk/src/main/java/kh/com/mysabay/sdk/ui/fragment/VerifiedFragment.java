@@ -82,7 +82,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                                 mViewBinding.edtVerifyCode.setText(null), 1000);
                     }
                 } else {
-                    MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "verify-otp");
+                    MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "verify-otp");
                     viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
                 }
             }
@@ -91,7 +91,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         viewModel.liveNetworkState.observe(this, this::showProgressState);
 
         mViewBinding.tvResendOtp.setOnClickListener(v -> {
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "resend-otp");
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "resend-otp");
             mViewBinding.edtVerifyCode.setText("");
             viewModel.resendOTPWithGraphQL(v.getContext());
             mTimeLeftInMillis = START_TIME_IN_MILLIS;

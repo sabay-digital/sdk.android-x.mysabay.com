@@ -121,13 +121,14 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
 
         viewModel.login.observe(this, phone -> mViewBinding.edtPhone.setText(phone));
         mViewBinding.fb.setOnClickListener(v-> {
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "login-with-facebook");
             mViewBinding.btnLoginFb.performClick();
         });
 
         mViewBinding.btnLogin.setOnClickListener(v -> {
             if (mViewBinding.edtPhone.getText() == null) return;
 
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "login-with-phone-number");
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "login-with-phone-number");
             KeyboardUtils.hideKeyboard(getContext(), v);
             String phoneNo = mViewBinding.edtPhone.getText().toString();
             PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();

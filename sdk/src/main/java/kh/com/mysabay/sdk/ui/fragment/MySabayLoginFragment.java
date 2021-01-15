@@ -73,7 +73,7 @@ public class MySabayLoginFragment extends BaseFragment<FmLoginMysabayBinding, Us
             initAddFragment(new MySabayCreateFragment(), MySabayCreateFragment.TAG, true);
         });
         mViewBinding.btnLogin.setOnClickListener(v -> {
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tab, "login-with-mysabay");
+            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "login-with-mysabay");
             KeyboardUtils.hideKeyboard(getContext(), v);
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();
