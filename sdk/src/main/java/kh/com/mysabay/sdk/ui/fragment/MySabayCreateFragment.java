@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
@@ -33,11 +34,24 @@ import kh.com.mysabay.sdk.webservice.Constant;
 public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, UserApiVM> {
 
     public static final String TAG = MySabayCreateFragment.class.getSimpleName();
+    public static final String EXT_KEY_DATA = "EXT_KEY_DATA";
+    private String mData;
 
     @NotNull
     @Contract(" -> new")
-    public static MySabayCreateFragment newInstance() {
-        return new MySabayCreateFragment();
+    public static MySabayCreateFragment newInstance(String pathFrom) {
+        Bundle args = new Bundle();
+        args.putString(EXT_KEY_DATA, pathFrom);
+        MySabayCreateFragment f = new MySabayCreateFragment();
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (getArguments() != null)
+            mData = getArguments().getParcelable(EXT_KEY_DATA);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -109,6 +123,7 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
                                     }
                                 });
                             } else {
+                                if ()
 //                                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
                             }
                         } else {

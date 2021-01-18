@@ -20,6 +20,7 @@ import com.mysabay.sdk.CreateMySabayLoginMutation;
 import com.mysabay.sdk.LoginWithFacebookMutation;
 import com.mysabay.sdk.LoginWithMySabayMutation;
 import com.mysabay.sdk.LoginWithPhoneMutation;
+import com.mysabay.sdk.SendCreateMySabayWithPhoneOTPMutation;
 import com.mysabay.sdk.UserProfileQuery;
 import com.mysabay.sdk.VerifyMySabayMutation;
 import com.mysabay.sdk.VerifyOtpCodMutation;
@@ -115,7 +116,7 @@ public class UserApiVM extends ViewModel {
                     item.withMySabayUserName(response.getData().sso_loginPhone().mySabayUsername());
                     if (response.getData().sso_loginPhone().verifyMySabay()) {
                         if (context instanceof LoginActivity) {
-                            ((LoginActivity) context).initAddFragment(new MySabayLoginConfirmFragment(), VerifiedFragment.TAG, true);
+                            ((LoginActivity) context).initAddFragment(new MySabayLoginConfirmFragment(), MySabayLoginConfirmFragment.TAG, true);
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -485,6 +486,47 @@ public class UserApiVM extends ViewModel {
 
     public ApolloQueryCall<CheckExistingLoginQuery.Data> checkExistingLogin( String login) {
         return apolloClient.query(new CheckExistingLoginQuery(login, Sso_LoginProviders.SABAY));
+    }
+
+    public void sendCreateMySabayWithPhoneOTP(Context context) {
+        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
+        LoginItem item = getResponseLogin().getValue();
+        apolloClient.mutate(new SendCreateMySabayWithPhoneOTPMutation(item.phone)).enqueue(new ApolloCall.Callback<SendCreateMySabayWithPhoneOTPMutation.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<SendCreateMySabayWithPhoneOTPMutation.Data> response) {
+                if (response.getData() != null) {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "mysabay-with-otp-success");
+                            ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
+                        }
+                    });
+                } else {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                            MessageUtil.displayDialog(context, context.getString(R.string.msg_can_not_connect_server));
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "mysabay-with-otp-failed");
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                        MessageUtil.displayDialog(context, "Send OTP failed");
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "resent-otp-failed");
+                    }
+                });
+            }
+        });
     }
 
     @Override

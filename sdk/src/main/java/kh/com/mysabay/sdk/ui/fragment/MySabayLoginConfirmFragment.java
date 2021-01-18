@@ -29,13 +29,17 @@ import kh.com.mysabay.sdk.webservice.Constant;
 public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysabayBinding, UserApiVM> {
 
     public static final String TAG = MySabayLoginConfirmFragment.class.getSimpleName();
-
+    public static final String EXT_KEY_DATA = "EXT_KEY_DATA";
     private FragmentManager mManager;
 
     @NotNull
     @Contract(" -> new")
-    public static MySabayLoginConfirmFragment newInstance() {
-        return new MySabayLoginConfirmFragment();
+    public static MySabayLoginConfirmFragment newInstance(String phoneNumber) {
+        Bundle args = new Bundle();
+        args.putString(phoneNumber, phoneNumber);
+        MySabayLoginConfirmFragment f = new MySabayLoginConfirmFragment();
+        f.setArguments(args);
+        return f;
     }
 
     @Override
@@ -63,9 +67,6 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
 
     @Override
     public void addListeners() {
-        mViewBinding.btnConfirmMysabay.setOnClickListener(v -> {
-            initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
-        });
         mViewBinding.btnClose.setOnClickListener(v -> {
             if (v.getContext() instanceof LoginActivity)
                 ((LoginActivity) v.getContext()).finish();
@@ -91,7 +92,7 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
         });
 
         mViewBinding.btnCreateMysabay.setOnClickListener(v-> {
-            initAddFragment(new MySabayCreateFragment(), MySabayLoginConfirmFragment.TAG, true);
+            initAddFragment(MySabayCreateFragment.newInstance(MySabayLoginConfirmFragment.TAG), MySabayLoginConfirmFragment.TAG, true);
         });
     }
 
