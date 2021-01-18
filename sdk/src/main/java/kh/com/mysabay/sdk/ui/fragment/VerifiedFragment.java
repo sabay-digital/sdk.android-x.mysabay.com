@@ -6,13 +6,19 @@ import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
+
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.base.BaseFragment;
 import kh.com.mysabay.sdk.databinding.FragmentVerifiedBinding;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
+import kh.com.mysabay.sdk.pojo.mysabay.MySabayAccount;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.KeyboardUtils;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.utils.SdkTheme;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
@@ -25,15 +31,31 @@ import kh.com.mysabay.sdk.webservice.Constant;
 public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, UserApiVM> {
 
     public static final String TAG = VerifiedFragment.class.getSimpleName();
+    public static final String EXT_KEY_DATA = "EXT_KEY_DATA";
     private static final long START_TIME_IN_MILLIS = 60000;
+    private MySabayAccount mData;
     private CountDownTimer mCountDownTimer;
     private boolean mTimerRunning;
 
     private long mTimeLeftInMillis = START_TIME_IN_MILLIS;
     private long mEndTime;
 
-    public VerifiedFragment() {
-        super();
+    @NotNull
+    @Contract("_ -> new")
+    public static VerifiedFragment newInstance(MySabayAccount item) {
+        Bundle args = new Bundle();
+        args.putParcelable(EXT_KEY_DATA, item);
+        VerifiedFragment f = new VerifiedFragment();
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (getArguments() != null)
+            mData = getArguments().getParcelable(EXT_KEY_DATA);
+    
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -83,7 +105,9 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                     }
                 } else {
                     MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "verify-otp");
-                    viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
+                    if (mData == null) {
+                        viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
+                    }
                 }
             }
         });

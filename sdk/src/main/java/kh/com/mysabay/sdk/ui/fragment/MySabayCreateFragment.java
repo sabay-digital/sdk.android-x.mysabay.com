@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.AppCompatEditText;
 import android.view.View;
 
@@ -26,6 +27,7 @@ import kh.com.mysabay.sdk.databinding.FmCreateMysabayBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.KeyboardUtils;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 import kh.com.mysabay.sdk.webservice.Constant;
@@ -33,11 +35,25 @@ import kh.com.mysabay.sdk.webservice.Constant;
 public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, UserApiVM> {
 
     public static final String TAG = MySabayCreateFragment.class.getSimpleName();
+    public static final String EXT_KEY_DATA = "EXT_KEY_DATA";
+    private String mData;
 
     @NotNull
     @Contract(" -> new")
-    public static MySabayCreateFragment newInstance() {
-        return new MySabayCreateFragment();
+    public static MySabayCreateFragment newInstance(String pathFrom) {
+        Bundle args = new Bundle();
+        args.putString(EXT_KEY_DATA, pathFrom);
+        MySabayCreateFragment f = new MySabayCreateFragment();
+        f.setArguments(args);
+        return f;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (getArguments() != null)
+            mData = getArguments().getString(EXT_KEY_DATA);
+        LogUtil.info("mdata", mData);
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -109,6 +125,14 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
                                     }
                                 });
                             } else {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mData.equals(MySabayLoginConfirmFragment.TAG)) {
+                                            viewModel.sendCreateMySabayWithPhoneOTP(v.getContext(), username, password);
+                                        }
+                                    }
+                                });
 //                                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
                             }
                         } else {

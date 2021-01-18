@@ -497,6 +497,10 @@ public class MySabaySDK {
         getTracker(activity).setUserId(userId);
     }
 
+    public void setEcommerce(Activity activity) {
+
+    }
+
     public String appSecret() {
         return mSdkConfiguration.isSandBox ? "9c85c50a4362f687cd4507771ba81db5cf50eaa0b3008f4f943f77ba3ac6386b" : "d41faee946f531794d18a152eafeb5fd8fc81ce4de520e97fcfe41fefdd0381c";
     }

@@ -108,4 +108,12 @@ mutation createMySabayLogin($username: String!, $password: String!) {
   }
 }
 
+mutation sendCreateMySabayWithPhoneOTP($phoneNumber: String!) {
+  sso_sendCreateMySabayWithPhoneOTP(phoneNumber: $phoneNumber) {
+    verifyMySabay
+    mySabayUsername
+    otpExpiry
+  }
+}
+
 
