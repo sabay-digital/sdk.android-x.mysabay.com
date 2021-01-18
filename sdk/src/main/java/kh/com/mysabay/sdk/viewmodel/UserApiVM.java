@@ -39,6 +39,7 @@ import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
+import kh.com.mysabay.sdk.pojo.mysabay.MySabayAccount;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.fragment.MySabayLoginConfirmFragment;
 import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
@@ -488,7 +489,7 @@ public class UserApiVM extends ViewModel {
         return apolloClient.query(new CheckExistingLoginQuery(login, Sso_LoginProviders.SABAY));
     }
 
-    public void sendCreateMySabayWithPhoneOTP(Context context) {
+    public void sendCreateMySabayWithPhoneOTP(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         LoginItem item = getResponseLogin().getValue();
         apolloClient.mutate(new SendCreateMySabayWithPhoneOTPMutation(item.phone)).enqueue(new ApolloCall.Callback<SendCreateMySabayWithPhoneOTPMutation.Data>() {
@@ -499,8 +500,9 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "mysabay-with-otp-success");
-                            ((LoginActivity) context).initAddFragment(new VerifiedFragment(), VerifiedFragment.TAG, true);
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "create-mysabay-with-otp-success");
+                            MySabayAccount mySabayAccount = new MySabayAccount(username, password, item.phone);
+                            ((LoginActivity) context).initAddFragment(VerifiedFragment.newInstance(mySabayAccount), VerifiedFragment.TAG, true);
                         }
                     });
                 } else {
@@ -509,7 +511,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                             MessageUtil.displayDialog(context, context.getString(R.string.msg_can_not_connect_server));
-                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "mysabay-with-otp-failed");
+                            MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "create-mysabay-with-otp-failed");
                         }
                     });
                 }
@@ -521,8 +523,8 @@ public class UserApiVM extends ViewModel {
                     @Override
                     public void run() {
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
-                        MessageUtil.displayDialog(context, "Send OTP failed");
-                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "resent-otp-failed");
+                        MessageUtil.displayDialog(context, "Create mysabay account with otp failed");
+                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.sso, Constant.process, "create-mysabay-with-otp-failed");
                     }
                 });
             }

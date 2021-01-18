@@ -27,6 +27,7 @@ import kh.com.mysabay.sdk.databinding.FmCreateMysabayBinding;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.KeyboardUtils;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 import kh.com.mysabay.sdk.webservice.Constant;
@@ -50,7 +51,8 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (getArguments() != null)
-            mData = getArguments().getParcelable(EXT_KEY_DATA);
+            mData = getArguments().getString(EXT_KEY_DATA);
+        LogUtil.info("mdata", mData);
         super.onCreate(savedInstanceState);
     }
 
@@ -123,7 +125,14 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
                                     }
                                 });
                             } else {
-                                if ()
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (mData.equals(MySabayLoginConfirmFragment.TAG)) {
+                                            viewModel.sendCreateMySabayWithPhoneOTP(v.getContext(), username, password);
+                                        }
+                                    }
+                                });
 //                                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
                             }
                         } else {
