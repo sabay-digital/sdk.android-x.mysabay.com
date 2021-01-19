@@ -3,6 +3,7 @@ package kh.com.mysabay.sdk;
 import android.app.Activity;
 import android.app.Application;
 import android.arch.lifecycle.MediatorLiveData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -475,29 +476,29 @@ public class MySabaySDK {
     /**
      *  Create Tracker instance
      */
-    private Tracker getTracker(Activity activity) {
-        return ((MatomoApplication) activity.getApplication()).getTracker();
+    private Tracker getTracker(Context context) {
+        return ((MatomoApplication) context.getApplicationContext()).getTracker();
     }
 
     /**
      * track screen views
      */
-    public void trackPageView(Activity activity, String path, String title) {
-        TrackHelper.track().screen("android" + path).title("android" + title).with(getTracker(activity));
+    public void trackPageView(Context context, String path, String title) {
+        TrackHelper.track().screen("android" + path).title("android" + title).with(getTracker(context));
     }
 
     /**
      * track events
      */
-    public void trackEvents(Activity activity, String category, String action, String name) {
-        TrackHelper.track().event("android-" + category, action).name(name).with(getTracker(activity));
+    public void trackEvents(Context context, String category, String action, String name) {
+        TrackHelper.track().event("android-" + category, action).name(name).with(getTracker(context));
     }
 
-    public void setCustomUserId(Activity activity, String userId) {
-        getTracker(activity).setUserId(userId);
+    public void setCustomUserId(Context context, String userId) {
+        getTracker(context).setUserId(userId);
     }
 
-    public void setEcommerce(Activity activity) {
+    public void setEcommerce(Context context) {
 
     }
 

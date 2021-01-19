@@ -53,7 +53,7 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
         this.viewModel = LoginActivity.loginActivity.viewModel;
         mManager = getFragmentManager();
 
-        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/verify-mysabay-screen", "/sdk/verify-mysabay-screen");
+        MySabaySDK.getInstance().trackPageView(getContext(), "/sdk/verify-mysabay-screen", "/sdk/verify-mysabay-screen");
     }
 
     @Override
@@ -78,7 +78,7 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
         });
 
         mViewBinding.btnConfirmMysabay.setOnClickListener(v -> {
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "verify-mysabay");
+            MySabaySDK.getInstance().trackEvents(v.getContext(), "sdk-" + Constant.sso, Constant.tap, "verify-mysabay");
             KeyboardUtils.hideKeyboard(getContext(), v);
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();

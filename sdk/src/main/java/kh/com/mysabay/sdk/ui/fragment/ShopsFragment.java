@@ -118,7 +118,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
             mAdapter.notifyDataSetChanged();
         });
 
-        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/product-screen", "/sdk/product-screen");
+        MySabaySDK.getInstance().trackPageView(getContext(), "/sdk/product-screen", "/sdk/product-screen");
     }
 
     @Override
