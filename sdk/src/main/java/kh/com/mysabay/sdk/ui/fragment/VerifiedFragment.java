@@ -18,7 +18,9 @@ import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.pojo.mysabay.MySabayAccount;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.KeyboardUtils;
+import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
+import kh.com.mysabay.sdk.utils.RSA;
 import kh.com.mysabay.sdk.utils.SdkTheme;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 import kh.com.mysabay.sdk.webservice.Constant;
@@ -51,8 +53,10 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        if (getArguments() != null)
+        if (getArguments() != null) {
             mData = getArguments().getParcelable(EXT_KEY_DATA);
+            LogUtil.info("mData", mData.toString());
+        }
 
         super.onCreate(savedInstanceState);
     }
@@ -99,7 +103,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                         if (mData == null) {
                             viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
                         } else {
-                            viewModel.createMySabayLoginWithPhone(getContext(), mData.username, mData.username, mData.phoneNumber, str.toString());
+                            viewModel.createMySabayLoginWithPhone(getContext(), mData.username, RSA.sha256String(mData.password), mData.phoneNumber, str.toString());
                         }
                     } else {
                         KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
@@ -112,7 +116,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                     if (mData == null) {
                         viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
                     } else {
-                        viewModel.createMySabayLoginWithPhone(getContext(), mData.username, mData.username, mData.phoneNumber, str.toString());
+                        viewModel.createMySabayLoginWithPhone(getContext(), mData.username, RSA.sha256String(mData.password), mData.phoneNumber, str.toString());
                     }
                 }
             }
