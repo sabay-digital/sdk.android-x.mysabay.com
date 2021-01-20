@@ -131,9 +131,11 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
                                         if (mData != null) {
                                             if (mData.equals(MySabayLoginConfirmFragment.TAG)) {
                                                 viewModel.sendCreateMySabayWithPhoneOTP(v.getContext(), username, password);
+                                                LogUtil.info("mdata", "not null");
                                             }
                                         } else {
                                             viewModel.postTocreateMySabayAccount(v.getContext(), username, password);
+                                            LogUtil.info("mdata", "null");
                                         }
                                     }
                                 });

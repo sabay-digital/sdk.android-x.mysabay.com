@@ -274,7 +274,7 @@ public class UserApiVM extends ViewModel {
 
     public void postToLoginMySabayWithGraphql(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-        apolloClient.mutate(new LoginWithMySabayMutation(username, RSA.sha256String(password))).enqueue(new ApolloCall.Callback<LoginWithMySabayMutation.Data>() {
+        apolloClient.mutate(new LoginWithMySabayMutation(username, password)).enqueue(new ApolloCall.Callback<LoginWithMySabayMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<LoginWithMySabayMutation.Data> response) {
                 if (response.getData() != null) {
@@ -323,7 +323,7 @@ public class UserApiVM extends ViewModel {
 
     public void postToVerifyMySabayWithGraphql(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-        apolloClient.mutate(new VerifyMySabayMutation(username, password)).enqueue(new ApolloCall.Callback<VerifyMySabayMutation.Data>() {
+        apolloClient.mutate(new VerifyMySabayMutation(username, RSA.sha256String(password))).enqueue(new ApolloCall.Callback<VerifyMySabayMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<VerifyMySabayMutation.Data> response) {
                 if (response.getData() != null) {
@@ -337,6 +337,7 @@ public class UserApiVM extends ViewModel {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "verify-mysabay-success");
                             EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_verifyMySabay().accessToken(), null));
+                            getUserProfile(context);
                             LoginActivity.loginActivity.finish();
                         }
                     });
@@ -462,6 +463,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "register-mysabay-success");
+                            getUserProfile(context);
                             EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_createMySabayLogin().accessToken(), null));
                             LoginActivity.loginActivity.finish();
                         }
@@ -542,11 +544,10 @@ public class UserApiVM extends ViewModel {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         LoginItem item = getResponseLogin().getValue();
 
-        apolloClient.mutate(new CreateMySabayLoginWithPhoneMutation(username, RSA.sha256String(password), phoneNumber, otpCode)).enqueue(new ApolloCall.Callback<CreateMySabayLoginWithPhoneMutation.Data>() {
+        apolloClient.mutate(new CreateMySabayLoginWithPhoneMutation(username, password, phoneNumber, otpCode)).enqueue(new ApolloCall.Callback<CreateMySabayLoginWithPhoneMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<CreateMySabayLoginWithPhoneMutation.Data> response) {
                 if (response.getData() != null) {
-                    LogUtil.info("Created account", username + " " + password + " " + phoneNumber + " " + otpCode);
                     CreateMySabayLoginWithPhoneMutation.Sso_createMySabayLoginWithPhone data = response.getData().sso_createMySabayLoginWithPhone();
                     AppItem appItem = new AppItem(item.mySabayUsername, item.verifyMySabay, data.accessToken(), data.refreshToken(), data.expire());
                     String encrypted = gson.toJson(appItem);
@@ -557,6 +558,7 @@ public class UserApiVM extends ViewModel {
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "verify-otp-success");
+                            getUserProfile(context);
                             EventBus.getDefault().post(new SubscribeLogin(data.accessToken(), null));
                             LoginActivity.loginActivity.finish();
                         }
@@ -601,7 +603,6 @@ public class UserApiVM extends ViewModel {
                             appItem.withMySabayUserId(response.getData().sso_userProfile().userID());
                             appItem.withMySabayUsername(response.getData().sso_userProfile().profileName());
                             appItem.withUuid(response.getData().sso_userProfile().persona().uuid());
-                            LogUtil.info("UUID", response.getData().sso_userProfile().persona().uuid());
                             MySabaySDK.getInstance().setCustomUserId(context, response.getData().sso_userProfile().persona().uuid());
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override

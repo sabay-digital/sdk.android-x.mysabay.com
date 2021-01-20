@@ -87,9 +87,13 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
 
     @Override
     public void initializeObjects(@NotNull View v, Bundle args) {
+        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        
         mViewBinding.viewMainShop.setBackgroundResource(colorCodeBackground());
         mViewBinding.rcv.setBackgroundResource(colorCodeBackground());
         mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
+        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), appItem.mysabayUserId.toString()));
+
         if (getContext() != null)
             viewModel.getShopFromServerGraphQL(getContext());
 
@@ -129,8 +133,6 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
             if (info != null) {
                 Gson g = new Gson();
                 UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-                mySabayId = userProfile.userID.toString();
-                mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), userProfile.userID.toString()));
                 if (userProfile.coin > 0) {
                     String sabayCoin = "<b>" + userProfile.toSabayCoin() + "</b> ";
                     mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
