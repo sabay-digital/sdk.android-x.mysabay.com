@@ -153,9 +153,7 @@ public class MainActivity extends AppCompatActivity {
                             LogUtil.info("Profile localPayEnabled", userProfile.localPayEnabled.toString());
                             LogUtil.info("Profile coin balance", userProfile.coin.toString());
                             LogUtil.info("Profile gold balance", userProfile.gold.toString());
-                            LogUtil.info("Profile Vip Point", userProfile.vipPoints.toString());
                             LogUtil.info("Profile persona", userProfile.persona.toString());
-                            LogUtil.info("Profile createAt", userProfile.createdAt);
                             MessageUtil.displayDialog(v.getContext(), info);
                         } else {
                             MessageUtil.displayDialog(v.getContext(), getString(R.string.msg_can_not_connect_server));

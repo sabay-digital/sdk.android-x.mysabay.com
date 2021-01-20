@@ -19,52 +19,8 @@ public class Persona implements Parcelable {
     @Expose
     public String uuid;
 
-    @SerializedName("serviceCode")
-    @Expose
-    public String serviceCode;
-
-    @SerializedName("mysabayUserID")
-    @Expose
-    public Integer mysabayUserID;
-
-    @SerializedName("serviceUserID")
-    @Expose
-    public String serviceUserID;
-
-    @SerializedName("serviceDisplayName")
-    @Expose
-    public String serviceDisplayName;
-
-    @SerializedName("status")
-    @Expose
-    public Integer status;
-
-    @SerializedName("lastLogin")
-    @Expose
-    public String lastLogin;
-
-    public Persona(String uuid, String serviceCode, Integer mysabayUserID, String serviceUserID, String serviceDisplayName, Integer status, String lastLogin) {
-        this.uuid = uuid;
-        this.serviceCode = serviceCode;
-        this.mysabayUserID = mysabayUserID;
-        this.serviceUserID = serviceUserID;
-        this.serviceDisplayName = serviceDisplayName;
-        this.status = status;
-        this.lastLogin = lastLogin;
-    }
-
-    public Persona() { }
-
-
     protected Persona(@NotNull Parcel in) {
         uuid = in.readString();
-        serviceCode = in.readString();
-        mysabayUserID = in.readInt();
-        serviceUserID = in.readString();
-        uuid = in.readString();
-        serviceDisplayName = in.readString();
-        status = in.readInt();
-        lastLogin = in.readString();
     }
 
     public static final Creator<Persona> CREATOR = new Creator<Persona>() {
@@ -84,41 +40,9 @@ public class Persona implements Parcelable {
         return this;
     }
 
-    public Persona withServiceCode(String serviceCode) {
-        this.serviceCode = serviceCode;
-        return this;
-    }
-
-    public Persona withMysabayUserID(Integer mysabayUserID) {
-        this.mysabayUserID = mysabayUserID;
-        return this;
-    }
-
-    public Persona withServiceUserID(String serviceUserID) {
-        this.serviceUserID = serviceUserID;
-        return this;
-    }
-
-    public Persona withStatus(Integer status) {
-        this.status = status;
-        return this;
-    }
-
-    public Persona withLastLogin(String lastLogin) {
-        this.lastLogin = lastLogin;
-        return this;
-    }
-
-    public Persona withServiceDisplayName(String serviceDisplayName) {
-        this.serviceDisplayName = serviceDisplayName;
-        return this;
-    }
-
     @Override
     public String toString() {
-        return new ToStringBuilder(this).append("uuid", uuid).append("serviceCode", serviceCode)
-                .append("mysabayUserID", mysabayUserID).append("serviceUserID", serviceUserID)
-                .append("serviceDisplayName", serviceDisplayName).append("status", status).append("lastLogin", lastLogin).toString();
+        return new ToStringBuilder(this).append("uuid", uuid).toString();
     }
 
     @Override
@@ -129,11 +53,5 @@ public class Persona implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(uuid);
-        dest.writeString(serviceCode);
-        dest.writeInt(mysabayUserID);
-        dest.writeString(serviceUserID);
-        dest.writeString(serviceDisplayName);
-        dest.writeInt(status);
-        dest.writeString(lastLogin);
     }
 }

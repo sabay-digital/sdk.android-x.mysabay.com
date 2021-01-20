@@ -65,18 +65,9 @@ query userProfile {
     localPayEnabled
     coin
     gold
-    vipPoints
     status
-    createdAt
-    updatedAt
     persona {
         uuid
-        serviceCode
-        mysabayUserID
-        serviceUserID
-        serviceDisplayName
-        status
-        lastLogin
     }
   }
 }
