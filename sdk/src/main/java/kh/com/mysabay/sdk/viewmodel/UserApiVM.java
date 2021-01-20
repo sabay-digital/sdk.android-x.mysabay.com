@@ -274,7 +274,6 @@ public class UserApiVM extends ViewModel {
 
     public void postToLoginMySabayWithGraphql(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-        LogUtil.info("Username", username + " " + password);
         apolloClient.mutate(new LoginWithMySabayMutation(username, password)).enqueue(new ApolloCall.Callback<LoginWithMySabayMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<LoginWithMySabayMutation.Data> response) {
@@ -604,7 +603,6 @@ public class UserApiVM extends ViewModel {
                             appItem.withMySabayUserId(response.getData().sso_userProfile().userID());
                             appItem.withMySabayUsername(response.getData().sso_userProfile().profileName());
                             appItem.withUuid(response.getData().sso_userProfile().persona().uuid());
-                            LogUtil.info("UUID", response.getData().sso_userProfile().persona().uuid());
                             MySabaySDK.getInstance().setCustomUserId(context, response.getData().sso_userProfile().persona().uuid());
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override

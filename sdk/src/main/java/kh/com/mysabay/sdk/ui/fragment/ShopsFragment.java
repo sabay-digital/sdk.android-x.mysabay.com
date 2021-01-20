@@ -87,13 +87,15 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
 
     @Override
     public void initializeObjects(@NotNull View v, Bundle args) {
+        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        
         mViewBinding.viewMainShop.setBackgroundResource(colorCodeBackground());
         mViewBinding.rcv.setBackgroundResource(colorCodeBackground());
         mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
+        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), appItem.mysabayUserId.toString()));
+
         if (getContext() != null)
             viewModel.getShopFromServerGraphQL(getContext());
-        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
-        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), appItem.mysabayUserId.toString()));
 
         mAdapter = new ShopAdapter(v.getContext(), item -> {
             //    if (!BuildConfig.DEBUG)
