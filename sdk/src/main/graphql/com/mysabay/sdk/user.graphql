@@ -69,15 +69,15 @@ query userProfile {
     status
     createdAt
     updatedAt
-#    persona {
-#        uuid
-#        serviceCode
-#        mysabayUserID
-#        serviceUserID
-#        serviceDisplayName
-#        status
-#        lastLogin
-#    }
+    persona {
+        uuid
+        serviceCode
+        mysabayUserID
+        serviceUserID
+        serviceDisplayName
+        status
+        lastLogin
+    }
   }
 }
 

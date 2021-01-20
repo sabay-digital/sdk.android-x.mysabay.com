@@ -124,8 +124,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
 
     @Override
     public void assignValues() {
- //       viewModel.getNetworkState().observe(this, this::showProgressState);
-
+        viewModel.getNetworkState().observe(this, this::showProgressState);
         MySabaySDK.getInstance().getUserProfile(info -> {
             if (info != null) {
                 Gson g = new Gson();

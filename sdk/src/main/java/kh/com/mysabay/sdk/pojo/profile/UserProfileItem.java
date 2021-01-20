@@ -26,9 +26,9 @@ public class UserProfileItem implements Parcelable {
     @SerializedName("userID")
     @Expose
     public Integer userID;
-    @SerializedName("displayName")
+    @SerializedName("profileName")
     @Expose
-    public String displayName;
+    public String profileName;
     @SerializedName("coin")
     @Expose
     public Double coin;
@@ -78,7 +78,7 @@ public class UserProfileItem implements Parcelable {
     protected UserProfileItem(@NotNull Parcel in) {
         this.id = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.userID = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.displayName = ((String) in.readValue((String.class.getClassLoader())));
+        this.profileName = ((String) in.readValue((String.class.getClassLoader())));
         this.gold = ((Double) in.readValue((Double.class.getClassLoader())));
         this.coin = ((Double) in.readValue((Double.class.getClassLoader())));
         this.status = ((Integer) in.readValue((Integer.class.getClassLoader())));
@@ -144,8 +144,8 @@ public class UserProfileItem implements Parcelable {
         return this;
     }
 
-    public  UserProfileItem withDisplayName(String displayName) {
-        this.displayName = displayName;
+    public  UserProfileItem withProfileName(String profileName) {
+        this.profileName = profileName;
         return this;
     }
 
@@ -177,14 +177,14 @@ public class UserProfileItem implements Parcelable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("userID", userID)
-                .append("displayName", displayName).append("gold", gold).append("coin", coin)
+                .append("profileName", profileName).append("gold", gold).append("coin", coin)
                 .append("vipPoints", vipPoints).append("status", status).append("createdAt", createdAt)
                 .append("updatedAt", updatedAt).append("localPayEnabled", localPayEnabled).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(userID).append(id).append(displayName).append(createdAt).append(coin).append(gold).append(vipPoints).append(status).append(updatedAt).append(localPayEnabled).toHashCode();
+        return new HashCodeBuilder().append(userID).append(id).append(profileName).append(createdAt).append(coin).append(gold).append(vipPoints).append(status).append(updatedAt).append(localPayEnabled).toHashCode();
     }
 
     @Override
@@ -196,7 +196,7 @@ public class UserProfileItem implements Parcelable {
             return false;
         }
         UserProfileItem rhs = ((UserProfileItem) other);
-        return new EqualsBuilder().append(userID, rhs.userID).append(id, rhs.id).append(displayName, rhs.displayName)
+        return new EqualsBuilder().append(userID, rhs.userID).append(id, rhs.id).append(profileName, rhs.profileName)
                 .append(coin, rhs.coin).append(gold, rhs.gold).append(vipPoints, rhs.vipPoints)
                 .append(status, rhs.status).append(updatedAt, rhs.updatedAt)
                 .append(createdAt, rhs.createdAt).append(localPayEnabled, rhs.localPayEnabled).isEquals();
@@ -205,7 +205,7 @@ public class UserProfileItem implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeValue(userID);
-        dest.writeValue(displayName);
+        dest.writeValue(profileName);
         dest.writeValue(coin);
         dest.writeValue(gold);
         dest.writeValue(vipPoints);

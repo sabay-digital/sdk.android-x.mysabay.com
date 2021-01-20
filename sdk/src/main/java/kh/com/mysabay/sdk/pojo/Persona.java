@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -113,6 +114,12 @@ public class Persona implements Parcelable {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this).append("uuid", uuid).append("serviceCode", serviceCode)
+                .append("mysabayUserID", mysabayUserID).append("serviceUserID", serviceUserID)
+                .append("serviceDisplayName", serviceDisplayName).append("status", status).append("lastLogin", lastLogin).toString();
+    }
 
     @Override
     public int describeContents() {
