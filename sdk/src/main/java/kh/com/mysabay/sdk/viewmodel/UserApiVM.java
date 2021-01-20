@@ -201,7 +201,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                           MessageUtil.displayDialog(context, "OTP Verification failed");
+                            MessageUtil.displayDialog(context, "OTP Verification failed");
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "verify-otp-failed");
                         }
                     });
@@ -292,7 +292,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                            MessageUtil.displayDialog(context, "MySabay Login failed");
+                            MessageUtil.displayDialog(context, context.getString(R.string.msg_can_not_connect_server));
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "login-with-mysabay-failed");
                         }
                     });
@@ -340,7 +340,7 @@ public class UserApiVM extends ViewModel {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
-                            MessageUtil.displayDialog(context, "Verify MySabay account failed");
+                            MessageUtil.displayDialog(context, context.getString(R.string.msg_can_not_connect_server));
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "verify-mysabay-failed");
                         }
                     });
@@ -448,13 +448,17 @@ public class UserApiVM extends ViewModel {
             @Override
             public void onResponse(@NotNull Response<CreateMySabayLoginMutation.Data> response) {
                 if (response.getData() != null) {
-                    LoginItem item = new LoginItem();
+                    AppItem appItem = new AppItem(response.getData().sso_createMySabayLogin().accessToken(), response.getData().sso_createMySabayLogin().refreshToken(), response.getData().sso_createMySabayLogin().expire());
+                    String encrypted = gson.toJson(appItem);
+                    MySabaySDK.getInstance().saveAppItem(encrypted);
 
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
                             _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "register-mysabay-success");
+                            EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_createMySabayLogin().accessToken(), null));
+                            LoginActivity.loginActivity.finish();
                         }
                     });
                 } else {

@@ -119,6 +119,7 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         });
 
         MySabaySDK.getInstance().trackPageView(getContext(), "/sdk/product-screen", "/sdk/product-screen");
+        MySabaySDK.getInstance().setEcommerce(getContext());
     }
 
     @Override

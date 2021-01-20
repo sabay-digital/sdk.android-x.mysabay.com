@@ -29,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.matomo.sdk.QueryParams;
 import org.matomo.sdk.TrackMe;
 import org.matomo.sdk.Tracker;
+import org.matomo.sdk.extra.EcommerceItems;
 import org.matomo.sdk.extra.MatomoApplication;
 import org.matomo.sdk.extra.TrackHelper;
 
@@ -499,7 +500,10 @@ public class MySabaySDK {
     }
 
     public void setEcommerce(Context context) {
+        EcommerceItems items = new EcommerceItems();
+        items.addItem(new EcommerceItems.Item("sku").name("product").category("category").price(2000).quantity(1));
 
+        TrackHelper.track().order("orderId2", 2200).subTotal(2000).tax(200).shipping(0).discount(0).items(items).with(getTracker(context));
     }
 
     public String appSecret() {

@@ -128,12 +128,15 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (mData.equals(MySabayLoginConfirmFragment.TAG)) {
-                                            viewModel.sendCreateMySabayWithPhoneOTP(v.getContext(), username, password);
+                                        if (mData != null) {
+                                            if (mData.equals(MySabayLoginConfirmFragment.TAG)) {
+                                                viewModel.sendCreateMySabayWithPhoneOTP(v.getContext(), username, password);
+                                            }
+                                        } else {
+                                            viewModel.postTocreateMySabayAccount(v.getContext(), username, password);
                                         }
                                     }
                                 });
-//                                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
                             }
                         } else {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
