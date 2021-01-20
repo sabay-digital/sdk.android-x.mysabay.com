@@ -103,7 +103,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
 
         callbackManager = CallbackManager.Factory.create();
 
-        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/login-screen", "/sdk/login-screen");
+        MySabaySDK.getInstance().trackPageView(getContext(), "/sdk/login-screen", "/sdk/login-screen");
     }
 
     @Override
@@ -121,14 +121,14 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
 
         viewModel.login.observe(this, phone -> mViewBinding.edtPhone.setText(phone));
         mViewBinding.fb.setOnClickListener(v-> {
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "login-with-facebook");
+            MySabaySDK.getInstance().trackEvents(v.getContext(), "sdk-" + Constant.sso, Constant.tap, "login-with-facebook");
             mViewBinding.btnLoginFb.performClick();
         });
 
         mViewBinding.btnLogin.setOnClickListener(v -> {
             if (mViewBinding.edtPhone.getText() == null) return;
 
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "login-with-phone-number");
+            MySabaySDK.getInstance().trackEvents(v.getContext(), "sdk-" + Constant.sso, Constant.tap, "login-with-phone-number");
             KeyboardUtils.hideKeyboard(getContext(), v);
             String phoneNo = mViewBinding.edtPhone.getText().toString();
             PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();

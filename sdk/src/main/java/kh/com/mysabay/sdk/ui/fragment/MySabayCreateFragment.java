@@ -52,7 +52,7 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (getArguments() != null)
             mData = getArguments().getString(EXT_KEY_DATA);
-        LogUtil.info("mdata", mData);
+
         super.onCreate(savedInstanceState);
     }
 
@@ -66,7 +66,7 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
         mViewBinding.viewMainRegister.setBackgroundResource(colorCodeBackground());
         this.viewModel = LoginActivity.loginActivity.viewModel;
 
-        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/register-mysabay-screen", "/sdk/register-mysabay-scree");
+        MySabaySDK.getInstance().trackPageView(getContext(), "/sdk/register-mysabay-screen", "/sdk/register-mysabay-scree");
     }
 
     @Override
@@ -98,7 +98,7 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
         });
 
         mViewBinding.btnCreateMysabay.setOnClickListener(v -> {
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "register-mysabay");
+            MySabaySDK.getInstance().trackEvents(v.getContext(),"sdk-" + Constant.sso, Constant.tap, "register-mysabay");
             KeyboardUtils.hideKeyboard(getContext(), v);
             String username = mViewBinding.edtUsername.getText().toString();
             String password = mViewBinding.edtPassword.getText().toString();
@@ -128,12 +128,15 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        if (mData.equals(MySabayLoginConfirmFragment.TAG)) {
-                                            viewModel.sendCreateMySabayWithPhoneOTP(v.getContext(), username, password);
+                                        if (mData != null) {
+                                            if (mData.equals(MySabayLoginConfirmFragment.TAG)) {
+                                                viewModel.sendCreateMySabayWithPhoneOTP(v.getContext(), username, password);
+                                            }
+                                        } else {
+                                            viewModel.postTocreateMySabayAccount(v.getContext(), username, password);
                                         }
                                     }
                                 });
-//                                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, password);
                             }
                         } else {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {

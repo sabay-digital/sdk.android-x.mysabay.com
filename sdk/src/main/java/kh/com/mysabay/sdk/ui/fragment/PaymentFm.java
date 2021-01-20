@@ -124,7 +124,7 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         onBillingSetupFinished();
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR);
-        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/checkout-screen", "/sdk/checkout-screen");
+        MySabaySDK.getInstance().trackPageView(getContext(), "/sdk/checkout-screen", "/sdk/checkout-screen");
 
     }
 

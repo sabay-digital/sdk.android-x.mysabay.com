@@ -116,4 +116,12 @@ mutation sendCreateMySabayWithPhoneOTP($phoneNumber: String!) {
   }
 }
 
+mutation  createMySabayLoginWithPhone($username: String!, $password: String!, $phoneNumber: String!, $otpCode: String!) {
+  sso_createMySabayLoginWithPhone(username: $username, password: $password, phoneNumber: $phoneNumber, otpCode: $otpCode) {
+    accessToken
+    refreshToken
+    expire
+  }
+}
+
 
