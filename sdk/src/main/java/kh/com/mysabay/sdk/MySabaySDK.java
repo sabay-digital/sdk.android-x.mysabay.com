@@ -254,7 +254,6 @@ public class MySabaySDK {
      */
     public void getUserProfile(UserInfoListener listener) {
         AppItem item = gson.fromJson(getAppItem(), AppItem.class);
-
         apolloClient.query(new UserProfileQuery()).toBuilder()
                 .requestHeaders(RequestHeaders.builder()
                         .addHeader("Authorization", "Bearer " + item.token).build())
@@ -264,9 +263,6 @@ public class MySabaySDK {
             public void onResponse(@NotNull Response<UserProfileQuery.Data> response) {
                 if (response.getData() != null) {
                     if (listener != null) {
-                        item.withEnableLocaPay(response.getData().sso_userProfile().localPayEnabled());
-                        item.withMySabayUserId(response.getData().sso_userProfile().userID());
-                        item.withMySabayUsername(response.getData().sso_userProfile().profileName());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {

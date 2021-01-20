@@ -14,6 +14,7 @@ import com.apollographql.apollo.ApolloQueryCall;
 import com.apollographql.apollo.api.Response;
 import com.apollographql.apollo.exception.ApolloException;
 import com.apollographql.apollo.exception.ApolloNetworkException;
+import com.apollographql.apollo.request.RequestHeaders;
 import com.google.gson.Gson;
 import com.mysabay.sdk.CheckExistingLoginQuery;
 import com.mysabay.sdk.CreateMySabayLoginMutation;
@@ -41,6 +42,7 @@ import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
 import kh.com.mysabay.sdk.pojo.mysabay.MySabayAccount;
+import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.fragment.MySabayLoginConfirmFragment;
 import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
@@ -190,9 +192,10 @@ public class UserApiVM extends ViewModel {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "verify-otp-success");
                             EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_verifyOTP().accessToken(), null));
+                            getUserProfile(context);
                             LoginActivity.loginActivity.finish();
                         }
                     });
@@ -238,9 +241,10 @@ public class UserApiVM extends ViewModel {
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
                         MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "login-with-facebook-success");
                         EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_loginFacebook().accessToken(), null));
+                        getUserProfile(context);
                         LoginActivity.loginActivity.finish();
                     }
                 });
@@ -281,9 +285,10 @@ public class UserApiVM extends ViewModel {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
                             MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.sso, Constant.process, "login-with-mysabay-success");
                             EventBus.getDefault().post(new SubscribeLogin(response.getData().sso_loginMySabay().accessToken(), null));
+                            getUserProfile(context);
                             LoginActivity.loginActivity.finish();
                         }
                     });
@@ -580,6 +585,54 @@ public class UserApiVM extends ViewModel {
                 });
             }
         });
+    }
+
+    public void getUserProfile(Context context) {
+        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        apolloClient.query(new UserProfileQuery()).toBuilder()
+                .requestHeaders(RequestHeaders.builder()
+                        .addHeader("Authorization", "Bearer " + appItem.token).build())
+                .build()
+                .enqueue(new ApolloCall.Callback<UserProfileQuery.Data>() {
+                    @Override
+                    public void onResponse(@NotNull Response<UserProfileQuery.Data> response) {
+                        if (response.getData() != null) {
+                            appItem.withEnableLocaPay(response.getData().sso_userProfile().localPayEnabled());
+                            appItem.withMySabayUserId(response.getData().sso_userProfile().userID());
+                            appItem.withMySabayUsername(response.getData().sso_userProfile().profileName());
+                            appItem.withUuid(response.getData().sso_userProfile().persona().uuid());
+                            LogUtil.info("UUID", response.getData().sso_userProfile().persona().uuid());
+                            MySabaySDK.getInstance().setCustomUserId(context, response.getData().sso_userProfile().persona().uuid());
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        MySabaySDK.getInstance().saveAppItem(gson.toJson(appItem));
+                                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                                    }
+                                });
+                        } else {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    MessageUtil.displayDialog(context, "Get UserProfile Failed");
+                                    _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                                }
+                            });
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NotNull ApolloException e) {
+                        LogUtil.info("Error", e.getMessage());
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                                MessageUtil.displayDialog(context, "Get UserProfile Failed");
+                            }
+                        });
+                    }
+                });
     }
 
     @Override

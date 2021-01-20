@@ -26,27 +26,18 @@ public class UserProfileItem implements Parcelable {
     @SerializedName("userID")
     @Expose
     public Integer userID;
-    @SerializedName("displayName")
+    @SerializedName("profileName")
     @Expose
-    public String displayName;
+    public String profileName;
     @SerializedName("coin")
     @Expose
     public Double coin;
     @SerializedName("gold")
     @Expose
     public Double gold;
-    @SerializedName("vipPoints")
-    @Expose
-    public Double vipPoints;
     @SerializedName("status")
     @Expose
     public Integer status;
-    @SerializedName("createdAt")
-    @Expose
-    public String createdAt;
-    @SerializedName("updatedAt")
-    @Expose
-    public String updatedAt;
     @SerializedName("localPayEnabled")
     @Expose
     public Boolean localPayEnabled;
@@ -78,13 +69,10 @@ public class UserProfileItem implements Parcelable {
     protected UserProfileItem(@NotNull Parcel in) {
         this.id = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.userID = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.displayName = ((String) in.readValue((String.class.getClassLoader())));
+        this.profileName = ((String) in.readValue((String.class.getClassLoader())));
         this.gold = ((Double) in.readValue((Double.class.getClassLoader())));
         this.coin = ((Double) in.readValue((Double.class.getClassLoader())));
         this.status = ((Integer) in.readValue((Integer.class.getClassLoader())));
-        this.vipPoints = ((Double) in.readValue((Double.class.getClassLoader())));
-        this.createdAt = ((String) in.readValue((String.class.getClassLoader())));
-        this.updatedAt = ((String) in.readValue((String.class.getClassLoader())));
         this.localPayEnabled = ((Boolean) in.readValue((Integer.class.getClassLoader())));
     }
 
@@ -99,23 +87,16 @@ public class UserProfileItem implements Parcelable {
      * @param userID
      * @param coin
      * @param gold
-     * @param vipPoints
      * @param localPayEnabled
      * @param status
-     * @param createdAt
-     * @param updatedAt
      */
-    public UserProfileItem(Integer id, Integer userID, Double coin, Double gold, Double vipPoints, Boolean localPayEnabled,
-                Integer status, String createdAt, String updatedAt) {
+    public UserProfileItem(Integer id, Integer userID, Double coin, Double gold, Boolean localPayEnabled, Integer status) {
         super();
         this.id = id;
         this.userID = userID;
         this.coin = coin;
         this.gold = gold;
-        this.vipPoints = vipPoints;
         this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
         this.localPayEnabled = localPayEnabled;
     }
 
@@ -139,28 +120,13 @@ public class UserProfileItem implements Parcelable {
         return this;
     }
 
-    public UserProfileItem withVipPoints(Double vipPoints) {
-        this.vipPoints = vipPoints;
-        return this;
-    }
-
-    public  UserProfileItem withDisplayName(String displayName) {
-        this.displayName = displayName;
+    public  UserProfileItem withProfileName(String profileName) {
+        this.profileName = profileName;
         return this;
     }
 
     public UserProfileItem withStatus(Integer status) {
         this.status = status;
-        return this;
-    }
-
-    public UserProfileItem withCreatedAt(String createdAt) {
-        this.createdAt = createdAt;
-        return this;
-    }
-
-    public UserProfileItem withUpdatedAt(String updatedAt) {
-        this.updatedAt = updatedAt;
         return this;
     }
 
@@ -177,14 +143,13 @@ public class UserProfileItem implements Parcelable {
     @Override
     public String toString() {
         return new ToStringBuilder(this).append("id", id).append("userID", userID)
-                .append("displayName", displayName).append("gold", gold).append("coin", coin)
-                .append("vipPoints", vipPoints).append("status", status).append("createdAt", createdAt)
-                .append("updatedAt", updatedAt).append("localPayEnabled", localPayEnabled).toString();
+                .append("profileName", profileName).append("gold", gold).append("coin", coin)
+                .append("status", status).append("localPayEnabled", localPayEnabled).toString();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(userID).append(id).append(displayName).append(createdAt).append(coin).append(gold).append(vipPoints).append(status).append(updatedAt).append(localPayEnabled).toHashCode();
+        return new HashCodeBuilder().append(userID).append(id).append(profileName).append(coin).append(gold).append(status).append(localPayEnabled).toHashCode();
     }
 
     @Override
@@ -196,23 +161,19 @@ public class UserProfileItem implements Parcelable {
             return false;
         }
         UserProfileItem rhs = ((UserProfileItem) other);
-        return new EqualsBuilder().append(userID, rhs.userID).append(id, rhs.id).append(displayName, rhs.displayName)
-                .append(coin, rhs.coin).append(gold, rhs.gold).append(vipPoints, rhs.vipPoints)
-                .append(status, rhs.status).append(updatedAt, rhs.updatedAt)
-                .append(createdAt, rhs.createdAt).append(localPayEnabled, rhs.localPayEnabled).isEquals();
+        return new EqualsBuilder().append(userID, rhs.userID).append(id, rhs.id).append(profileName, rhs.profileName)
+                .append(coin, rhs.coin).append(gold, rhs.gold).append(status, rhs.status)
+                .append(localPayEnabled, rhs.localPayEnabled).isEquals();
     }
 
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(id);
         dest.writeValue(userID);
-        dest.writeValue(displayName);
+        dest.writeValue(profileName);
         dest.writeValue(coin);
         dest.writeValue(gold);
-        dest.writeValue(vipPoints);
         dest.writeValue(status);
         dest.writeValue(localPayEnabled);
-        dest.writeValue(createdAt);
-        dest.writeValue(updatedAt);
         dest.writeValue(persona);
     }
 
