@@ -52,7 +52,7 @@ public class MySabayCreateFragment extends BaseFragment<FmCreateMysabayBinding, 
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (getArguments() != null)
             mData = getArguments().getString(EXT_KEY_DATA);
-        LogUtil.info("mdata", mData);
+
         super.onCreate(savedInstanceState);
     }
 
