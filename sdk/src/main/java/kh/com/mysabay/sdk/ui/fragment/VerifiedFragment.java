@@ -18,7 +18,6 @@ import kh.com.mysabay.sdk.pojo.login.LoginItem;
 import kh.com.mysabay.sdk.pojo.mysabay.MySabayAccount;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.KeyboardUtils;
-import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
 import kh.com.mysabay.sdk.utils.SdkTheme;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
@@ -54,7 +53,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
     public void onCreate(@Nullable Bundle savedInstanceState) {
         if (getArguments() != null)
             mData = getArguments().getParcelable(EXT_KEY_DATA);
-    
+
         super.onCreate(savedInstanceState);
     }
 
@@ -71,7 +70,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
             mViewBinding.tvResendOtp.setTextColor(getResources().getColor(R.color.colorWhite700));
            this.viewModel = LoginActivity.loginActivity.viewModel;
 
-        MySabaySDK.getInstance().trackPageView(getActivity(), "/sdk/otp-screen", "/sdk/otp-screen");
+        MySabaySDK.getInstance().trackPageView(getContext(), "/sdk/otp-screen", "/sdk/otp-screen");
     }
 
     @Override
@@ -94,9 +93,14 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
 
             if (Integer.parseInt(str.toString()) != 0) {
                 if (MySabaySDK.getInstance().getSdkConfiguration().isSandBox) {
+                    MySabaySDK.getInstance().trackEvents(getContext(), "sdk-" + Constant.sso, Constant.tap, "verify-otp");
                     if (Integer.parseInt(str.toString()) != 0) {
                         KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
-                        viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
+                        if (mData == null) {
+                            viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
+                        } else {
+                            viewModel.createMySabayLoginWithPhone(getContext(), mData.username, mData.username, mData.phoneNumber, str.toString());
+                        }
                     } else {
                         KeyboardUtils.hideKeyboard(getContext(), mViewBinding.edtVerifyCode);
                         mViewBinding.edtVerifyCode.setError(true);
@@ -104,9 +108,11 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
                                 mViewBinding.edtVerifyCode.setText(null), 1000);
                     }
                 } else {
-                    MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "verify-otp");
+                    MySabaySDK.getInstance().trackEvents(getContext(), "sdk-" + Constant.sso, Constant.tap, "verify-otp");
                     if (mData == null) {
                         viewModel.verifyOTPWithGraphql(getContext(), Integer.parseInt(str.toString()));
+                    } else {
+                        viewModel.createMySabayLoginWithPhone(getContext(), mData.username, mData.username, mData.phoneNumber, str.toString());
                     }
                 }
             }
@@ -115,7 +121,7 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         viewModel.liveNetworkState.observe(this, this::showProgressState);
 
         mViewBinding.tvResendOtp.setOnClickListener(v -> {
-            MySabaySDK.getInstance().trackEvents(getActivity(),"sdk-" + Constant.sso, Constant.tap, "resend-otp");
+            MySabaySDK.getInstance().trackEvents(v.getContext(), "sdk-" + Constant.sso, Constant.tap, "resend-otp");
             mViewBinding.edtVerifyCode.setText("");
             viewModel.resendOTPWithGraphQL(v.getContext());
             mTimeLeftInMillis = START_TIME_IN_MILLIS;

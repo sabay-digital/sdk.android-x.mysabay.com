@@ -3,6 +3,7 @@ package kh.com.mysabay.sdk;
 import android.app.Activity;
 import android.app.Application;
 import android.arch.lifecycle.MediatorLiveData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.matomo.sdk.QueryParams;
 import org.matomo.sdk.TrackMe;
 import org.matomo.sdk.Tracker;
+import org.matomo.sdk.extra.EcommerceItems;
 import org.matomo.sdk.extra.MatomoApplication;
 import org.matomo.sdk.extra.TrackHelper;
 
@@ -475,30 +477,33 @@ public class MySabaySDK {
     /**
      *  Create Tracker instance
      */
-    private Tracker getTracker(Activity activity) {
-        return ((MatomoApplication) activity.getApplication()).getTracker();
+    private Tracker getTracker(Context context) {
+        return ((MatomoApplication) context.getApplicationContext()).getTracker();
     }
 
     /**
      * track screen views
      */
-    public void trackPageView(Activity activity, String path, String title) {
-        TrackHelper.track().screen("android" + path).title("android" + title).with(getTracker(activity));
+    public void trackPageView(Context context, String path, String title) {
+        TrackHelper.track().screen("android" + path).title("android" + title).with(getTracker(context));
     }
 
     /**
      * track events
      */
-    public void trackEvents(Activity activity, String category, String action, String name) {
-        TrackHelper.track().event("android-" + category, action).name(name).with(getTracker(activity));
+    public void trackEvents(Context context, String category, String action, String name) {
+        TrackHelper.track().event("android-" + category, action).name(name).with(getTracker(context));
     }
 
-    public void setCustomUserId(Activity activity, String userId) {
-        getTracker(activity).setUserId(userId);
+    public void setCustomUserId(Context context, String userId) {
+        getTracker(context).setUserId(userId);
     }
 
-    public void setEcommerce(Activity activity) {
+    public void setEcommerce(Context context) {
+        EcommerceItems items = new EcommerceItems();
+        items.addItem(new EcommerceItems.Item("sku").name("product").category("category").price(2000).quantity(1));
 
+        TrackHelper.track().order("orderId2", 2200).subTotal(2000).tax(200).shipping(0).discount(0).items(items).with(getTracker(context));
     }
 
     public String appSecret() {

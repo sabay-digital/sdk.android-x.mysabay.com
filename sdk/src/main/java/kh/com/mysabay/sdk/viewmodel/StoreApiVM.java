@@ -171,7 +171,7 @@ public class StoreApiVM extends ViewModel {
                             public void run() {
                                 _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                                 _shopItem.setValue(shopItems);
-                                MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.store, Constant.process, "get-store-success");
+                                MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.store, Constant.process, "get-store-success");
                             }
                         });
                     }
@@ -181,7 +181,7 @@ public class StoreApiVM extends ViewModel {
                         LogUtil.info("Error", e.toString());
                         _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         MessageUtil.displayToast(context, "Something went wrong! Please try again");
-                        MySabaySDK.getInstance().trackEvents((Activity) context,"sdk-" + Constant.store, Constant.process, "get-store-failed");
+                        MySabaySDK.getInstance().trackEvents(context, "sdk-" + Constant.store, Constant.process, "get-store-failed");
                     }
                 });
     }
