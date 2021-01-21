@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        MySabaySDK.getInstance().trackPageView(this, "/home-screen", "/home-screen");
         mViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mViewBinding.viewPb.setVisibility(View.GONE);
         findViewById(R.id.show_login_screen).setOnClickListener(v -> {
@@ -43,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void loginFailed(Object error) {
-                        MessageUtil.displayToast(v.getContext(), "error = " + "Verify failed");
+                        MessageUtil.displayToast(v.getContext(), "error = " + error);
                     }
                 });
         });
@@ -145,17 +146,18 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (MySabaySDK.getInstance().isLogIn()) {
                     MySabaySDK.getInstance().getUserProfile(info -> {
-                        UserProfileItem userProfile = new Gson().fromJson(info, UserProfileItem.class);
-                        LogUtil.info("Profile uuid", userProfile.data.uuid);
-                        LogUtil.info("Profile mySabayUserId", userProfile.data.mysabayUserId.toString());
-                        LogUtil.info("Profile serviceUserId", userProfile.data.serviceUserId);
-                        LogUtil.info("Profile lastLogin", userProfile.data.lastLogin);
-                        LogUtil.info("Profile enableLocalPay", userProfile.data.enableLocalPay.toString());
-                        LogUtil.info("Profile createAt", userProfile.data.createdAt);
-                        LogUtil.info("Profile balance coin", userProfile.data.balance.coin.toString());
-                        LogUtil.info("Profile balance gold", userProfile.data.balance.gold.toString());
-
-                        MessageUtil.displayDialog(v.getContext(), info);
+                        if (info != null) {
+                            UserProfileItem userProfile = new Gson().fromJson(info, UserProfileItem.class);
+                            LogUtil.info("Profile userId", userProfile.userID.toString());
+                            LogUtil.info("Profile name", userProfile.profileName);
+                            LogUtil.info("Profile localPayEnabled", userProfile.localPayEnabled.toString());
+                            LogUtil.info("Profile coin balance", userProfile.coin.toString());
+                            LogUtil.info("Profile gold balance", userProfile.gold.toString());
+                            LogUtil.info("Profile persona", userProfile.persona.toString());
+                            MessageUtil.displayDialog(v.getContext(), info);
+                        } else {
+                            MessageUtil.displayDialog(v.getContext(), getString(R.string.msg_can_not_connect_server));
+                        }
                     });
                 } else {
                     MessageUtil.displayToast(v.getContext(), "Need user login");

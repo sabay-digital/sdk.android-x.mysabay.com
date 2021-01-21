@@ -44,7 +44,6 @@ import kh.com.mysabay.sdk.pojo.googleVerify.DataBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
 import kh.com.mysabay.sdk.pojo.googleVerify.ReceiptBody;
 import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
-import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
@@ -88,17 +87,23 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
 
     @Override
     public void initializeObjects(@NotNull View v, Bundle args) {
+        AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
+        
         mViewBinding.viewMainShop.setBackgroundResource(colorCodeBackground());
         mViewBinding.rcv.setBackgroundResource(colorCodeBackground());
         mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
+        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), appItem.mysabayUserId.toString()));
+
+        if (getContext() != null)
+            viewModel.getShopFromServerGraphQL(getContext());
 
         mAdapter = new ShopAdapter(v.getContext(), item -> {
             //    if (!BuildConfig.DEBUG)
             if (verifyInstallerId(getActivity())) {
-                PURCHASE_ID = item.packageId;
-                purchase(v, item.packageId);
-            } else {
-                MessageUtil.displayDialog(getActivity(), getString(R.string.application_do_not_support_in_app_purchase));
+//                PURCHASE_ID = item.packageId;
+//                purchase(v, item.packageId);
+//            } else {
+//                MessageUtil.displayDialog(getActivity(), getString(R.string.application_do_not_support_in_app_purchase));
             }
         });
 
@@ -108,52 +113,45 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
 
         onBillingSetupFinished();
 
-        MySabaySDK.getInstance().getUserProfile(info -> {
-            Gson g = new Gson();
-            UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            mySabayId = userProfile.data.mysabayUserId.toString();
-            mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), userProfile.data.mysabayUserId.toString()));
-        });
-
         viewModel.getNetworkState().observe(this, this::showProgressState);
         viewModel.getShopItem().observe(this, item -> {
             mLayoutManager.setSpanCount(getResources().getInteger(R.integer.layout_size));
             mViewBinding.rcv.setLayoutManager(mLayoutManager);
             mAdapter.clear();
-            for (Data ob : item.data) {
-                mAdapter.insert(ob);
-            }
-
+            mAdapter.insert(item);
             mAdapter.notifyDataSetChanged();
         });
+
+        MySabaySDK.getInstance().trackPageView(getContext(), "/sdk/product-screen", "/sdk/product-screen");
+        MySabaySDK.getInstance().setEcommerce(getContext());
     }
 
     @Override
     public void assignValues() {
         viewModel.getNetworkState().observe(this, this::showProgressState);
-
-        if (getContext() != null)
-            viewModel.getShopFromServer(getContext());
-
         MySabaySDK.getInstance().getUserProfile(info -> {
-            Gson g = new Gson();
-            UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            if (userProfile.data.balance.coin > 0) {
-                String sabayCoin = "<b>" + userProfile.data.toSabayCoin() + "</b> ";
-                mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
-            }
-            if (userProfile.data.balance.gold > 0) {
-                String sabayGold = "<b>" + userProfile.data.toSabayGold() + "</b> ";
-                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
-                mViewBinding.deviderBalance.setVisibility(userProfile.data.balance.coin > 0 ? View.VISIBLE : View.GONE);
+            if (info != null) {
+                Gson g = new Gson();
+                UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
+                if (userProfile.coin > 0) {
+                    String sabayCoin = "<b>" + userProfile.toSabayCoin() + "</b> ";
+                    mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
+                }
+                if (userProfile.gold > 0) {
+                    String sabayGold = "<b>" + userProfile.toSabayGold() + "</b> ";
+                    mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
+                    mViewBinding.deviderBalance.setVisibility(userProfile.coin > 0 ? View.VISIBLE : View.GONE);
+                } else {
+                    mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
+                    mViewBinding.deviderBalance.setVisibility(View.GONE);
+                }
+                if (userProfile.gold > 0 || userProfile.coin > 0) {
+                    mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
+                } else {
+                    mViewBinding.sabayBalance.setVisibility(View.GONE);
+                }
             } else {
-                mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
-                mViewBinding.deviderBalance.setVisibility(View.GONE);
-            }
-            if (userProfile.data.balance.gold > 0 || userProfile.data.balance.coin > 0) {
-                mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
-            } else {
-                mViewBinding.sabayBalance.setVisibility(View.GONE);
+                MessageUtil.displayDialog(getActivity(), getString(R.string.msg_can_not_connect_server));
             }
         });
     }

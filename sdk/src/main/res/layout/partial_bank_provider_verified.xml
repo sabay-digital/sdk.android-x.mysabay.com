@@ -7,7 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.AppCompatImageView
+        <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -15,12 +15,13 @@
             android:layout_marginBottom="1dp"
             android:padding="3dp"
             android:visibility="gone"
+            android:background="@null"
             app:layout_constraintBottom_toTopOf="@+id/wv"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_back" />
+            android:src="@drawable/ic_back" />
 
-        <android.support.v7.widget.AppCompatImageView
+        <android.support.v7.widget.AppCompatImageButton
             android:id="@+id/btn_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,10 +30,11 @@
             android:layout_marginBottom="1dp"
             android:padding="3dp"
             android:visibility="gone"
+            android:background="@null"
             app:layout_constraintBottom_toTopOf="@+id/wv"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_close" />
+            android:src="@drawable/ic_close" />
 
         <WebView
             android:id="@+id/wv"
