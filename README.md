@@ -298,7 +298,7 @@ There are three login functions offered by the SDK
 - Example 
 
 #### Login with MySabay account
-**Functions**
+**Function**
 - function: `loginWithMySabayAccount(Context context, String username, String password)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
@@ -307,7 +307,7 @@ There are three login functions offered by the SDK
 - Example 
 
 #### Login with facebook
-**Functions**
+**Function**
 - function: `loginWithFacebook(Activity context, String token)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
@@ -327,7 +327,7 @@ There are three login functions offered by the SDK
 - Example
 
 #### Create MySabay account with phone number
-- If you create MySabay account with phone number first you need to input username and password by using function `createMySabayWithPhoneOTP(Context context, String phoneNumber)`. then verify otp code by using function `createMySabayLoginWithPhone(Context context, String username, String password, String phoneNumber, String otpCode)`
+- If you create MySabay account with phone number first you need to input username and password by using function `createMySabayWithPhoneOTP(Context context, String phoneNumber)` and pass username and password to verify screen then verify otp code by using function `createMySabayLoginWithPhone(Context context, String username, String password, String phoneNumber, String otpCode)`
 
 **Function**
 - function: `createMySabayWithPhoneOTP(Context context, String phoneNumber)`
@@ -345,16 +345,16 @@ There are three login functions offered by the SDK
     - `otpCode`: otp code that message sent to verify your phone number
 - Example
 
-### verify  
+### Verify  
 
-### verify otp code
+### Verify otp code
 - function: `verifyOTPCode(Context context, int otpCode)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
     - `otpCode`: otp code that message sent to verify your phone number
 - Example
 
-### verify MySabay
+### Verify MySabay
 - function: `verifyMySabayAccount(Context context, String username, String password)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
@@ -362,14 +362,14 @@ There are three login functions offered by the SDK
     - `password`: MySabay account password
 - Example
 
-### resend otp code
+### Resend otp code
 - function: `resendOTP(Context context, String phoneNumber)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
     - `phoneNumber`: phoneNumber you use to login
 - Example
 
-### get user profile
+### Get user profile
 - function: `getUserProfile(Context context)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
