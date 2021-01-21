@@ -146,7 +146,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
                     if (isValid) {
                         String phNumber = String.valueOf(phoneNumber.getNationalNumber());
                         String dialCode = String.valueOf(phoneNumber.getCountryCode());
-                        viewModel.postToLoginWithGraphql(v.getContext(), phNumber, dialCode);
+                        viewModel.loginWithPhoneNumber(v.getContext(), phNumber, dialCode);
                     } else {
                         showCheckFields(mViewBinding.edtPhone, R.string.msg_phone_incorrect);
                     }
@@ -167,7 +167,7 @@ public class LoginFragment extends BaseFragment<FragmentLoginBinding, UserApiVM>
             @Override
             public void onSuccess(LoginResult loginResult) {
                 LogUtil.info("OnSuccess", loginResult.getAccessToken().getToken());
-                viewModel.postToLoginFacebookWithGraphql(getActivity(), loginResult.getAccessToken().getToken());
+                viewModel.loginWithFacebook(getActivity(), loginResult.getAccessToken().getToken());
             }
 
             @Override

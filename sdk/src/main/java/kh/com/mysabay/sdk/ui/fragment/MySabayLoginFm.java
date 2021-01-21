@@ -99,7 +99,7 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
                         String encrypted = gson.toJson(appItem);
                         MySabaySDK.getInstance().saveAppItem(encrypted);
                     }
-                    getActivity().runOnUiThread(() -> viewModel.postToGetUserProfileWithGraphQL(getActivity(), token));
+                    getActivity().runOnUiThread(() -> viewModel.getUserProfile(getActivity(), token));
                 }
 
                 return super.shouldInterceptRequest(view, request);

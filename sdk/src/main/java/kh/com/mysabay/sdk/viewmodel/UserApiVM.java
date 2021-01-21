@@ -101,7 +101,7 @@ public class UserApiVM extends ViewModel {
         return _responseLogin;
     }
 
-    public void postToLoginWithGraphql(Context context, String phone, String dialCode) {
+    public void loginWithPhoneNumber(Context context, String phone, String dialCode) {
         _login.setValue(phone);
 
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
@@ -172,7 +172,7 @@ public class UserApiVM extends ViewModel {
         });
     }
 
-    public void verifyOTPWithGraphql(Context context, int code) {
+    public void verifyOTPCode(Context context, int code) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         LoginItem item = getResponseLogin().getValue();
         if (item == null) {
@@ -228,7 +228,7 @@ public class UserApiVM extends ViewModel {
         });
     }
 
-    public void postToLoginFacebookWithGraphql(@NotNull Activity context, String token) {
+    public void loginWithFacebook(@NotNull Activity context, String token) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         apolloClient.mutate(new LoginWithFacebookMutation(token)).enqueue(new ApolloCall.Callback<LoginWithFacebookMutation.Data>() {
             @Override
@@ -272,9 +272,9 @@ public class UserApiVM extends ViewModel {
         });
     }
 
-    public void postToLoginMySabayWithGraphql(Context context, String username, String password) {
+    public void loginWithMySabayAccount(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-        apolloClient.mutate(new LoginWithMySabayMutation(username, password)).enqueue(new ApolloCall.Callback<LoginWithMySabayMutation.Data>() {
+        apolloClient.mutate(new LoginWithMySabayMutation(username, RSA.sha256String(password))).enqueue(new ApolloCall.Callback<LoginWithMySabayMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<LoginWithMySabayMutation.Data> response) {
                 if (response.getData() != null) {
@@ -321,7 +321,7 @@ public class UserApiVM extends ViewModel {
     }
 
 
-    public void postToVerifyMySabayWithGraphql(Context context, String username, String password) {
+    public void verifyMySabayAccount(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         apolloClient.mutate(new VerifyMySabayMutation(username, RSA.sha256String(password))).enqueue(new ApolloCall.Callback<VerifyMySabayMutation.Data>() {
             @Override
@@ -369,7 +369,7 @@ public class UserApiVM extends ViewModel {
         });
     }
 
-    public void resendOTPWithGraphQL(Context context) {
+    public void resendOTP(Context context) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         LoginItem item = getResponseLogin().getValue();
         apolloClient.mutate(new LoginWithPhoneMutation(item.phone)).enqueue(new ApolloCall.Callback<LoginWithPhoneMutation.Data>() {
@@ -414,7 +414,7 @@ public class UserApiVM extends ViewModel {
         });
     }
 
-    public void postToGetUserProfileWithGraphQL(@NotNull Activity context, String token) {
+    public void getUserProfile(@NotNull Activity context, String token) {
         AppItem appItem = gson.fromJson(MySabaySDK.getInstance().getAppItem(), AppItem.class);
         apolloClient.query(new UserProfileQuery()).enqueue(new ApolloCall.Callback<UserProfileQuery.Data>() {
             @Override
@@ -448,9 +448,9 @@ public class UserApiVM extends ViewModel {
         });
     }
 
-    public void postTocreateMySabayAccount(Context context, String username, String password) {
+    public void createMySabayAccount(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
-        apolloClient.mutate(new CreateMySabayLoginMutation(username, password)).enqueue(new ApolloCall.Callback<CreateMySabayLoginMutation.Data>() {
+        apolloClient.mutate(new CreateMySabayLoginMutation(username, RSA.sha256String(password))).enqueue(new ApolloCall.Callback<CreateMySabayLoginMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<CreateMySabayLoginMutation.Data> response) {
                 if (response.getData() != null) {
@@ -498,7 +498,7 @@ public class UserApiVM extends ViewModel {
         return apolloClient.query(new CheckExistingLoginQuery(login, Sso_LoginProviders.SABAY));
     }
 
-    public void sendCreateMySabayWithPhoneOTP(Context context, String username, String password) {
+    public void createMySabayWithPhoneOTP(Context context, String username, String password) {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         LoginItem item = getResponseLogin().getValue();
         apolloClient.mutate(new SendCreateMySabayWithPhoneOTPMutation(item.phone)).enqueue(new ApolloCall.Callback<SendCreateMySabayWithPhoneOTPMutation.Data>() {
@@ -544,7 +544,7 @@ public class UserApiVM extends ViewModel {
         _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
         LoginItem item = getResponseLogin().getValue();
 
-        apolloClient.mutate(new CreateMySabayLoginWithPhoneMutation(username, password, phoneNumber, otpCode)).enqueue(new ApolloCall.Callback<CreateMySabayLoginWithPhoneMutation.Data>() {
+        apolloClient.mutate(new CreateMySabayLoginWithPhoneMutation(username, RSA.sha256String(password), phoneNumber, otpCode)).enqueue(new ApolloCall.Callback<CreateMySabayLoginWithPhoneMutation.Data>() {
             @Override
             public void onResponse(@NotNull Response<CreateMySabayLoginWithPhoneMutation.Data> response) {
                 if (response.getData() != null) {

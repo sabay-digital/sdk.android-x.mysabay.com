@@ -107,8 +107,9 @@ MysabaySdk needs to be initialized. You should only do this 1 time, so placing t
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.SdkConfiguration;
 import kh.com.mysabay.sdk.utils.SdkTheme;
+import kh.com.mysabay.sdk.SdkApplication;
 
-public class MyApplication extends Application {
+public class MyApplication extends SdkApplication {
     @Override
     public void onCreate() {
         super.onCreate();
@@ -131,6 +132,8 @@ public class MyApplication extends Application {
 
 > Note that in order to use the store and checkout function, the user must login first.
 > Follow the guide below for each functions provided by the SDK:
+
+### With UI
 
 *  **Login**
 
@@ -277,6 +280,68 @@ To logout user session from the app use the following method:
 
     MySabaySDK.getInstance().logout();
 ```
+
+## Without UI
+### Login
+
+There are three login functions offered by the SDK
+#### Login with phone number
+- If your phone number don't link with MySabay account it use OTP to verify
+- If your phone number linked with MySabay account it use verify MySabay instead of OTP
+
+**Functions**
+- function: `loginWithPhoneNumber(Context context, String phone, String dialCode)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `phone`: phone number
+    - `dialCode`: telephone number prefix
+- Example 
+
+#### Login with MySabay account
+**Functions**
+- function: `loginWithMySabayAccount(Context context, String username, String password)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `username`: username you input
+    - `password`: password you input
+- Example 
+
+#### Login with facebook
+
+**Functions**
+- function: `loginWithFacebook(Activity context, String token)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `token`: token then you get from facebook after register a callback with facebook login button
+- Example
+    
+### Register
+#### Create MySabay account without phone number
+- we can create MySabay account by entering username and password
+
+**Function**
+- function: `createMySabayAccount(Context context, String username, String password)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `username`: username that you input
+    - `password`: password that you input
+- Example
+
+#### Create MySabay account with phone number
+    - If you create MySabay account with phone number first you need to input username and password. then verify otp code.
+
+**Function**
+- function: ` createMySabayWithPhoneOTP(Context context, String username, String password)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `token`: token then you get from facebook after register a callback with facebook login button
+- Example
+
+- function: `loginWithFacebook(Activity context, String token)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `token`: token then you get from facebook after register a callback with facebook login button
+- Example
 
 ## Tracking
 

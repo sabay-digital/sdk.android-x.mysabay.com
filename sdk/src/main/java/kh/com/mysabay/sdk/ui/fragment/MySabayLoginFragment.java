@@ -23,7 +23,6 @@ import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.KeyboardUtils;
 import kh.com.mysabay.sdk.utils.MessageUtil;
-import kh.com.mysabay.sdk.utils.RSA;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
 import kh.com.mysabay.sdk.webservice.Constant;
 
@@ -83,7 +82,7 @@ public class MySabayLoginFragment extends BaseFragment<FmLoginMysabayBinding, Us
             } else if (StringUtils.isAnyBlank(password)) {
                 showCheckFields(mViewBinding.edtPassword, R.string.msg_input_password);
             } else {
-                viewModel.postToLoginMySabayWithGraphql(v.getContext(), username, RSA.sha256String(password));
+                viewModel.loginWithMySabayAccount(v.getContext(), username, password);
             }
         });
     }
