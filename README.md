@@ -133,7 +133,7 @@ public class MyApplication extends SdkApplication {
 > Note that in order to use the store and checkout function, the user must login first.
 > Follow the guide below for each functions provided by the SDK:
 
-### With UI
+## With UI
 
 *  **Login**
 
@@ -290,10 +290,10 @@ There are three login functions offered by the SDK
 - If your phone number linked with MySabay account it use verify MySabay instead of OTP
 
 **Functions**
-- function: `loginWithPhoneNumber(Context context, String phone, String dialCode)`
+- function: `loginWithPhoneNumber(Context context, String phoneNumber, String dialCode)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
-    - `phone`: phone number
+    - `phoneNumber`: phone number that you use to login
     - `dialCode`: telephone number prefix
 - Example 
 
@@ -307,7 +307,6 @@ There are three login functions offered by the SDK
 - Example 
 
 #### Login with facebook
-
 **Functions**
 - function: `loginWithFacebook(Activity context, String token)`
 - Arguments:
@@ -328,19 +327,52 @@ There are three login functions offered by the SDK
 - Example
 
 #### Create MySabay account with phone number
-    - If you create MySabay account with phone number first you need to input username and password. then verify otp code.
+- If you create MySabay account with phone number first you need to input username and password by using function `createMySabayWithPhoneOTP(Context context, String phoneNumber)`. then verify otp code by using function `createMySabayLoginWithPhone(Context context, String username, String password, String phoneNumber, String otpCode)`
 
 **Function**
-- function: ` createMySabayWithPhoneOTP(Context context, String username, String password)`
+- function: `createMySabayWithPhoneOTP(Context context, String phoneNumber)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
-    - `token`: token then you get from facebook after register a callback with facebook login button
+    - `phoneNumber`: phoneNumber you use to login
 - Example
 
-- function: `loginWithFacebook(Activity context, String token)`
+- function: `createMySabayLoginWithPhone(Context context, String username, String password, String phoneNumber, String otpCode)`
 - Arguments:
     - `context`: the context which is linked to the Activity from which is called
-    - `token`: token then you get from facebook after register a callback with facebook login button
+    - `username`: username that you input
+    - `password`: password that you input
+    - `phoneNumber`: phoneNumber you use to login
+    - `otpCode`: otp code that message sent to verify your phone number
+- Example
+
+### verify  
+
+### verify otp code
+- function: `verifyOTPCode(Context context, int otpCode)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `otpCode`: otp code that message sent to verify your phone number
+- Example
+
+### verify MySabay
+- function: `verifyMySabayAccount(Context context, String username, String password)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `username`: MySabay account username
+    - `password`: MySabay account password
+- Example
+
+### resend otp code
+- function: `resendOTP(Context context, String phoneNumber)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
+    - `phoneNumber`: phoneNumber you use to login
+- Example
+
+### get user profile
+- function: `getUserProfile(Context context)`
+- Arguments:
+    - `context`: the context which is linked to the Activity from which is called
 - Example
 
 ## Tracking
