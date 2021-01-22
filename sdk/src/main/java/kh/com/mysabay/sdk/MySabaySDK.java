@@ -17,8 +17,11 @@ import com.apollographql.apollo.request.RequestHeaders;
 import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
 import com.mysabay.sdk.DeleteTokenMutation;
+import com.mysabay.sdk.GetProductsByServiceCodeQuery;
+import com.mysabay.sdk.LoginWithPhoneMutation;
 import com.mysabay.sdk.RefreshTokenMutation;
 import com.mysabay.sdk.UserProfileQuery;
+import com.mysabay.sdk.VerifyOtpCodMutation;
 import com.mysabay.sdk.VerifyTokenQuery;
 
 import org.apache.commons.lang3.StringUtils;
@@ -26,8 +29,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.matomo.sdk.QueryParams;
-import org.matomo.sdk.TrackMe;
 import org.matomo.sdk.Tracker;
 import org.matomo.sdk.extra.EcommerceItems;
 import org.matomo.sdk.extra.MatomoApplication;
@@ -36,6 +37,7 @@ import org.matomo.sdk.extra.TrackHelper;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import kh.com.mysabay.sdk.callback.DataCallback;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
@@ -51,6 +53,8 @@ import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
+import kh.com.mysabay.sdk.viewmodel.StoreService;
+import kh.com.mysabay.sdk.viewmodel.UserService;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -69,6 +73,11 @@ public class MySabaySDK {
     Gson gson;
     @Inject
     AppRxSchedulers appRxSchedulers;
+
+    @Inject
+    UserService userService;
+    @Inject
+    StoreService storeService;
 
     private SharedPreferences mPreferences;
     public BaseAppComponent mComponent;
@@ -466,8 +475,22 @@ public class MySabaySDK {
         return mSdkConfiguration;
     }
 
-    public void setSdkConfiguration(SdkConfiguration mSdkConfiguration) {
-        mSdkConfiguration = mSdkConfiguration;
+    // provided function
+
+    public void loginWithPhoneNumber(String phoneNumber, String dialCode, DataCallback<LoginWithPhoneMutation.Sso_loginPhone> dataCallback) {
+        userService.loginWithPhoneNumber(phoneNumber, dialCode, dataCallback);
+    }
+
+    public void verifyOTPCode(String phoneNumber, String otpCode, DataCallback<VerifyOtpCodMutation.Sso_verifyOTP> dataCallback) {
+        userService.verifyOTPCode(phoneNumber, otpCode, dataCallback);
+    }
+
+    public void getStoreFromServer(String serviceCode, String token, DataCallback<GetProductsByServiceCodeQuery.Store_listProduct> dataCallback) {
+        storeService.getShopFromServerGraphQL(serviceCode, token, dataCallback);
+    }
+
+    public void getUserInfo(String token, DataCallback<UserProfileQuery.Sso_userProfile> dataCallback) {
+        userService.getUserProfile(token, dataCallback);
     }
 
     /**

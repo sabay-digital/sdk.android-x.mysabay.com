@@ -62,7 +62,6 @@ public class UserApiVM extends ViewModel {
 
     ApolloClient apolloClient;
 
-    private final AppRxSchedulers appRxSchedulers;
     @Inject
     Gson gson;
 
@@ -79,9 +78,8 @@ public class UserApiVM extends ViewModel {
     public CompositeDisposable mCompositeDisposable;
 
     @Inject
-    public UserApiVM(ApolloClient apolloClient, AppRxSchedulers appRxSchedulers) {
+    public UserApiVM(ApolloClient apolloClient) {
         this.apolloClient = apolloClient;
-        this.appRxSchedulers = appRxSchedulers;
         this._networkState = new MediatorLiveData<>();
         this._responseLogin = new MediatorLiveData<>();
         this._loginMySabay = new MediatorLiveData<>();
