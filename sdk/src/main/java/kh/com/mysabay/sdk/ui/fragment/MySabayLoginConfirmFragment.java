@@ -87,7 +87,7 @@ public class MySabayLoginConfirmFragment extends BaseFragment<FmConfrimLoginMysa
             } else if (StringUtils.isAnyBlank(password)) {
                 showCheckFields(mViewBinding.edtPassword, R.string.msg_input_password);
             } else {
-                viewModel.postToVerifyMySabayWithGraphql(v.getContext(), username, password);
+                viewModel.verifyMySabayAccount(v.getContext(), username, password);
             }
         });
 
