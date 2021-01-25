@@ -19,7 +19,7 @@ public class FunctionCallActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_function_call);
 
-        MySabaySDK.getInstance().loginWithPhoneNumber("89970429", "855", new DataCallback<LoginWithPhoneMutation.Sso_loginPhone>() {
+        MySabaySDK.getInstance().loginWithPhoneNumber("85589970429", new DataCallback<LoginWithPhoneMutation.Sso_loginPhone>() {
             @Override
             public void onSuccess(LoginWithPhoneMutation.Sso_loginPhone response) {
                 LogUtil.info("Success", response.toString());

@@ -70,6 +70,17 @@ There are 2 different payment flows in the SDK: 1). payment with google In App B
 
 Refer to the API document below for payment receipt validation of both payments.
 
+## MySabaySDK Sample App
+
+This repo contains a sample app which uses MySabaySDK. To run the sample app, make sure you have a stable version of Android Studio installed on your machine. Then do the followings:
+
+1. Open Android Studio
+2. Click `Open an existing Android Studio project...`
+3. Navigate to the project folder and go into `MySabaySDKSampleApp`
+4. Once the project is open, select a simulator or generic device you wish to run the app.
+5. Click on the Play button (`Run App`)
+
+
 ## Installation
 
 1. Add Jitpack to your project build.gralde file
@@ -169,7 +180,7 @@ Every function will return all the necessary information and an extra string at 
 
 For example:
 ```java
-    MySabaySDK.getInstance().loginWithPhoneNumber("128080808", "855", new DataCallback<LoginWithPhoneMutation.Sso_loginPhone>() {
+    MySabaySDK.getInstance().loginWithPhoneNumber("85512808080", new DataCallback<LoginWithPhoneMutation.Sso_loginPhone>() {
         @Override
         public void onSuccess(LoginWithPhoneMutation.Sso_loginPhone response) {
             LogUtil.info("Success", response.toString());
@@ -215,7 +226,7 @@ String error
 
 Call this function when the user logins with their MySabay username and password.
 
-```swift
+```java
 loginWithMySabay(String username, String password, DataCallback<LoginWithMySabayMutation.Sso_loginMySabay> dataCallback)
 
 // return
