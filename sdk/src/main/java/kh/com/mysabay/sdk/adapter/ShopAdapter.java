@@ -1,17 +1,16 @@
 package kh.com.mysabay.sdk.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 import java.util.LinkedList;
 import java.util.List;
 
 import kh.com.mysabay.sdk.R;
-import kh.com.mysabay.sdk.pojo.shop.Data;
+import kh.com.mysabay.sdk.callback.ShopListener;
+import kh.com.mysabay.sdk.pojo.shop.ShopItem;
 import kh.com.mysabay.sdk.ui.holder.ShopItmVH;
 
 /**
@@ -23,17 +22,19 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopItmVH> {
     private static final String TAG = ShopAdapter.class.getSimpleName();
 
     private Context context;
-    private LinkedList<Data> shopItems;
+    private LinkedList<ShopItem> shopItems;
+    private ShopListener mListener;
 
-    public ShopAdapter(Context context) {
+    public ShopAdapter(Context context, ShopListener listener) {
         this.context = context;
+        this.mListener = listener;
         this.shopItems = new LinkedList<>();
     }
 
     @NonNull
     @Override
     public ShopItmVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ShopItmVH(LayoutInflater.from(context).inflate(R.layout.partial_shop_item, parent, false));
+        return new ShopItmVH(LayoutInflater.from(context).inflate(R.layout.partial_shop_item, parent, false), mListener);
     }
 
     @Override
@@ -46,17 +47,17 @@ public class ShopAdapter extends RecyclerView.Adapter<ShopItmVH> {
         return shopItems.size();
     }
 
-    public void insert(Data item) {
+    public void insert(ShopItem item) {
         shopItems.add(item);
         //notifyItemInserted(shopItems.size());
     }
 
-    public void insert(List<Data> items) {
+    public void insert(List<ShopItem> items) {
         shopItems.addAll(items);
         notifyDataSetChanged();
     }
 
-    public Data getItem(int pos) {
+    public ShopItem getItem(int pos) {
         return shopItems.get(pos);
     }
 

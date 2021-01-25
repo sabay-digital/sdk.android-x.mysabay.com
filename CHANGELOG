@@ -1,0 +1,68 @@
+Sabay currently publishes android SDK with version below:
+
+-Latest 
+    - Move from Rest API to gateway API (GraphQL)
+    - Change Login process (Phone Number)
+        - If phone number has existing MySabay account so it need to verify MySabay account
+            - Enter password to verify account or you can create new account here
+        - If phone number doesn't have MySabay account so OTP has been sent.
+    - Change Login process (MySabay account)
+        - Move from login with MySabay Login WebView to gateway API
+    - MySabay account Registration
+    - Login with facebook
+
+-Latest: 1.0.18
+    - Wing payment
+    - Check application install manually via APK or Google Play store.
+    - Display message if user input wrong verify code.
+    - Display loading if In-App Purchase Payment is not yet completed.
+    - Change login logo and update checkout screen.
+
+-Latest: 1.0.17
+ 	- Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.17-o'
+    - Changes 
+        - Rename filed in payment with other provider
+-Latest: 1.0.16
+ 	- Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.16-o'
+
+- Latest: 1.0.7
+ 	- Android-X: 'com.github.sabay-digital:sdk.android-x.mysabay.com:1.0.7'
+    - Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.7-o'
+    - Changes
+        - Implement postMessage when OneTime payment completed.
+- 1.0.6
+    - Android-X: 'com.github.sabay-digital:sdk.android-x.mysabay.com:1.0.6'
+    - Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.6-o'
+    - Changes
+        - Update UI
+        - User session management
+        - Check button payment with sabayCoin (valid or invalid)
+- 1.0.5
+    - Android-X: 'com.github.sabay-digital:sdk.android-x.mysabay.com:1.0.5'
+    - Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.5-o'
+    - Changes
+        - Add packageId filed into payment response
+- 1.0.4
+    - Android-X: 'com.github.sabay-digital:sdk.android-x.mysabay.com:1.0.4'
+    - Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.4-o'
+    - Changes
+        - Callback after payment completed
+        - Handle payment success by type
+- 1.0.3
+    - Android-X: 'com.github.sabay-digital:sdk.android-x.mysabay.com:1.0.3'
+    - Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.3-o'
+        - Subscribe login to pass accessToken
+- 1.0.2
+    - Android-X: 'com.github.sabay-digital:sdk.android-x.mysabay.com:1.0.2'
+    - Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.2-o'
+    - Changes:
+        - Received accessToken, refreshToken, expire when webview loaded
+        - Received UUID when get userprofile completed
+       
+- 1.0.0
+    - Android-X: 'com.github.sabay-digital:sdk.android-x.mysabay.com:1.0.0'
+    - Old Android: 'com.github.sabay-digital:sdk.android-old.mysabay.com:1.0.0-o'
+    - Changes:
+        - Received accessToken, refreshToken and expire when verify success
+        - Remove refreshToken and expire from UserProfile
+        - Create new one by using refreshToken to get new accessToken and expire

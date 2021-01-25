@@ -2,15 +2,14 @@ package kh.com.mysabay.sdk.utils;
 
 import android.content.Context;
 import android.graphics.Color;
+import com.google.android.material.snackbar.Snackbar;
+import androidx.appcompat.widget.AppCompatTextView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
-import androidx.appcompat.widget.AppCompatTextView;
-
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -77,6 +76,21 @@ public class MessageUtil {
         new MaterialDialog.Builder(context)
                 .typeface(FontUtils.getTypefaceKhmer(context), FontUtils.getTypefaceKhmer(context))
                 .content(msg)
+                .backgroundColorRes(R.color.colorBackground)
+                .contentColorRes(R.color.secondary)
+                .positiveColorRes(R.color.colorYellow)
+                .positiveText(R.string.label_close)
+                .onPositive((dialog, which) -> dialog.dismiss())
+                .build().show();
+
+    }
+
+    public static void displayDialog(Context context, String msg, int color) {
+        new MaterialDialog.Builder(context)
+                .typeface(FontUtils.getTypefaceKhmer(context), FontUtils.getTypefaceKhmer(context))
+                .content(msg)
+                .backgroundColorRes(color)
+                .contentColorRes(R.color.secondary)
                 .positiveColorRes(R.color.colorYellow)
                 .positiveText(R.string.label_close)
                 .onPositive((dialog, which) -> dialog.dismiss())
@@ -88,15 +102,20 @@ public class MessageUtil {
         displayDialog(context, title, msg, 0, txtPos, null, posListener);
     }
 
-    public static void displayDialog(Context context, String title, String msg, String txtNeg, String txtPos,
+    public static void displayDialog(Context context, String title, String msg, String txtNeg, String txtPos, int color,
                                      MaterialDialog.SingleButtonCallback negListener,
                                      MaterialDialog.SingleButtonCallback posListener) {
         new MaterialDialog.Builder(context)
                 .typeface(FontUtils.getTypefaceKhmerBold(context), FontUtils.getTypefaceKhmer(context))
                 .title(title)
+                .titleColorRes(R.color.colorYellow)
+                .backgroundColorRes(color)
                 .content(msg).canceledOnTouchOutside(false)
+                .positiveColorRes(R.color.colorYellow)
+                .contentColorRes(R.color.secondary)
                 .negativeText(txtNeg)
                 .positiveText(txtPos)
+                .negativeColorRes(R.color.colorYellow)
                 .onNegative((dialog, which) -> {
                     if (negListener != null)
                         negListener.onClick(dialog, which);

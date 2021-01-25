@@ -2,22 +2,43 @@ package kh.com.mysabay.sdk;
 
 import android.app.Activity;
 import android.app.Application;
+import androidx.lifecycle.MediatorLiveData;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Looper;
 
-import androidx.lifecycle.MediatorLiveData;
-
+import com.apollographql.apollo.ApolloCall;
+import com.apollographql.apollo.ApolloClient;
+import com.apollographql.apollo.api.Response;
+import com.apollographql.apollo.exception.ApolloException;
+import com.apollographql.apollo.request.RequestHeaders;
+import com.facebook.login.LoginManager;
 import com.google.gson.Gson;
+import com.mysabay.sdk.DeleteTokenMutation;
+import com.mysabay.sdk.GetProductsByServiceCodeQuery;
+import com.mysabay.sdk.LoginWithMySabayMutation;
+import com.mysabay.sdk.LoginWithPhoneMutation;
+import com.mysabay.sdk.RefreshTokenMutation;
+import com.mysabay.sdk.UserProfileQuery;
+import com.mysabay.sdk.VerifyOtpCodMutation;
+import com.mysabay.sdk.VerifyTokenQuery;
 
 import org.apache.commons.lang3.StringUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.matomo.sdk.Tracker;
+import org.matomo.sdk.extra.EcommerceItems;
+import org.matomo.sdk.extra.MatomoApplication;
+import org.matomo.sdk.extra.TrackHelper;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import kh.com.mysabay.sdk.callback.DataCallback;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
@@ -27,18 +48,14 @@ import kh.com.mysabay.sdk.di.DaggerBaseAppComponent;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.pojo.NetworkState;
 import kh.com.mysabay.sdk.pojo.login.SubscribeLogin;
-import kh.com.mysabay.sdk.pojo.logout.LogoutResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
-import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
-import kh.com.mysabay.sdk.pojo.refreshToken.RefreshTokenItem;
-import kh.com.mysabay.sdk.pojo.refreshToken.TokenVerify;
-import kh.com.mysabay.sdk.repository.UserRepo;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.utils.AppRxSchedulers;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.MessageUtil;
-import kh.com.mysabay.sdk.webservice.AbstractDisposableObs;
+import kh.com.mysabay.sdk.viewmodel.StoreService;
+import kh.com.mysabay.sdk.viewmodel.UserService;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -52,11 +69,16 @@ public class MySabaySDK {
     private static final String TAG = MySabaySDK.class.getSimpleName();
 
     @Inject
-    UserRepo userRepo;
+    ApolloClient apolloClient;
     @Inject
     Gson gson;
     @Inject
     AppRxSchedulers appRxSchedulers;
+
+    @Inject
+    UserService userService;
+    @Inject
+    StoreService storeService;
 
     private SharedPreferences mPreferences;
     public BaseAppComponent mComponent;
@@ -108,67 +130,81 @@ public class MySabaySDK {
             this.loginListner = listener;
         AppItem item = gson.fromJson(getAppItem(), AppItem.class);
         if (item != null) {
-            userRepo.getVerifyToken(item.appSecret, item.token).subscribeOn(appRxSchedulers.io())
-                    .observeOn(appRxSchedulers.mainThread())
-                    .subscribe(new AbstractDisposableObs<TokenVerify>(mAppContext, _networkState) {
+            _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
+            apolloClient.query(new VerifyTokenQuery(item.token)).enqueue(new ApolloCall.Callback<VerifyTokenQuery.Data>() {
+                @Override
+                public void onResponse(@NotNull Response<VerifyTokenQuery.Data> response) {
+                    apolloClient.mutate(new RefreshTokenMutation(item.refreshToken)).enqueue(new ApolloCall.Callback<RefreshTokenMutation.Data>() {
                         @Override
-                        protected void onSuccess(TokenVerify tokenVerify) {
-                            LogUtil.info(TAG, "Token is valid");
-                            userRepo.postRefreshToken(item.appSecret,item.refreshToken)
-                                    .subscribeOn(appRxSchedulers.io())
-                                    .observeOn(appRxSchedulers.mainThread()).subscribe(
-                                    new AbstractDisposableObs<RefreshTokenItem>(mAppContext, _networkState, null) {
-                                        @Override
-                                        protected void onSuccess(RefreshTokenItem refreshTokenItem) {
-                                            if (refreshTokenItem.status == 200) {
-                                                item.withToken(refreshTokenItem.data.accessToken);
-                                                item.withExpired(refreshTokenItem.data.expire);
-                                                item.withRefreshToken(refreshTokenItem.data.refreshToken);
-                                                MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
-                                                EventBus.getDefault().post(new SubscribeLogin(item.token, null));
-                                            } else
-                                                onErrors(new Error(gson.toJson(refreshTokenItem)));
-                                        }
-
-                                        @Override
-                                        protected void onErrors(@NotNull Throwable error) {
-                                            LogUtil.info(TAG, error.getMessage());
-                                        }
-                                    });
+                        public void onResponse(@NotNull Response<RefreshTokenMutation.Data> response) {
+                            if (response.getData() != null) {
+                                item.withToken(response.getData().sso_refreshToken().accessToken());
+                                item.withExpired(response.getData().sso_refreshToken().expire());
+                                item.withRefreshToken(response.getData().sso_refreshToken().refreshToken());
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                                        MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
+                                        EventBus.getDefault().post(new SubscribeLogin(item.token, null));
+                                    }
+                                });
+                            } else {
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                                        LogUtil.info("Data is null", "Error");
+                                    }
+                                });
+                            }
                         }
 
                         @Override
-                        protected void onErrors(Throwable error) {
-                            LogUtil.info(TAG, "Token is invalid");
-                            userRepo.postRefreshToken(item.appSecret,item.refreshToken)
-                                    .subscribeOn(appRxSchedulers.io())
-                                    .observeOn(appRxSchedulers.mainThread()).subscribe(
-                                    new AbstractDisposableObs<RefreshTokenItem>(mAppContext, _networkState, null) {
-                                        @Override
-                                        protected void onSuccess(RefreshTokenItem refreshTokenItem) {
-                                            if (refreshTokenItem.status == 200) {
-                                                item.withToken(refreshTokenItem.data.accessToken);
-                                                item.withExpired(refreshTokenItem.data.expire);
-                                                item.withRefreshToken(refreshTokenItem.data.refreshToken);
-                                                MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
-                                                EventBus.getDefault().post(new SubscribeLogin(item.token, null));
-                                            } else
-                                                onErrors(new Error(gson.toJson(refreshTokenItem)));
-                                        }
-
-                                        @Override
-                                        protected void onErrors(@NotNull Throwable error) {
-                                            LogUtil.info(TAG, error.getMessage());
-                                            mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
-                                        }
-                                    });
+                        public void onFailure(@NotNull ApolloException e) {
+                            _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                            EventBus.getDefault().post(new SubscribeLogin(null, e));
+                            LogUtil.info(TAG, e.getMessage());
                         }
                     });
+                }
+
+                @Override
+                public void onFailure(@NotNull ApolloException e) {
+                    apolloClient.mutate(new RefreshTokenMutation(item.refreshToken)).enqueue(new ApolloCall.Callback<RefreshTokenMutation.Data>() {
+                        @Override
+                        public void onResponse(@NotNull Response<RefreshTokenMutation.Data> response) {
+                            item.withToken(response.getData().sso_refreshToken().accessToken());
+                            item.withExpired(response.getData().sso_refreshToken().expire());
+                            item.withRefreshToken(response.getData().sso_refreshToken().refreshToken());
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                                    MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
+                                    EventBus.getDefault().post(new SubscribeLogin(item.token, null));
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onFailure(@NotNull ApolloException e) {
+                            LogUtil.info(TAG, e.getMessage());
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                                    mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+                                }
+                            });
+                        }
+                    });
+                }
+            });
         } else {
             mAppContext.startActivity(new Intent(mAppContext, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
         }
     }
-
 
     /**
      * validate if user login
@@ -182,20 +218,43 @@ public class MySabaySDK {
     public void logout() {
         AppItem item = gson.fromJson(getAppItem(), AppItem.class);
         if (item != null) {
-            userRepo.logout(item.appSecret, item.refreshToken, "true").subscribeOn(appRxSchedulers.io())
-                    .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<LogoutResponseItem>(mAppContext, _networkState) {
+          logoutWithGraphQl(item.refreshToken);
+        }
+    }
+
+    public void logoutWithGraphQl(String refreshToken) {
+        _networkState.setValue(new NetworkState(NetworkState.Status.LOADING));
+            apolloClient.mutate(new DeleteTokenMutation(refreshToken)).enqueue(new ApolloCall.Callback<DeleteTokenMutation.Data>() {
                 @Override
-                protected void onSuccess(LogoutResponseItem logoutResponseItem) {
-                    saveAppItem("");
-                    LogUtil.error(TAG, logoutResponseItem.data);
+                public void onResponse(@NotNull Response<DeleteTokenMutation.Data> response) {
+                    if (response.getData() != null) {
+                        clearAppItem();
+                        if (LoginManager.getInstance() != null) {
+                            LogUtil.info("Facebook", "Logout");
+                            LoginManager.getInstance().logOut();
+                        }
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            }
+                        });
+                    } else {
+                        LogUtil.info("Logout", "null");
+                    }
                 }
 
                 @Override
-                protected void onErrors(Throwable error) {
-                    LogUtil.error(TAG, error.getLocalizedMessage());
+                public void onFailure(@NotNull ApolloException e) {
+                    LogUtil.info("OnError", e.toString());
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                        }
+                    });
                 }
             });
-        }
     }
 
     /**
@@ -205,26 +264,44 @@ public class MySabaySDK {
      */
     public void getUserProfile(UserInfoListener listener) {
         AppItem item = gson.fromJson(getAppItem(), AppItem.class);
-        userRepo.getUserProfile(item.appSecret, item.token).subscribeOn(appRxSchedulers.io())
-                .observeOn(appRxSchedulers.mainThread()).subscribe(new AbstractDisposableObs<UserProfileItem>(mAppContext) {
+        apolloClient.query(new UserProfileQuery()).toBuilder()
+                .requestHeaders(RequestHeaders.builder()
+                        .addHeader("Authorization", "Bearer " + item.token).build())
+                .build()
+                .enqueue(new ApolloCall.Callback<UserProfileQuery.Data>() {
             @Override
-            protected void onSuccess(UserProfileItem userProfileItem) {
-                if (listener != null) {
-                    if (userProfileItem.status == 200) {
-                        item.withUuid(userProfileItem.data.uuid);
-                        item.withMySabayUserId(userProfileItem.data.mysabayUserId);
-                        MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
-                        listener.userInfo(gson.toJson(userProfileItem));
-                    } else
-                        onErrors(new Error(gson.toJson(userProfileItem)));
+            public void onResponse(@NotNull Response<UserProfileQuery.Data> response) {
+                if (response.getData() != null) {
+                    if (listener != null) {
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
+                                listener.userInfo(gson.toJson(response.getData().sso_userProfile()));
+                            }
+                        });
+                    } else {
+                        onFailure(new ApolloException("UserInfoListener required!!!"));
+                    }
                 } else {
-                    onErrors(new NullPointerException("UserInfoListener required!!!"));
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                           listener.userInfo(null);
+                        }
+                    });
                 }
             }
 
             @Override
-            protected void onErrors(@NotNull Throwable error) {
-                LogUtil.error(TAG, error.getLocalizedMessage());
+            public void onFailure(@NotNull ApolloException e) {
+                LogUtil.info("Error", e.getMessage());
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                    }
+                });
             }
         });
     }
@@ -243,22 +320,30 @@ public class MySabaySDK {
             MessageUtil.displayToast(mAppContext, "You need to login first");
             return;
         }
-        userRepo.getVerifyToken(appItem.appSecret, appItem.token).subscribeOn(appRxSchedulers.io())
-                .observeOn(appRxSchedulers.mainThread())
-                .subscribe(new AbstractDisposableObs<TokenVerify>(mAppContext, _networkState) {
 
+        apolloClient.query(new VerifyTokenQuery(appItem.token)).enqueue(new ApolloCall.Callback<VerifyTokenQuery.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<VerifyTokenQuery.Data> response) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
-                    protected void onSuccess(TokenVerify tokenVerify) {
-                        LogUtil.info(TAG, tokenVerify.message);
+                    public void run() {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
                         mAppContext.startActivity(new Intent(mAppContext, StoreActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
                     }
+                });
+            }
 
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
-                    protected void onErrors(Throwable error) {
-                        LogUtil.info(TAG, error.getMessage());
+                    public void run() {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
                         MessageUtil.displayToast(mAppContext, "Token is invalid");
                     }
                 });
+            }
+        });
     }
 
     /**
@@ -266,31 +351,40 @@ public class MySabaySDK {
      */
     public void refreshToken(RefreshTokenListener listener) {
         AppItem item = gson.fromJson(getAppItem(), AppItem.class);
-        userRepo.postRefreshToken(item.appSecret,item.refreshToken)
-                .subscribeOn(appRxSchedulers.io())
-                .observeOn(appRxSchedulers.mainThread()).subscribe(
-                new AbstractDisposableObs<RefreshTokenItem>(mAppContext, _networkState, null) {
-                    @Override
-                    protected void onSuccess(RefreshTokenItem refreshTokenItem) {
-                        if (listener != null) {
-                            if (refreshTokenItem.status == 200) {
-                                item.withToken(refreshTokenItem.data.accessToken);
-                                item.withExpired(refreshTokenItem.data.expire);
-                                item.withRefreshToken(refreshTokenItem.data.refreshToken);
-                                MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
-                                listener.refreshSuccess(refreshTokenItem.data.refreshToken);
-                            } else
-                                onErrors(new Error(gson.toJson(refreshTokenItem)));
-                        } else {
-                            onErrors(new NullPointerException("RefreshTokenListener required!!!"));
-                        }
-                    }
 
+        apolloClient.mutate(new RefreshTokenMutation(item.refreshToken)).enqueue(new ApolloCall.Callback<RefreshTokenMutation.Data>() {
+            @Override
+            public void onResponse(@NotNull Response<RefreshTokenMutation.Data> response) {
+                LogUtil.info("Success", response.getData().toString());
+                if (listener != null) {
+                    item.withToken(response.getData().sso_refreshToken().accessToken());
+                    item.withExpired(response.getData().sso_refreshToken().expire());
+                    item.withRefreshToken(response.getData().sso_refreshToken().refreshToken());
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _networkState.setValue(new NetworkState(NetworkState.Status.SUCCESS));
+                            MySabaySDK.getInstance().saveAppItem(gson.toJson(item));
+                            listener.refreshSuccess(response.getData().sso_refreshToken().refreshToken());
+                        }
+                    });
+                } else {
+                    onFailure(new ApolloException("RefreshTokenListener required!!!"));
+                }
+            }
+
+            @Override
+            public void onFailure(@NotNull ApolloException e) {
+                LogUtil.info("OnError", e.toString());
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
-                    protected void onErrors(@NotNull Throwable error) {
-                        if (listener != null) listener.refreshFailed(error);
+                    public void run() {
+                        _networkState.setValue(new NetworkState(NetworkState.Status.ERROR));
+                        if (listener != null) listener.refreshFailed(e);
                     }
                 });
+            }
+        });
     }
 
     /**
@@ -358,6 +452,12 @@ public class MySabaySDK {
         editor.apply();
     }
 
+    public void clearAppItem() {
+        SharedPreferences.Editor editor = getPreferences().edit();
+        editor.remove(Globals.EXT_KEY_APP_ITEM);
+        editor.commit();
+    }
+
     public String getAppItem() {
         return getPreferences().getString(Globals.EXT_KEY_APP_ITEM, null);
     }
@@ -376,15 +476,73 @@ public class MySabaySDK {
         return mSdkConfiguration;
     }
 
-    public void setSdkConfiguration(SdkConfiguration mSdkConfiguration) {
-        mSdkConfiguration = mSdkConfiguration;
+    /**
+     *  Create Tracker instance
+     */
+    private Tracker getTracker(Context context) {
+        return ((MatomoApplication) context.getApplicationContext()).getTracker();
+    }
+
+    /**
+     * track screen views
+     */
+    public void trackPageView(Context context, String path, String title) {
+        TrackHelper.track().screen("android" + path).title("android" + title).with(getTracker(context));
+    }
+
+    /**
+     * track events
+     */
+    public void trackEvents(Context context, String category, String action, String name) {
+        TrackHelper.track().event("android-" + category, action).name(name).with(getTracker(context));
+    }
+
+    public void setCustomUserId(Context context, String userId) {
+        getTracker(context).setUserId(userId);
+    }
+
+    public void setEcommerce(Context context) {
+        EcommerceItems items = new EcommerceItems();
+        items.addItem(new EcommerceItems.Item("sku").name("product").category("category").price(2000).quantity(1));
+
+        TrackHelper.track().order("orderId2", 2200).subTotal(2000).tax(200).shipping(0).discount(0).items(items).with(getTracker(context));
+    }
+
+    public String appSecret() {
+        return mSdkConfiguration.isSandBox ? "9c85c50a4362f687cd4507771ba81db5cf50eaa0b3008f4f943f77ba3ac6386b" : "d41faee946f531794d18a152eafeb5fd8fc81ce4de520e97fcfe41fefdd0381c";
     }
 
     public String userApiUrl() {
-        return mSdkConfiguration.isSandBox ? "https://user.testing.mysabay.com/" : "https://user.mysabay.com/";
+        return mSdkConfiguration.isSandBox ? "https://gateway.master.sabay.com/graphql/" : "https://user.mysabay.com/";
     }
 
     public String storeApiUrl() {
         return mSdkConfiguration.isSandBox ? "https://store.testing.mysabay.com/" : "https://store.mysabay.com/";
+    }
+
+    public String serviceCode() {
+        return mSdkConfiguration.serviceCode;
+    }
+
+    // provided function
+
+    public void loginWithPhoneNumber(String phoneNumber, DataCallback<LoginWithPhoneMutation.Sso_loginPhone> dataCallback) {
+        userService.loginWithPhoneNumber(phoneNumber,  dataCallback);
+    }
+
+    public void verifyOTPCode(String phoneNumber, String otpCode, DataCallback<VerifyOtpCodMutation.Sso_verifyOTP> dataCallback) {
+        userService.verifyOTPCode(phoneNumber, otpCode, dataCallback);
+    }
+
+    public void getStoreFromServer(String serviceCode, String token, DataCallback<GetProductsByServiceCodeQuery.Store_listProduct> dataCallback) {
+        storeService.getShopFromServerGraphQL(serviceCode, token, dataCallback);
+    }
+
+    public void getUserInfo(String token, DataCallback<UserProfileQuery.Sso_userProfile> dataCallback) {
+        userService.getUserProfile(token, dataCallback);
+    }
+
+    public void loginWithMySabay(String username, String password, DataCallback<LoginWithMySabayMutation.Sso_loginMySabay> dataCallback) {
+        userService.loginWithMySabayAccount(username, password, dataCallback);
     }
 }

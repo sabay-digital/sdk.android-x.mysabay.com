@@ -1,19 +1,20 @@
 package kh.com.mysabay.sdk.ui.activity;
 
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.View;
-
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+import android.view.View;
+
+import com.facebook.FacebookSdk;
 
 import org.apache.commons.lang3.StringUtils;
-
 import javax.inject.Inject;
 
 import kh.com.mysabay.sdk.Globals;
@@ -23,8 +24,10 @@ import kh.com.mysabay.sdk.base.BaseActivity;
 import kh.com.mysabay.sdk.di.component.UserComponent;
 import kh.com.mysabay.sdk.ui.fragment.LoginFragment;
 import kh.com.mysabay.sdk.ui.fragment.MySabayLoginFm;
+import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 public class LoginActivity extends BaseActivity {
 
@@ -33,6 +36,7 @@ public class LoginActivity extends BaseActivity {
     private static final int DELAY = 1000;
 
     private FragmentManager mManager;
+    private VerifiedFragment verifiedFragment;
     private Handler mHandler;
 
     // Reference to the main graph
@@ -58,6 +62,30 @@ public class LoginActivity extends BaseActivity {
         loginActivity = this;
         viewModel = ViewModelProviders.of(this, viewModelFactory).get(UserApiVM.class);
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            verifiedFragment = (VerifiedFragment) getSupportFragmentManager().getFragment(savedInstanceState, "myFragmentName");
+        } else {
+            verifiedFragment =  new VerifiedFragment();
+        }
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (verifiedFragment != null) {
+            if (verifiedFragment.isAdded()) {
+                getSupportFragmentManager().putFragment(outState, VerifiedFragment.TAG, verifiedFragment);
+            }
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -78,7 +106,7 @@ public class LoginActivity extends BaseActivity {
 
     @Override
     public void assignValues() {
-        if (mDeepLink != null && StringUtils.contains(mDeepLink.toString(), "user.testing.mysabay.com/api/v1.4/user/mysabay/login/deeplink"))
+        if (mDeepLink != null && StringUtils.contains(mDeepLink.toString(), MySabaySDK.getInstance().userApiUrl() + Constant.mySabayDeepLink))
             initAddFragment(MySabayLoginFm.newInstance(mDeepLink.toString()), MySabayLoginFm.TAG);
         else initAddFragment(LoginFragment.newInstance(), LoginFragment.TAG);
     }

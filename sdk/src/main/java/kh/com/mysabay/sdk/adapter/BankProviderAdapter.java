@@ -1,17 +1,16 @@
 package kh.com.mysabay.sdk.adapter;
 
 import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import android.view.LayoutInflater;
+import android.view.ViewGroup;
 
 import java.util.List;
 
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.callback.OnRcvItemClick;
-import kh.com.mysabay.sdk.pojo.thirdParty.Data;
+import kh.com.mysabay.sdk.pojo.mysabay.ProviderResponse;
 import kh.com.mysabay.sdk.ui.holder.BankProviderVH;
 
 /**
@@ -20,12 +19,12 @@ import kh.com.mysabay.sdk.ui.holder.BankProviderVH;
  */
 public class BankProviderAdapter extends RecyclerView.Adapter<BankProviderVH> {
 
-    private List<Data> dataList;
+    private List<ProviderResponse> dataList;
     private LayoutInflater mInflater;
     private OnRcvItemClick mListener;
     private Context mContext;
 
-    public BankProviderAdapter(Context context, List<Data> dataList, OnRcvItemClick listener) {
+    public BankProviderAdapter(Context context, List<ProviderResponse> dataList, OnRcvItemClick listener) {
         this.mContext = context;
         this.dataList = dataList;
         this.mInflater = LayoutInflater.from(context);
@@ -40,9 +39,10 @@ public class BankProviderAdapter extends RecyclerView.Adapter<BankProviderVH> {
 
     @Override
     public void onBindViewHolder(@NonNull BankProviderVH holder, int position) {
-        Data item = dataList.get(position);
-        holder.setBankName(item.serviceName);
-        holder.showBankIcon(mContext, item.logo);
+        ProviderResponse item = dataList.get(position);
+        holder.setBankName(item.name);
+        holder.showBankIcon(mContext, item.info.logo);
+        holder.setBonus(item.label);
         holder.view.viewBankItem.setOnClickListener(v -> {
             if (mListener != null) mListener.onItemClick(item);
         });

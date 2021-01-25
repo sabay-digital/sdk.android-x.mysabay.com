@@ -1,120 +1,226 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/view_main_login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fillViewport="true"
         android:background="@color/colorBackground"
         tools:context=".ui.activity.LoginActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.activity.LoginActivity">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/padding_20"
             android:layout_marginEnd="@dimen/padding_20"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_close" />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/img_logo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/guideline"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@mipmap/ic_mysabay" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guideline"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="272dp" />
-
-        <androidx.appcompat.widget.LinearLayoutCompat
-            android:id="@+id/view_login"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_my_sabay_app_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/padding_35"
-                android:textAllCaps="true"
-                android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
-                android:textStyle="bold"
-                app:textAllCaps="true" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txt_input_phone"
-                style="@style/SdkAppTheme.MyStyleOutlineBox"
+            android:layout_alignParentEnd="true"
+            android:background="@null"
+            android:src="@drawable/ic_close"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="350dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/padding_35"
-                android:focusedByDefault="true"
+                android:layout_height="match_parent"
                 android:gravity="center"
-                android:hint="@string/phone_number"
-                app:boxStrokeColor="@color/text_input_bg"
-                app:hintTextAppearance="@style/MyAppearanceBody1.Primary">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/edt_phone"
-                    android:layout_width="match_parent"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/img_logo"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/guideline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@mipmap/sabay_account" />
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tv_my_sabay_app_name"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:focusable="true"
-                    android:fontFamily="@font/font_battambang_regular"
-                    android:inputType="phone"
-                    android:singleLine="true"
-                    android:textColor="@color/colorYellow"
-                    android:textCursorDrawable="@null"
-                    app:hintTextAppearance="@style/MyAppearanceBody1.Primary" />
-            </com.google.android.material.textfield.TextInputLayout>
+                    android:layout_gravity="center"
+                    android:textAllCaps="true"
+                    android:layout_marginTop="@dimen/padding_20"
+                    android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
+                    android:textStyle="bold"
+                    app:textAllCaps="true" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_login"
-                style="@style/ButtonPrimary"
-                android:layout_width="200dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/padding_10"
-                android:fontFamily="@font/font_battambang_regular"
-                android:gravity="center"
-                android:stateListAnimator="@null"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
-                android:text="@string/login"
-                android:textAppearance="@style/MyAppearanceBody1" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="50dp">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number"
+                    android:textColor="@color/secondary"
+                    android:layout_marginStart="30dp"
+                    android:paddingBottom="@dimen/padding_5"
+                    android:textSize="@dimen/font_size_title"
+                    />
+                            <androidx.appcompat.widget.LinearLayoutCompat
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/padding_35"
+                                android:padding="0dp">
+                                <androidx.appcompat.widget.LinearLayoutCompat
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:background="@drawable/spinner_bg"
+                                    style="@style/SdkAppTheme.MyStyleOutlineBox"
+                                    android:paddingRight="-10dp"
+                                    android:layout_gravity="center"
+                                    android:layout_marginStart="30dp">
+                                    <Spinner
+                                        android:id="@+id/spinner_countries"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:gravity="center_vertical"
+                                        android:padding="0dp"
+                                        android:layout_gravity="center_vertical" />
+                                </androidx.appcompat.widget.LinearLayoutCompat>
+<!--                                <android.support.design.widget.TextInputEditText-->
+<!--                                    android:id="@+id/edt_phone"-->
+<!--                                    android:layout_width="match_parent"-->
+<!--                                    android:layout_height="wrap_content"-->
+<!--                                    android:focusable="true"-->
+<!--                                    android:fontFamily="@font/font_battambang_regular"-->
+<!--                                    android:layout_marginStart="@dimen/padding_10"-->
+<!--                                    android:padding="@dimen/padding_8"-->
+<!--                                    android:layout_marginEnd="40dp"-->
+<!--                                    android:inputType="phone"-->
+<!--                                    android:singleLine="true"-->
+<!--                                    android:textColor="@color/colorYellow"-->
+<!--                                    android:imeOptions = "flagNoFullscreen"-->
+<!--                                    android:background="@drawable/spinner_bg"-->
+<!--                                    android:textCursorDrawable="@null"-->
+<!--                                    app:hintTextAppearance="@style/MyAppearanceBody1.Primary" />-->
+                                <com.santalu.maskedittext.MaskEditText
+                                    android:id="@+id/edt_phone"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="phone"
+                                    android:singleLine="true"
+                                    android:padding="@dimen/padding_10"
+                                    android:layout_marginStart="@dimen/padding_10"
+                                    android:layout_marginEnd="30dp"
+                                    android:background="@drawable/spinner_bg"
+                                    android:textColor="@color/secondary"
+                                    android:textCursorDrawable="@null"
+                                    android:imeOptions = "flagNoFullscreen"
+                                    app:hintTextAppearance="@style/MyAppearanceBody1.Primary"
+                                    app:mask="### ### ### ##"/>
+                            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_login_mysabay"
-                style="@style/ButtonPrimary"
-                android:layout_width="200dp"
-                android:layout_gravity="center"
-                android:fontFamily="@font/font_battambang_regular"
-                android:gravity="center"
-                android:stateListAnimator="@null"
-                android:text="@string/login_mysabay"
-                android:textAppearance="@style/MyAppearanceBody1" />
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center|bottom"
+                    android:layout_alignParentBottom="true"
+                    android:paddingBottom="@dimen/padding_20"
+                    android:layout_marginBottom="@dimen/padding_30"
+                    android:layout_marginTop="@dimen/padding_10"
+                    android:layout_marginStart="@dimen/padding_20"
+                    android:layout_marginEnd="@dimen/padding_20"
+                    android:orientation="vertical">
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btn_login"
+                                style="@style/ButtonPrimary"
+                                android:layout_width="250dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center"
+                                android:layout_marginBottom="@dimen/padding_10"
+                                android:fontFamily="@font/font_battambang_regular"
+                                android:gravity="center"
+                                android:paddingStart="20dp"
+                                android:paddingEnd="20dp"
+                                android:stateListAnimator="@null"
+                                android:text="@string/login"
+                                android:textAppearance="@style/MyAppearanceBody1" />
 
-        </androidx.appcompat.widget.LinearLayoutCompat>
+                            <View
+                                android:id="@+id/divider2"
+                                android:layout_width="250dp"
+                                android:layout_height="1dp"
+                                android:layout_gravity="center_horizontal"
+                                android:layout_marginBottom="@dimen/padding_10"
+                                android:background="?android:attr/listDivider"
+                                android:backgroundTint="@color/colorYellow" />
 
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btn_login_mysabay"
+                                style="@style/ButtonPrimary"
+                                android:layout_width="250dp"
+                                android:layout_height="40dp"
+                                android:layout_gravity="center"
+                                android:fontFamily="@font/font_battambang_regular"
+                                android:gravity="center"
+                                android:layout_marginBottom="@dimen/padding_10"
+                                android:stateListAnimator="@null"
+                                android:text="@string/login_mysabay"
+                                android:textAppearance="@style/MyAppearanceBody1" />
+<!--                    <com.facebook.login.widget.LoginButton-->
+<!--                        android:id="@+id/btn_Login_fb"-->
+<!--                        android:layout_width="200dp"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:visibility="visible"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:layout_marginTop="@dimen/padding_15"-->
+<!--                        android:layout_marginBottom="@dimen/padding_30" />-->
+                    <com.facebook.login.widget.LoginButton
+                        android:id="@+id/btn_Login_fb"
+                        android:layout_width="250dp"
+                        android:layout_height="40dp"
+                        android:layout_marginBottom="@dimen/padding_10"
+                        android:visibility="gone" />
+
+                    <androidx.appcompat.widget.AppCompatButton
+                        style="@style/ButtonPrimary"
+                        android:layout_width="250dp"
+                        android:layout_height="40dp"
+                        android:id="@+id/fb"
+                        android:textAllCaps="false"
+                        android:gravity="center_vertical"
+                        android:paddingEnd="20dp"
+                        android:drawableLeft="@drawable/image_button"
+                        android:drawablePadding="17dp"
+                        android:stateListAnimator="@null"
+                        android:text="Login with facebook"
+                        android:textAppearance="@style/MyAppearanceBody1" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true">
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/desc"
+                    android:layout_width="match_parent"
+                    android:textColor="@color/secondary"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:gravity="bottom|center"
+                    android:padding="@dimen/padding_10"
+                    android:layout_marginBottom="@dimen/padding_10"
+                    android:text="@string/logging_with_phone_number_desc" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </RelativeLayout>
         <include
             android:id="@+id/view_empty"
             layout="@layout/view_empty" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

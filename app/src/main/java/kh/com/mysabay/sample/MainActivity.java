@@ -1,9 +1,12 @@
 package kh.com.mysabay.sample;
 
-import android.os.Bundle;
-import android.view.View;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import android.view.View;
+
+import com.google.gson.Gson;
 
 import kh.com.mysabay.sample.databinding.ActivityMainBinding;
 import kh.com.mysabay.sdk.Globals;
@@ -11,11 +14,13 @@ import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.callback.LoginListener;
 import kh.com.mysabay.sdk.callback.PaymentListener;
 import kh.com.mysabay.sdk.callback.RefreshTokenListener;
+import kh.com.mysabay.sdk.pojo.googleVerify.GoogleVerifyBody;
+import kh.com.mysabay.sdk.pojo.onetime.Data;
 import kh.com.mysabay.sdk.pojo.payment.PaymentResponseItem;
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
-import kh.com.mysabay.sdk.utils.LogUtil;
+import kh.com.mysabay.sdk.pojo.profile.UserProfileItem;
 import kh.com.mysabay.sdk.utils.MessageUtil;
-import kh.com.mysabay.sdk.pojo.onetime.Data;
+import kh.com.mysabay.sdk.utils.LogUtil;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,22 +29,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MySabaySDK.getInstance().trackPageView(this, "/home-screen", "/home-screen");
         mViewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         mViewBinding.viewPb.setVisibility(View.GONE);
         findViewById(R.id.show_login_screen).setOnClickListener(v -> {
             mViewBinding.viewPb.setVisibility(View.VISIBLE);
-            MySabaySDK.getInstance().showLoginView(new LoginListener() {
-                @Override
-                public void loginSuccess(String accessToken) {
-                    MessageUtil.displayToast(v.getContext(), "accessToken = " + accessToken);
-                    mViewBinding.viewPb.setVisibility(View.GONE);
-                }
+                MySabaySDK.getInstance().showLoginView(new LoginListener() {
+                    @Override
+                    public void loginSuccess(String accessToken) {
+                        MessageUtil.displayToast(v.getContext(), "accessToken = " + accessToken);
+                        mViewBinding.viewPb.setVisibility(View.GONE);
+                    }
 
-                @Override
-                public void loginFailed(Object error) {
-                    MessageUtil.displayToast(v.getContext(), "error = " + error);
-                }
-            });
+                    @Override
+                    public void loginFailed(Object error) {
+                        MessageUtil.displayToast(v.getContext(), "error = " + error);
+                    }
+                });
         });
 
         mViewBinding.showPaymentPreAuth.setOnClickListener(new View.OnClickListener() {
@@ -49,23 +56,35 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void purchaseSuccess(SubscribePayment data) {
                         if(data.getType().equals(Globals.APP_IN_PURCHASE)) {
-                            LogUtil.info(data.getType(), data.data.toString());
-                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                            GoogleVerifyBody receipt = (GoogleVerifyBody) data.data;
+                            LogUtil.info("Data from", new Gson().toJson(data.data));
+                            LogUtil.info("data", receipt.receipt.data.toString());
+                            LogUtil.info("signature", receipt.receipt.signature.toString());
+                            LogUtil.info("Profile balance gold", new Gson().toJson(receipt));
+                            MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
                         } else if (data.getType().equals(Globals.MY_SABAY)) {
-                            if (data.data instanceof PaymentResponseItem) {
-                                PaymentResponseItem d = (PaymentResponseItem) data.data;
-                                LogUtil.info("data-payment", d.data.packageId);
-                            }
-                            LogUtil.info(data.getType(), data.data.toString());
-                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                            PaymentResponseItem dataPayment = (PaymentResponseItem) data.data;
+                            LogUtil.info("data", new Gson().toJson(data.data));
+                            LogUtil.info("satus",  dataPayment.status.toString());
+                            LogUtil.info("amount",  dataPayment.amount);
+                            LogUtil.info("hash",  dataPayment.hash);
+                            LogUtil.info("PackageId",  dataPayment.packageId);
+                            LogUtil.info("message",  dataPayment.message);
+                            LogUtil.info("pspAssetCode",  dataPayment.pspAssetCode);
+                            LogUtil.info("label",  dataPayment.label);
+                            MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
                         } else {
-                            if (data.data instanceof Data) {
-                                Data dataPayment = (Data) data.data;
-                                LogUtil.info(data.getType(), dataPayment.toString());
-                            }
-                            MessageUtil.displayToast(v.getContext(), data.getType() + " Payment Completed");
+                            Data dataPayment = (Data) data.data;
+                            LogUtil.info(data.getType(), new Gson().toJson(data.data));
+                            LogUtil.info("hash",  dataPayment.hash);
+                            LogUtil.info("amount",  dataPayment.amount);
+                            LogUtil.info("packageId",  dataPayment.packageId);
+                            LogUtil.info("assetCode", dataPayment.assetCode);
+                            MessageUtil.displayDialog(v.getContext(), new Gson().toJson(data.data));
+
                         }
                     }
+
                     @Override
                     public void purchaseFailed(Object dataError) {
                         MessageUtil.displayToast(v.getContext(), "error = " + dataError);
@@ -91,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                     MySabaySDK.getInstance().refreshToken(new RefreshTokenListener() {
                         @Override
                         public void refreshSuccess(String token) {
+                            LogUtil.info("token", token);
                             MessageUtil.displayToast(v.getContext(), "refresh token = " + token);
                         }
 
@@ -126,14 +146,34 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (MySabaySDK.getInstance().isLogIn()) {
                     MySabaySDK.getInstance().getUserProfile(info -> {
-                        LogUtil.info("test", info);
-                        MessageUtil.displayDialog(v.getContext(), info);
+                        if (info != null) {
+                            UserProfileItem userProfile = new Gson().fromJson(info, UserProfileItem.class);
+                            LogUtil.info("Profile userId", userProfile.userID.toString());
+                            LogUtil.info("Profile name", userProfile.profileName);
+                            LogUtil.info("Profile localPayEnabled", userProfile.localPayEnabled.toString());
+                            LogUtil.info("Profile coin balance", userProfile.coin.toString());
+                            LogUtil.info("Profile gold balance", userProfile.gold.toString());
+                            LogUtil.info("Profile persona", userProfile.persona.toString());
+                            MessageUtil.displayDialog(v.getContext(), info);
+                        } else {
+                            MessageUtil.displayDialog(v.getContext(), getString(R.string.msg_can_not_connect_server));
+                        }
                     });
                 } else {
                     MessageUtil.displayToast(v.getContext(), "Need user login");
                 }
             }
         });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -11,9 +13,6 @@ import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,6 +27,7 @@ import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.ui.activity.LoginActivity;
 import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.viewmodel.UserApiVM;
+import kh.com.mysabay.sdk.webservice.Constant;
 
 /**
  * Created by Tan Phirum on 3/10/20
@@ -86,6 +86,8 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
             @Nullable
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+
+                LogUtil.info("Scheme URL", request.getUrl().toString());
                 LogUtil.debug(TAG, "url =" + request.getUrl() + " token =" + request.getUrl().getQueryParameter("access_token"));
                 String token = request.getUrl().getQueryParameter("access_token");
                 String refreshToken = request.getUrl().getQueryParameter("refresh_token");
@@ -93,11 +95,11 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
 
                 if (!StringUtils.isBlank(token) && getActivity() != null) {
                     if (!StringUtils.isBlank(token) && !StringUtils.isBlank(refreshToken)) {
-                        AppItem appItem = new AppItem(MySabaySDK.getInstance().getSdkConfiguration().appSecret, token, refreshToken, "", Long.parseLong(expire));
+                        AppItem appItem = new AppItem(null, null, token, refreshToken, "", Long.parseLong(expire));
                         String encrypted = gson.toJson(appItem);
                         MySabaySDK.getInstance().saveAppItem(encrypted);
                     }
-                    getActivity().runOnUiThread(() -> viewModel.postToGetUserProfile(getActivity(), token));
+                    getActivity().runOnUiThread(() -> viewModel.getUserProfile(getActivity(), token));
                 }
 
                 return super.shouldInterceptRequest(view, request);
@@ -112,6 +114,7 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                LogUtil.info("URL", url);
                 mViewBinding.progressBar.setVisibility(View.GONE);
             }
         });
@@ -121,9 +124,8 @@ public class MySabayLoginFm extends BaseFragment<FmMysabayLoginBinding, UserApiV
     public void assignValues() {
         if (StringUtils.isBlank(mDeepLink)) {
             Map<String, String> header = new HashMap<>();
-            header.put("app_secret", MySabaySDK.getInstance().getSdkConfiguration().appSecret);
-
-            mViewBinding.wv.loadUrl("https://user.testing.mysabay.com/api/v1.4/user/mysabay/login", header);
+            header.put("app_secret", MySabaySDK.getInstance().appSecret());
+            mViewBinding.wv.loadUrl(MySabaySDK.getInstance().userApiUrl() + Constant.mySabayUrl, header);
         } else
             mViewBinding.wv.loadUrl(mDeepLink);
     }

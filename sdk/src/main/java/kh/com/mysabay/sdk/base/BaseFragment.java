@@ -1,26 +1,26 @@
 package kh.com.mysabay.sdk.base;
 
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import androidx.databinding.ViewDataBinding;
 import android.os.Bundle;
+import androidx.annotation.LayoutRes;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.annotation.VisibleForTesting;
+import androidx.test.espresso.IdlingResource;
+import androidx.fragment.app.Fragment;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.annotation.LayoutRes;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.VisibleForTesting;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ViewDataBinding;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
-import androidx.test.espresso.IdlingResource;
 
 import com.google.gson.Gson;
 
@@ -223,20 +223,19 @@ public abstract class BaseFragment<D extends ViewDataBinding, V extends ViewMode
 
     public int textColorCode() {
         int colorCode;
-        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Dark) {
-            colorCode = 0xFF000000;
-        } else
+        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light) {
             colorCode = 0xFFFFFFFF;
+        } else
+            colorCode = 0xFF000000;
         return colorCode;
     }
 
     public int colorCodeBackground() {
         int colorCode;
-        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Dark) {
-            colorCode = R.color.colorBackground;
-        } else
+        if (MySabaySDK.getInstance().getSdkConfiguration().sdkTheme == SdkTheme.Light) {
             colorCode = R.color.colorWhite;
+        } else
+            colorCode = R.color.colorBackground;
         return colorCode;
     }
-
 }

@@ -2,7 +2,6 @@ package kh.com.mysabay.sdk;
 
 import android.content.Context;
 import android.os.Handler;
-
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
@@ -28,7 +27,6 @@ public class Globals {
     public static final String APP_IN_PURCHASE = "APP_IN_PURCHASE";
     public static final String MY_SABAY = "MY_SABAY";
     public static final String ONE_TIME = "ONE_TIME";
-
 
     /**
      * Method replace fragment with set title to activity and add backpress

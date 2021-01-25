@@ -3,36 +3,40 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+    <RelativeLayout
         android:id="@+id/view_main_verified"
         android:fitsSystemWindows="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBackground"
-        android:gravity="center"
+        android:gravity="center_horizontal"
+        android:layout_gravity="center_horizontal"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.AppCompatImageView
+        <androidx.appcompat.widget.AppCompatImageButton
             android:id="@+id/btn_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
             android:layout_marginStart="@dimen/padding_20"
             android:layout_marginTop="@dimen/padding_20"
-            android:background="@color/colorBackground"
+            android:background="@null"
             android:padding="@dimen/padding_5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_back" />
+            android:src="@drawable/ic_back" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginTop="80dp"
+            android:layout_marginTop="56dp"
             android:paddingLeft="@dimen/padding_40"
             android:paddingRight="@dimen/padding_40"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_centerHorizontal="true">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView"
@@ -44,18 +48,19 @@
                 android:textAppearance="@style/BaseAppearanceTitle.MyAppearanceTitle"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent"
+                app:textAllCaps="true" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_show_otp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/padding_20"
-                android:textSize="@dimen/font_size_body"
                 android:layout_gravity="center"
-                android:textColor="@color/colorYellow"
+                android:layout_marginTop="@dimen/padding_20"
+                android:gravity="center"
                 android:text="@string/enter_the_otp_that_you_have_received_via_text_message"
+                android:textColor="@color/colorYellow"
+                android:textSize="@dimen/font_size_body"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/appCompatTextView" />
@@ -81,6 +86,7 @@
                 android:textColor="@color/secondary"
                 android:textIsSelectable="false"
                 android:textSize="24dp"
+                android:imeOptions = "flagNoFullscreen"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_show_otp"
@@ -92,36 +98,33 @@
                 tools:ignore="SpUsage" />
 
             <androidx.appcompat.widget.AppCompatTextView
-                android:id="@+id/tv_resend_otp"
+                android:id="@+id/tv_timer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:text="@string/resend_otp"
-                android:textColor="@android:color/white"
+                android:text="timer"
+                android:textSize="12sp"
+                android:textColor="@color/secondary"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edt_verify_code" />
 
-            <androidx.appcompat.widget.AppCompatButton
-                android:id="@+id/btn_verify"
-                style="@style/ButtonPrimary"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/tv_resend_otp"
                 android:layout_width="wrap_content"
-                android:gravity="center"
-                android:paddingStart="@dimen/padding_35"
-                android:paddingEnd="@dimen/padding_35"
-                android:text="@string/confirm"
-                android:textAppearance="@style/MyAppearanceBody1"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="@dimen/padding_20"
+                android:text="@string/resend_otp"
+                android:textColor="@color/secondary"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:stateListAnimator="@null"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_resend_otp" />
-
-            <include
-                android:id="@+id/view_empty"
-                layout="@layout/view_empty"
-                android:visibility="gone" />
-
+                app:layout_constraintTop_toBottomOf="@+id/tv_timer" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        <include
+            android:id="@+id/view_empty"
+            layout="@layout/view_empty"
+            android:visibility="visible" />
+    </RelativeLayout>
+    </androidx.core.widget.NestedScrollView>
 </layout>

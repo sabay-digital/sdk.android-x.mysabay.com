@@ -2,11 +2,10 @@ package kh.com.mysabay.sdk.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import android.view.View;
 
 import kh.com.mysabay.sdk.Globals;
 import kh.com.mysabay.sdk.MySabaySDK;

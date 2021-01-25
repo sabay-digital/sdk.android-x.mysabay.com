@@ -39,7 +39,7 @@ public class Data implements Parcelable {
     public String appSecret;
 
 
-    public final static Parcelable.Creator<Data> CREATOR = new Creator<Data>() {
+    public final static Creator<Data> CREATOR = new Creator<Data>() {
 
 
         @SuppressWarnings({
@@ -145,4 +145,6 @@ public class Data implements Parcelable {
         return 0;
     }
 
+    public static class LoginResponseItem {
+    }
 }
