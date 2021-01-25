@@ -1,8 +1,8 @@
 package kh.com.mysabay.sdk.adapter;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import java.util.LinkedList;
@@ -10,7 +10,6 @@ import java.util.List;
 
 import kh.com.mysabay.sdk.R;
 import kh.com.mysabay.sdk.callback.ShopListener;
-import kh.com.mysabay.sdk.pojo.shop.Data;
 import kh.com.mysabay.sdk.pojo.shop.ShopItem;
 import kh.com.mysabay.sdk.ui.holder.ShopItmVH;
 

@@ -1,29 +1,22 @@
 package kh.com.mysabay.sdk.ui.activity;
 
-import android.support.test.espresso.ViewAssertion;
-import android.support.test.espresso.assertion.ViewAssertions;
-import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.app.FragmentManager;
+import androidx.test.espresso.ViewAssertion;
+import androidx.test.espresso.assertion.ViewAssertions;
+import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.fragment.app.FragmentManager;
 
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-
-import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.R;
-import kh.com.mysabay.sdk.SdkConfiguration;
-import kh.com.mysabay.sdk.di.component.UserComponent;
 import kh.com.mysabay.sdk.ui.fragment.LoginFragment;
 import kh.com.mysabay.sdk.ui.fragment.VerifiedFragment;
-import kh.com.mysabay.sdk.utils.SdkTheme;
 
-import static android.support.test.espresso.Espresso.onView;
-import static org.junit.Assert.*;
+import static androidx.test.espresso.Espresso.onView;
 
 @RunWith(AndroidJUnit4.class)
 public class LoginActivityTest {

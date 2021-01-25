@@ -8,7 +8,7 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:id="@+id/view_main_login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             >
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
                 android:background="@null"
                 android:src="@drawable/ic_close"/>
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/view_login"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -39,7 +39,7 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/img_logo"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
@@ -47,7 +47,7 @@
                     android:layout_marginBottom="@dimen/padding_20"
                     app:srcCompat="@mipmap/sabay_account" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/tv_my_sabay_app_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                     android:textStyle="bold"
                     app:textAllCaps="true" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Phone Number"
@@ -67,11 +67,11 @@
                 android:paddingBottom="@dimen/padding_5"
                 android:textSize="@dimen/font_size_title"
                 />
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="0dp">
-                <android.support.v7.widget.LinearLayoutCompat
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:background="@drawable/spinner_bg"
@@ -87,7 +87,7 @@
                         android:padding="0dp"
                         android:backgroundTint="@color/secondary"
                         android:layout_gravity="center_vertical" />
-                </android.support.v7.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
 <!--                <android.support.design.widget.TextInputEditText-->
 <!--                    android:id="@+id/edt_phone"-->
 <!--                    android:layout_width="match_parent"-->
@@ -117,9 +117,9 @@
                     android:textCursorDrawable="@null"
                     app:hintTextAppearance="@style/MyAppearanceBody1.Primary"
                     app:mask="### ### ### ##"/>
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-                <android.support.v7.widget.LinearLayoutCompat
+                <androidx.appcompat.widget.LinearLayoutCompat
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center|bottom"
@@ -130,7 +130,7 @@
                     android:layout_marginEnd="@dimen/padding_20"
                     android:orientation="vertical">
 
-                    <android.support.v7.widget.AppCompatButton
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_login"
                         style="@style/ButtonPrimary"
                         android:layout_width="250dp"
@@ -154,7 +154,7 @@
                         android:background="?android:attr/listDivider"
                         android:backgroundTint="@color/colorYellow" />
 
-                    <android.support.v7.widget.AppCompatButton
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/btn_login_mysabay"
                         style="@style/ButtonPrimary"
                         android:layout_width="250dp"
@@ -187,7 +187,7 @@
                         android:layout_marginBottom="@dimen/padding_10"
                         android:visibility="gone" />
 
-                    <android.support.v7.widget.AppCompatButton
+                    <androidx.appcompat.widget.AppCompatButton
                         android:id="@+id/fb"
                         style="@style/ButtonPrimary"
                         android:layout_width="250dp"
@@ -201,7 +201,7 @@
                         android:textSize="14dp"
                         android:textAppearance="@style/MyAppearanceBody1" />
 
-                    <android.support.v7.widget.AppCompatTextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/desc"
                         android:layout_width="match_parent"
                         android:textColor="@color/secondary"
@@ -210,8 +210,8 @@
                         android:layout_marginTop="@dimen/padding_20"
                         android:gravity="bottom|center"
                         android:text="@string/logging_with_phone_number_desc" />
-                </android.support.v7.widget.LinearLayoutCompat>
-            </android.support.v7.widget.LinearLayoutCompat>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
             <include
                 android:id="@+id/view_empty"
@@ -219,6 +219,6 @@
                 android:visibility="visible" />
 
         </RelativeLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
     </RelativeLayout>
 </layout>

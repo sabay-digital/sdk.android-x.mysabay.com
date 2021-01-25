@@ -7,13 +7,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/view_main_payment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/colorBackground">
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
                 android:background="@null"
                 android:src="@drawable/ic_back" />
 
-            <android.support.v7.widget.AppCompatImageButton
+            <androidx.appcompat.widget.AppCompatImageButton
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,7 +35,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 android:src="@drawable/ic_close" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/appCompatTextView2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cd_sabayId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/padding_10">
-                    <android.support.v7.widget.AppCompatTextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_mysabayid"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                         android:layout_gravity="center_vertical"
                         android:gravity="center_vertical"
                         android:textColor="@color/colorYellow" />
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/btn_copy"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -81,9 +81,9 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:srcCompat="@drawable/ic_content_copy" />
                 </LinearLayout>
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/sabay_balance"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cd_sabayId">
-                <android.support.v7.widget.AppCompatImageView
+                <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/img_wallet"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
@@ -128,9 +128,9 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
-            </android.support.v7.widget.LinearLayoutCompat>
+            </androidx.appcompat.widget.LinearLayoutCompat>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/materialCardView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -145,7 +145,7 @@
                 app:strokeColor="@color/colorYellow"
                 app:strokeWidth="1dp">
 
-                <android.support.constraint.ConstraintLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/view_payment_detail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
                     android:paddingBottom="@dimen/padding_5"
                     android:layout_marginBottom="@dimen/padding_10">
 
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/appCompatImageView"
                         android:layout_width="30dp"
                         android:layout_height="wrap_content"
@@ -165,7 +165,7 @@
                         app:layout_constraintVertical_bias="0.066"
                         app:srcCompat="@drawable/ic_game_shop" />
 
-                    <android.support.v7.widget.AppCompatTextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_point"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -179,7 +179,7 @@
                         app:layout_constraintStart_toEndOf="@+id/appCompatImageView"
                         app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
 
-                    <android.support.v7.widget.AppCompatTextView
+                    <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/tv_price"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -192,10 +192,10 @@
                         app:layout_constraintStart_toEndOf="@+id/tv_point"
                         app:layout_constraintTop_toTopOf="@+id/appCompatImageView" />
 
-                </android.support.constraint.ConstraintLayout>
-            </android.support.design.card.MaterialCardView>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/txt_total"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
@@ -209,7 +209,7 @@
                 app:layout_constraintStart_toStartOf="@+id/divider1"
                 app:layout_constraintTop_toBottomOf="@+id/divider1" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_total"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -233,7 +233,7 @@
                 app:layout_constraintEnd_toStartOf="@id/btn_close"
                 app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_payment_option"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -264,7 +264,7 @@
                     android:background="@drawable/payment_button"
                     style="?android:attr/borderlessButtonStyle"
                     android:gravity="left|center_vertical">
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/img_mysabay_logo"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
@@ -300,7 +300,7 @@
                     android:background="@drawable/payment_button"
                     style="?android:attr/borderlessButtonStyle"
                     android:gravity="left|center_vertical">
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/img_in_app_billing_logo"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
@@ -327,7 +327,7 @@
                         android:textColor="@color/colorWhite700" />
                 </LinearLayout>
 
-                <android.support.v7.widget.AppCompatButton
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btn_pre_auth_pay"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
@@ -363,7 +363,7 @@
                     android:background="@drawable/payment_button"
                     style="?android:attr/borderlessButtonStyle"
                     android:gravity="left|center_vertical">
-                    <android.support.v7.widget.AppCompatImageView
+                    <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/img_other_payment_logo"
                         android:layout_width="35dp"
                         android:layout_height="35dp"
@@ -382,7 +382,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_pay"
                 style="@style/ButtonPrimary"
                 android:layout_width="150dp"
@@ -422,7 +422,7 @@
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="-16dp" />
 
-        </android.support.constraint.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </FrameLayout>
 </layout>

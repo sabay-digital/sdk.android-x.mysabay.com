@@ -1,7 +1,7 @@
 package kh.com.mysabay.sample;
 
 import android.content.res.Configuration;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import kh.com.mysabay.sdk.MySabaySDK;
 import kh.com.mysabay.sdk.SdkConfiguration;
 import kh.com.mysabay.sdk.SdkApplication;

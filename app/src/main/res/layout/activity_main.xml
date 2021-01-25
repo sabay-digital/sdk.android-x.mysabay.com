@@ -3,60 +3,60 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical">
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/show_login_screen"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="Login Flow" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/show_payment_pre_auth"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="Store" />
 
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_refresh_token"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="Refresh token" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_get_token"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="Get Current token" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_validate_token_expired"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:text="Validate token" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_user_profile"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="Get User Info" />
 
-            <android.support.v7.widget.AppCompatButton
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_logout"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:text="Logout" />
-        </android.support.v7.widget.LinearLayoutCompat>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
         <LinearLayout
             android:id="@+id/view_pb"
@@ -78,5 +78,5 @@
                 android:layout_gravity="center" />
         </LinearLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

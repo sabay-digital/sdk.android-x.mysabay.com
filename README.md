@@ -1,22 +1,52 @@
 # Official MySabay SDK for Android
 
+- [Official MySabay SDK for android](#official-mysabay-sdk-for-android)
+  - [Version](#version)
+  - [Create your application](#create-your-application)
+  - [MySabaySDK Sample App](#mysabaysdk-sample-app)
+  - [Installation](#installation)
+  - [Configuration](#configuration)
+  - [Integration](#integration)
+    - [Login](#login)
+      - [loginWithPhone](#loginwithphone)
+      - [verifyOtp](#verifyotp)
+      - [loginWithMySabay](#loginwithmysabay)
+      - [loginWithFacebook](#loginwithfacebook)
+    - [Verify Existing MySabay Users](#verify-existing-mysabay-users)
+      - [verifyMySabay](#verifymysabay)
+      - [checkExistingMySabayUsername](#checkexistingmysabayusername)
+      - [sendCreateMySabayWithPhoneOTP](#sendcreatemysabaywithphoneotp)
+      - [createMySabayWithPhone](#createmysabaywithphone)
+    - [Register](#register)
+      - [registerMySabayAccount](#registermysabayaccount)
+    - [Tokens](#tokens)
+      - [verifyToken](#verifytoken)
+      - [refreshTokens](#refreshtokens)
+    - [Logout](#logout)
+      - [logout](#logout-1)
+  - [Tracking](#tracking)
+    - [Functions](#functions)
+      - [trackPageView](#trackpageview)
+      - [trackEvent](#trackevent)
+      - [setCustomUserId](#setcustomuserid)
+    - [Internal tracking within the SDK (**PRIVATE INFORMATION**)](#internal-tracking-within-the-sdk-private-information)
+      - [Tracking Screens](#tracking-screens)
+      - [Tracking Events](#tracking-events)
+  - [MySabay API](#mysabay-api)
+    - [Server side validation](#server-side-validation)
+
+
+
 This is the official MySabay SDK for native Android application. To use this SDK, you can follow the guides below or download the test with the example project we have in this repository.
 
 ## Version
--Latest: 
+-Latest: 1.0.19
     - Change from rest api to graphQL gateway
     - Implement user process with graphQL gateway
     - Implement store process with graphQL gateway
     - Implement tracking with Piwik
     - Implement register with Mysabay from login
-    - Implement Login with Mysabay UI
-
-- Latest: 1.0.18  
-    - Wing payment  
-    - Check application install manually via APK or Google Play store.  
-    - Display message if user input wrong verify code.  
-    - Display loading if In-App Purchase Payment is not yet completed.  
-    - Change login logo and update checkout screen.  
+    - Implement Login with Mysabay UI 
 
 ## Create your application
 
@@ -133,7 +163,204 @@ public class MyApplication extends SdkApplication {
 > Note that in order to use the store and checkout function, the user must login first.
 > Follow the guide below for each functions provided by the SDK:
 
-## With UI
+MySabaySDK provides functions to support login, store and checkout process.
+
+Every function will return all the necessary information and an extra string at the end which includes an error message from the server. The best practice for implementation is to check whether the error message is null before completing any operations.
+
+For example:
+```java
+    MySabaySDK.getInstance().loginWithPhoneNumber("128080808", "855", new DataCallback<LoginWithPhoneMutation.Sso_loginPhone>() {
+        @Override
+        public void onSuccess(LoginWithPhoneMutation.Sso_loginPhone response) {
+            LogUtil.info("Success", response.toString());
+        }
+
+        @Override
+        public void onFailed(Object error) {
+            LogUtil.info("Error", error.toString());
+        }
+    }); 
+```
+
+### Login
+
+#### loginWithPhone
+
+Call this function when the user wants to login your application with a phone number. Calling this function will trigger an OTP to be sent.
+
+```java
+    loginWithPhoneNumber(String phoneNumber, DataCallback<LoginWithPhoneMutation.Sso_loginPhone> dataCallback) {}
+    
+    // return
+    String phoneNumber
+    Boolean verifyMySabay // You can use this boolean to check if the phone number associates with any existing MySabay account
+    String mySabayUsername // If verifyMySabay is true, you can then can MySabay username from this return
+    String error
+```
+
+#### verifyOtp
+
+Call this function right after `loginWithPhone`, which verifies the OTP with the phone number that is entered by the user.
+
+```java
+verifyOTPCode(String phoneNumber, String code, DataCallback<VerifyOtpCodMutation.Sso_verifyOTP> dataCallback)
+
+// return
+String accessToken // You can use this token as an authorization token to make requests
+String refreshToken // You can use this token to refresh your existing tokens
+String error
+```
+
+#### loginWithMySabay
+
+Call this function when the user logins with their MySabay username and password.
+
+```swift
+loginWithMySabay(String username, String password, DataCallback<LoginWithMySabayMutation.Sso_loginMySabay> dataCallback)
+
+// return
+accessToken: MSAccessToken // You can use this token as an authorization token to make requests
+refreshToken: MSRefreshToken // You can use this token to refresh your existing tokens
+error: String?
+```
+
+#### loginWithFacebook
+
+Call this function when the user logins with their Facebook account.
+
+```java
+loginWithFacebook(String token, DataCallback<LoginWithFacebookMutation.Sso_loginFacebook> dataCallback)
+
+// return
+String accessToken // You can use this token as an authorization token to make requests
+String refreshToken // You can use this token to refresh your existing tokens
+String error
+```
+
+### Verify Existing MySabay Users
+
+If the user logins with a phone number that we find associated with an existing MySabay account, `verifyMySabay` returns `true` along with their username. It is recommended that you present the user with a screen for them to enter their MySabay password and confirm that they have access to that account.
+
+If they no longer have access to that account, you should present them with an option to create a new MySabay account. In this flow, you should require the user to pick a username, password and send another OTP to verify that the number they use belong to them. In this section, we will go over the functions provided by the SDK to support this flow.
+
+#### verifyMySabay
+Call this function when you ask the user to enter their password to verify their MySabay account.
+
+```java
+verifyMySabay(String username, String password, DataCallback<VerifyMySabayMutation.Sso_verifyMySabay> dataCallback)
+
+// return
+String accessToken // You can use this token as an authorization token to make requests
+String refreshToken // You can use this token to refresh your existing tokens
+String error
+```
+
+#### checkExistingMySabayUsername
+
+Call this function to check whether the username the user picks already exists. A good practice would be to call this function just right after the user finishes typing their username.
+
+```java
+checkExistingMySabayUsername(String username, DataCallback<CheckExistingLoginQuery.Data> dataCallback)
+
+// return
+boolean usernameExist
+String error
+```
+
+#### sendCreateMySabayWithPhoneOTP
+
+Call this function after they have filled out their username and password for their new MySabay account.
+
+```java
+createMySabayWithPhoneOTP(String phoneNumber, DataCallback<SendCreateMySabayWithPhoneOTPMutation.Sso_sendCreateMySabayWithPhoneOTP> dataCallback)
+
+// return
+String phoneNumber
+boolean verifyMySabay // You can use this boolean to check if the phone number associates with any existing MySabay account
+String mySabayUsername // If verifyMySabay is true, you can then can MySabay username from this return
+String error
+```
+> Note: you should pass their username and password to the next screen where they would confirm their OTP. In that OTP screen, you can include all the information in your request.
+
+#### createMySabayWithPhone
+
+Call this function to create a new MySabay account with username, password and phone number.
+
+```java
+createMySabayLoginWithPhone(String username, String password, String phoneNumber, String otpCode, DataCallback<CreateMySabayLoginWithPhoneMutation.Sso_createMySabayLoginWithPhone> dataCallback)
+
+// return
+String accessToken // You can use this token as an authorization token to make requests
+String refreshToken // You can use this token to refresh your existing tokens
+String error
+```
+
+> Note that in order to use the store and checkout function, the user must login first.
+> Follow the guide below for each functions provided by the SDK:
+
+### Register
+
+We also provide a simple function to register for a MySabay account with username and password.
+
+#### registerMySabayAccount
+
+Call this function to create a MySabay account with username and password.
+
+```java
+createMySabayAccount(String username, String password, DataCallback<CreateMySabayLoginMutation.Sso_createMySabayLogin> dataCallback)
+
+// return
+String accessToken // You can use this token as an authorization token to make requests
+String refreshToken // You can use this token to refresh your existing tokens
+String error
+```
+
+### Tokens
+
+These are the functions provided by the SDK to verify and refresh tokens.
+
+> Note: When the user is successfully authenticated, you should store their access and refresh token in the device's keychain.
+
+#### verifyToken
+
+Call this function to verify if the token is still valid.
+
+```java
+isTokenValid()
+
+// return
+boolean tokenIsValid
+String error
+```
+
+#### refreshTokens
+
+Call this function to refresh your tokens.
+
+```java
+refreshToken(RefreshTokenListener listener)
+
+// return
+String accessToken // You can use this token as an authorization token to make requests
+String refreshToken // You can use this token to refresh your existing tokens
+String error
+```
+
+### Logout
+
+#### logout
+
+Call this function to log the user out.
+
+```java
+logout()
+
+// return
+String status
+String error
+```
+
+
 
 *  **Login**
 

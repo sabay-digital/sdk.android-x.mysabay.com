@@ -1,6 +1,6 @@
 package kh.com.mysabay.sdk.webservice;
 
-import android.arch.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MediatorLiveData;
 import android.content.Context;
 
 import org.json.JSONObject;

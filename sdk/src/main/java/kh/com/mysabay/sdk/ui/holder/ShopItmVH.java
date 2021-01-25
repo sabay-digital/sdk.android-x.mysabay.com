@@ -1,8 +1,8 @@
 package kh.com.mysabay.sdk.ui.holder;
 
-import android.databinding.DataBindingUtil;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
+import androidx.databinding.DataBindingUtil;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import com.google.gson.Gson;
@@ -16,7 +16,6 @@ import kh.com.mysabay.sdk.databinding.PartialShopItemBinding;
 import kh.com.mysabay.sdk.pojo.AppItem;
 import kh.com.mysabay.sdk.ui.activity.StoreActivity;
 import kh.com.mysabay.sdk.ui.fragment.PaymentFm;
-import kh.com.mysabay.sdk.utils.LogUtil;
 import kh.com.mysabay.sdk.utils.SdkTheme;
 
 /**

@@ -1,6 +1,6 @@
 package kh.com.mysabay.sdk.pojo;
 
-import android.support.annotation.IntDef;
+import androidx.annotation.IntDef;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
