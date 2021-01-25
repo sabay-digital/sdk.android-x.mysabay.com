@@ -92,7 +92,8 @@ public class ShopsFragment extends BaseFragment<FmShopBinding, StoreApiVM> imple
         mViewBinding.viewMainShop.setBackgroundResource(colorCodeBackground());
         mViewBinding.rcv.setBackgroundResource(colorCodeBackground());
         mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
-        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), appItem.mysabayUserId.toString()));
+        if (appItem.mysabayUserId != null)
+            mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), appItem.mysabayUserId.toString()));
 
         if (getContext() != null)
             viewModel.getShopFromServerGraphQL(getContext());

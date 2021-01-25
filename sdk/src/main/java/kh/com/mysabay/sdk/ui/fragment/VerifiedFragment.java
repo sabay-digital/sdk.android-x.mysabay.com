@@ -226,5 +226,4 @@ public class VerifiedFragment extends BaseFragment<FragmentVerifiedBinding, User
         // Now you can access loginViewModel here and onCreateView too
         // (shared instance with the Activity and the other Fragment)
     }
-
 }

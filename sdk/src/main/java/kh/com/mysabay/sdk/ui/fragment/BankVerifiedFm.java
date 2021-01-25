@@ -196,7 +196,6 @@ public class BankVerifiedFm extends BaseFragment<PartialBankProviderVerifiedBind
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mViewBinding.wv.saveState(outState);
-
     }
 
     @NotNull

@@ -115,7 +115,8 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
         mViewBinding.materialCardView.setBackgroundResource(colorCodeBackground());
         mViewBinding.btnPay.setTextColor(textColorCode());
         mViewBinding.cdSabayId.setBackgroundResource(colorCodeBackground());
-        mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), item.mysabayUserId.toString()));
+        if (item.mysabayUserId != null)
+            mViewBinding.tvMysabayid.setText(String.format(getString(R.string.mysabay_id), item.mysabayUserId.toString()));
 
         viewModel.setShopItemSelected(mData);
         viewModel.getMySabayCheckoutWithGraphQL(v.getContext(), mData.id);
@@ -179,28 +180,30 @@ public class PaymentFm extends BaseFragment<FmPaymentBinding, StoreApiVM> implem
 
         MySabaySDK.getInstance().getUserProfile(info -> {
             Gson g = new Gson();
-            UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
-            balanceCoin = userProfile.coin;
-            balanceGold = userProfile.gold;
+            if (info !=null) {
+                UserProfileItem userProfile = g.fromJson(info, UserProfileItem.class);
+                balanceCoin = userProfile.coin;
+                balanceGold = userProfile.gold;
 
-            if (balanceCoin > 0) {
-                String sabayCoin = "<b>" + userProfile.toSabayCoin() + "</b>";
-                mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
-                mViewBinding.tvMySabay.setText(getString(R.string.mysabay));
-            }
-            if (balanceGold > 0) {
-                String sabayGold = "<b style=\"color:blue;\">" + userProfile.toSabayGold() + "</b>";
-                mViewBinding.dividerBalance.setVisibility(balanceCoin > 0 ? View.VISIBLE : View.GONE);
-                mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
-            } else {
-                mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
-                mViewBinding.dividerBalance.setVisibility(View.GONE);
-            }
+                if (balanceCoin > 0) {
+                    String sabayCoin = "<b>" + userProfile.toSabayCoin() + "</b>";
+                    mViewBinding.tvSabayCoinBalance.setText(Html.fromHtml(sabayCoin));
+                    mViewBinding.tvMySabay.setText(getString(R.string.mysabay));
+                }
+                if (balanceGold > 0) {
+                    String sabayGold = "<b style=\"color:blue;\">" + userProfile.toSabayGold() + "</b>";
+                    mViewBinding.dividerBalance.setVisibility(balanceCoin > 0 ? View.VISIBLE : View.GONE);
+                    mViewBinding.tvSabayGoldBalance.setText(Html.fromHtml(sabayGold));
+                } else {
+                    mViewBinding.tvSabayGoldBalance.setVisibility(View.GONE);
+                    mViewBinding.dividerBalance.setVisibility(View.GONE);
+                }
 
-            if (balanceCoin > 0 || balanceGold > 0) {
-                mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
-            } else {
-                mViewBinding.sabayBalance.setVisibility(View.GONE);
+                if (balanceCoin > 0 || balanceGold > 0) {
+                    mViewBinding.sabayBalance.setVisibility(View.VISIBLE);
+                } else {
+                    mViewBinding.sabayBalance.setVisibility(View.GONE);
+                }
             }
         });
 

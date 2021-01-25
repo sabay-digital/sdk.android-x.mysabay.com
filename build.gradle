@@ -176,3 +176,8 @@ def compatibility(name) {
     }
 
 }
+
+def static getDate() {
+    return new Date().format('yyyyMMddHHmm')
+}
+

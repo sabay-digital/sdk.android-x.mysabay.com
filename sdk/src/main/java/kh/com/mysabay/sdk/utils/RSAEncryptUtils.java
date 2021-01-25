@@ -26,6 +26,11 @@ import javax.security.auth.x500.X500Principal;
 
 import kh.com.mysabay.sdk.R;
 
+/**
+ * Created by Tan Phirum on 2019-12-17
+ * Gmail phirumtan@gmail.com
+ * reference https://github.com/yakivmospan/scytale?utm_source=android-arsenal.com&utm_medium=referral&utm_campaign=5034
+ */
 public class RSAEncryptUtils {
 
     private static final String TAG = RSAEncryptUtils.class.getSimpleName();
@@ -50,7 +55,7 @@ public class RSAEncryptUtils {
     public RSAEncryptUtils(Context context) {
         LogUtil.debug(TAG, "init");
         initKeyStore(context);
-        createNewKeys(context, "ALIAS");
+        createNewKeys(context, context.getString(R.string.alias));
         initCipher();
     }
 

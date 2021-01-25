@@ -1,5 +1,4 @@
 package kh.com.mysabay.sdk.callback;
-
 import kh.com.mysabay.sdk.pojo.payment.SubscribePayment;
 
 /**

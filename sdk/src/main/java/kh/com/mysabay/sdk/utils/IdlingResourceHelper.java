@@ -4,7 +4,10 @@ import androidx.test.espresso.IdlingResource;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class IdlingResourceHelper  implements IdlingResource {
+/**
+ * Created by Tan Phirum on 3/5/18.
+ */
+public class IdlingResourceHelper implements IdlingResource {
 
     private volatile ResourceCallback mResourceCallback;
 
